@@ -12,6 +12,7 @@ Machine boundary: 本文说明设计；行为真相以 `skills/opl-doc-governanc
 ## 外部参考吸收
 
 - OpenSpec：吸收 change proposal / spec delta / archive foldback 思路。
+- OpenSpec：吸收 repo-native project context / agent instruction 的自描述形态。
 - Spec Kit：吸收 spec-plan-tasks-implement 的闭环形态。
 - Agent OS：吸收 standards / product / specs 的长期上下文分层。
 - OpenArc：吸收 plugin / skill / doctor / profile-aware scan 产品形态。
@@ -23,6 +24,7 @@ Machine boundary: 本文说明设计；行为真相以 `skills/opl-doc-governanc
 
 - `skill`: 给 Codex 读取的工作流与硬规则。
 - `doctor`: 只读扫描器，输出 profile、canonical doc 状态和 lifecycle findings。
+- `repo-native anchor`: `.opl-doc-governance/` 中的本地 config、agent entry 和说明，让目标 repo 自带治理入口。
 - `family-plan`: 固化OPL series文档治理提示，变成可重复执行的工作流。
 - `change packet`: 非平凡开发的短期 active 包，完成后 fold back。
 
@@ -35,4 +37,3 @@ Machine boundary: 本文说明设计；行为真相以 `skills/opl-doc-governanc
 - history/tombstone 承接过程和退役语义。
 - contracts/tests/read-model 不被 prose 文档矛盾。
 - 最终 main checkout 上有新鲜验证。
-

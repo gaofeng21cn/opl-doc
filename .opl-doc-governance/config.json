@@ -1,0 +1,53 @@
+{
+  "agent_entry": ".opl-doc-governance/agent-entry.md",
+  "canonical_doc_dirs": [
+    "docs/active",
+    "docs/public",
+    "docs/product",
+    "docs/runtime",
+    "docs/delivery",
+    "docs/source",
+    "docs/policies",
+    "docs/specs",
+    "docs/references",
+    "docs/history"
+  ],
+  "canonical_docs": [
+    "README.md",
+    "AGENTS.md",
+    "TASTE.md",
+    "docs/README.md",
+    "docs/project.md",
+    "docs/status.md",
+    "docs/architecture.md",
+    "docs/invariants.md",
+    "docs/decisions.md"
+  ],
+  "goal_mode": {
+    "auto_create_for_long_horizon_or_editing": true,
+    "single_repo_read_only_audit_starts_with_doctor": true
+  },
+  "governance_skill": "opl-doc-governance",
+  "lifecycle_fields": [
+    "Owner:",
+    "Purpose:",
+    "State:",
+    "Machine boundary:"
+  ],
+  "machine_truth_boundaries": [
+    "source",
+    "tests",
+    "contracts",
+    "CLI/API output",
+    "runtime ledger",
+    "receipt refs"
+  ],
+  "owner_boundary": "Developer-document lifecycle governance only; domain truth, runtime truth, artifact authority, quality verdicts, and owner receipts stay with their owning surfaces.",
+  "primary_reference_docs": [],
+  "repo_profile": "codex_plugin",
+  "schema_version": "opl-doc-governance.repo-native.v1",
+  "verification": {
+    "doctor_json": "python3 <opl-doc-governance-checkout>/scripts/opl_doc_doctor.py doctor <repo-root> --format json",
+    "repo_native": "run the target repository's own documented verification before closeout"
+  }
+}

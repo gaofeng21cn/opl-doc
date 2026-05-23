@@ -13,7 +13,9 @@ Machine boundary: 本文是人读参考对比；本仓行为以 skill、CLI doct
 
 ## OpenSpec
 
-可吸收：change proposal、spec delta、archive foldback。
+可吸收：repo-native project context、agent instructions、change proposal、spec delta、archive foldback。
+
+已吸收：`init-repo` 可在目标仓写入 `.opl-doc-governance/config.json`、`.opl-doc-governance/agent-entry.md` 和 `.opl-doc-governance/README.md`，让后续 agent 先从 repo 内读取治理规则。
 
 不吸收：外部固定 spec 目录结构作为 OPL truth owner。
 
@@ -34,4 +36,3 @@ OPL 映射：`AGENTS/TASTE` 是协作和 taste；`project/status/architecture/in
 可吸收：worktree、subagent、验证、finish branch、长时间自治时的 scope/decision/return briefing。
 
 OPL 映射：用于执行纪律，不作为文件 taxonomy owner。
-

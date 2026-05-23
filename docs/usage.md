@@ -9,6 +9,8 @@ Machine boundary: 本文是人读使用说明；可执行入口以 `skills/` 和
 
 这是一个 Codex plugin / skill repo，同时带一个只读 CLI doctor。使用形态接近 OpenArc：通过 skill 触发工作流，通过 CLI 产生诊断证据。区别是本仓只服务 OPL-native 文档生命周期，不要求迁移到外部固定文件框架。
 
+它也支持 OpenSpec-like repo-native 用法：目标 repo 可以携带 `.opl-doc-governance/`，让后续代理进入仓库后先读取本地治理入口，再按本仓 skill 和 doctor 工作。
+
 ## 常用调用
 
 审计单仓：
@@ -43,6 +45,15 @@ python3 scripts/opl_doc_doctor.py family-plan --format json
 python3 scripts/opl_doc_doctor.py doctor /path/to/one-person-lab
 ```
 
+初始化目标 repo 的本地治理入口：
+
+```bash
+python3 scripts/opl_doc_doctor.py init-repo /path/to/repo --dry-run --format json
+python3 scripts/opl_doc_doctor.py init-repo /path/to/repo --format json
+```
+
+`init-repo` 会写入 `.opl-doc-governance/config.json`、`.opl-doc-governance/agent-entry.md` 和 `.opl-doc-governance/README.md`。默认不覆盖已有文件，需要有意识刷新时使用 `--force`。
+
 安装为本地 Codex plugin：
 
 ```bash
@@ -54,6 +65,8 @@ python3 scripts/install_local_plugin.py
 ```text
 使用 OPL Doc Governance 审计这里的开发文档生命周期。
 ```
+
+如果该 repo 已初始化 `.opl-doc-governance/agent-entry.md`，代理应先读取本地入口；这就是面向自动开发的 repo-native 能力。
 
 ## `/goal` 模板
 

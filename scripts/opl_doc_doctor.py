@@ -75,6 +75,17 @@ DEFAULT_SERIES_REPO_NAMES = {
 DATED_HEADING_RISK_THRESHOLD = 5
 CHECKBOX_LIST_RISK_THRESHOLD = 10
 
+REPO_NATIVE_DIR = ".opl-doc-governance"
+REPO_NATIVE_CONFIG_PATH = f"{REPO_NATIVE_DIR}/config.json"
+REPO_NATIVE_AGENT_ENTRY_PATH = f"{REPO_NATIVE_DIR}/agent-entry.md"
+REPO_NATIVE_README_PATH = f"{REPO_NATIVE_DIR}/README.md"
+REPO_NATIVE_SCHEMA_VERSION = "opl-doc-governance.repo-native.v1"
+REPO_NATIVE_FILES = (
+    REPO_NATIVE_CONFIG_PATH,
+    REPO_NATIVE_AGENT_ENTRY_PATH,
+    REPO_NATIVE_README_PATH,
+)
+
 DATED_HEADING_RE = re.compile(
     r"^#{1,6}\s+"
     r"(?:\d{4}[-/.]\d{1,2}(?:[-/.]\d{1,2})?|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4})"
@@ -129,6 +140,170 @@ def detect_profile(root: Path) -> str:
     return "generic_repo"
 
 
+def build_repo_native_config(root: Path) -> dict[str, Any]:
+    profile = detect_profile(root)
+    return {
+        "schema_version": REPO_NATIVE_SCHEMA_VERSION,
+        "governance_skill": "opl-doc-governance",
+        "repo_profile": profile,
+        "goal_mode": {
+            "auto_create_for_long_horizon_or_editing": True,
+            "single_repo_read_only_audit_starts_with_doctor": True,
+        },
+        "agent_entry": REPO_NATIVE_AGENT_ENTRY_PATH,
+        "canonical_docs": CORE_DOCS,
+        "canonical_doc_dirs": CANONICAL_DOC_DIRS,
+        "primary_reference_docs": FAMILY_REFERENCE_DOCS
+        if profile in {"opl_framework", "foundry_agent", "opl_meta_agent"}
+        else [],
+        "lifecycle_fields": list(HEADER_FIELDS),
+        "machine_truth_boundaries": [
+            "source",
+            "tests",
+            "contracts",
+            "CLI/API output",
+            "runtime ledger",
+            "receipt refs",
+        ],
+        "verification": {
+            "doctor_json": "python3 <opl-doc-governance-checkout>/scripts/opl_doc_doctor.py doctor <repo-root> --format json",
+            "repo_native": "run the target repository's own documented verification before closeout",
+        },
+        "owner_boundary": (
+            "Developer-document lifecycle governance only; domain truth, runtime truth, "
+            "artifact authority, quality verdicts, and owner receipts stay with their owning surfaces."
+        ),
+    }
+
+
+def repo_native_agent_entry_text(config: dict[str, Any]) -> str:
+    profile = config["repo_profile"]
+    return f"""# OPL Doc Governance Agent Entry
+
+Owner: `OPL Doc Governance`
+Purpose: `repo_native_agent_entry`
+State: `active_entry`
+Machine boundary: This file is agent-readable guidance; machine truth remains in source, tests, contracts, CLI/API output, runtime ledgers, and receipt refs.
+
+## First agent move
+
+1. Read this file and `{REPO_NATIVE_CONFIG_PATH}`.
+2. Read the target repo `AGENTS.md`.
+3. Read `TASTE.md` when present.
+4. Read canonical current docs before supporting docs: `README.md`, `docs/README.md`, `docs/project.md`, `docs/status.md`, `docs/architecture.md`, `docs/invariants.md`, `docs/decisions.md`, and active gap references when present.
+5. Run the OPL Doc Governance doctor from the installed skill or governance tool checkout, targeting this repo root, then verify important findings by reading files.
+
+## Operating mode
+
+- Repo profile: `{profile}`.
+- For long-horizon, multi-repo, edit-heavy, worktree/subagent, or absorb-back-to-main requests, create or resume a `/goal` before execution.
+- For a short single-repo read-only audit, start with doctor output and direct file reads.
+- Treat docs as developer context, not production readiness evidence.
+
+## Lifecycle policy
+
+- Each long-lived document has one owner, one purpose, one state, and one machine boundary.
+- Current truth belongs in canonical docs.
+- Active work belongs in `docs/active/`.
+- Historical process, retired plans, and tombstones belong in `docs/history/`.
+- Stale modules, interfaces, tests, aliases, and compatibility wording are retired directly after active callers move.
+
+## Closeout gate
+
+- Canonical docs reflect current truth.
+- Active docs contain only current plans, gaps, and baton material.
+- History or tombstone files hold necessary provenance.
+- Prose does not contradict source, tests, contracts, CLI/API output, runtime ledgers, or receipt refs.
+- Final verification ran on the target repo's final main checkout.
+"""
+
+
+def repo_native_readme_text(config: dict[str, Any]) -> str:
+    profile = config["repo_profile"]
+    return f"""# Repo-Native OPL Doc Governance
+
+Owner: `OPL Doc Governance`
+Purpose: `repo_native_config`
+State: `active_reference`
+Machine boundary: This directory stores agent-readable governance configuration only.
+
+This repo carries a local OPL Doc Governance entry so future agents can discover the document lifecycle rules without relying on a long prompt.
+
+- Profile: `{profile}`
+- Config: `{REPO_NATIVE_CONFIG_PATH}`
+- Agent entry: `{REPO_NATIVE_AGENT_ENTRY_PATH}`
+
+The local entry preserves this repo's own documentation taxonomy. It does not migrate the repo to OpenArc, OpenSpec, Spec Kit, or Agent OS file layouts.
+"""
+
+
+def build_repo_native_files(root: Path) -> dict[str, str]:
+    config = build_repo_native_config(root)
+    return {
+        REPO_NATIVE_CONFIG_PATH: json.dumps(config, indent=2, sort_keys=True) + "\n",
+        REPO_NATIVE_AGENT_ENTRY_PATH: repo_native_agent_entry_text(config),
+        REPO_NATIVE_README_PATH: repo_native_readme_text(config),
+    }
+
+
+def inspect_repo_native(root: Path) -> dict[str, Any]:
+    config_path = root / REPO_NATIVE_CONFIG_PATH
+    entry_path = root / REPO_NATIVE_AGENT_ENTRY_PATH
+    readme_path = root / REPO_NATIVE_README_PATH
+    present_files = [path for path in REPO_NATIVE_FILES if rel_exists(root, path)]
+    missing_files = [path for path in REPO_NATIVE_FILES if not rel_exists(root, path)]
+    schema_version = None
+    repo_profile = None
+    if config_path.exists():
+        try:
+            config = json.loads(read_text(config_path))
+            schema_version = config.get("schema_version")
+            repo_profile = config.get("repo_profile")
+        except json.JSONDecodeError:
+            schema_version = "invalid_json"
+    return {
+        "present": bool(present_files),
+        "complete": not missing_files and schema_version == REPO_NATIVE_SCHEMA_VERSION,
+        "config_path": REPO_NATIVE_CONFIG_PATH if config_path.exists() else None,
+        "agent_entry_path": REPO_NATIVE_AGENT_ENTRY_PATH if entry_path.exists() else None,
+        "readme_path": REPO_NATIVE_README_PATH if readme_path.exists() else None,
+        "schema_version": schema_version,
+        "repo_profile": repo_profile,
+        "present_files": present_files,
+        "missing_files": missing_files,
+    }
+
+
+def init_repo(root: Path, *, dry_run: bool = False, force: bool = False) -> dict[str, Any]:
+    root = root.resolve()
+    files = build_repo_native_files(root)
+    existing = [rel_path for rel_path in files if (root / rel_path).exists()]
+    if existing and not dry_run and not force:
+        raise FileExistsError(
+            "repo-native governance file already exists; use force to overwrite: "
+            + ", ".join(existing)
+        )
+
+    if not dry_run:
+        for rel_path, text in files.items():
+            path = root / rel_path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding="utf-8")
+
+    return {
+        "root": str(root),
+        "repo_profile": detect_profile(root),
+        "schema_version": REPO_NATIVE_SCHEMA_VERSION,
+        "dry_run": dry_run,
+        "force": force,
+        "created": list(files),
+        "skipped_existing": existing if dry_run else [],
+        "agent_entry_path": REPO_NATIVE_AGENT_ENTRY_PATH,
+        "config_path": REPO_NATIVE_CONFIG_PATH,
+        "next_step": f"Read {REPO_NATIVE_AGENT_ENTRY_PATH}, then run doctor and repo-native verification.",
+    }
+
+
 def inspect_header(path: Path) -> dict[str, bool]:
     if not path.exists() or not path.is_file():
         return {field: False for field in HEADER_FIELDS}
@@ -177,6 +352,7 @@ def incremental_list_risk_details(text: str) -> list[str]:
 def doctor(root: Path) -> dict[str, Any]:
     root = root.resolve()
     profile = detect_profile(root)
+    repo_native = inspect_repo_native(root)
     docs = list_markdown_docs(root)
     findings: list[Finding] = []
 
@@ -250,6 +426,7 @@ def doctor(root: Path) -> dict[str, Any]:
     return {
         "root": str(root),
         "repo_profile": profile,
+        "repo_native": repo_native,
         "core_docs": core_status,
         "canonical_dirs": dir_status,
         "markdown_doc_count": len(docs),
@@ -360,6 +537,14 @@ def print_markdown(payload: dict[str, Any]) -> None:
     print(f"Root: `{payload['root']}`")
     print(f"Profile: `{payload['repo_profile']}`")
     print(f"Markdown docs: `{payload['markdown_doc_count']}`")
+    repo_native = payload["repo_native"]
+    if repo_native["present"]:
+        state = "complete" if repo_native["complete"] else "incomplete"
+        print(f"Repo-native governance: `{state}`")
+        if repo_native["agent_entry_path"]:
+            print(f"Agent entry: `{repo_native['agent_entry_path']}`")
+    else:
+        print("Repo-native governance: `absent`")
     print()
     print("## Findings")
     if not payload["findings"]:
@@ -416,6 +601,27 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
         print(f"- {gate}")
 
 
+def print_init_repo_markdown(payload: dict[str, Any]) -> None:
+    print("# OPL Repo-Native Governance Init")
+    print()
+    print(f"Root: `{payload['root']}`")
+    print(f"Profile: `{payload['repo_profile']}`")
+    print(f"Schema: `{payload['schema_version']}`")
+    print(f"Dry run: `{payload['dry_run']}`")
+    print()
+    print("## Files")
+    for path in payload["created"]:
+        print(f"- `{path}`")
+    if payload["skipped_existing"]:
+        print()
+        print("## Existing Files")
+        for path in payload["skipped_existing"]:
+            print(f"- `{path}`")
+    print()
+    print("## Next Step")
+    print(payload["next_step"])
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="OPL document governance doctor")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -436,6 +642,20 @@ def parse_args() -> argparse.Namespace:
     family_parser.add_argument(
         "--workspace-root",
         help="Optional local workspace root used to expand default public repo names into local paths.",
+    )
+
+    init_parser = subparsers.add_parser("init-repo")
+    init_parser.add_argument("repo_root", nargs="?", default=".")
+    init_parser.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    init_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Report repo-native governance files without writing them.",
+    )
+    init_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing repo-native governance files.",
     )
 
     return parser.parse_args()
@@ -477,6 +697,17 @@ def main() -> int:
             print(json.dumps(payload, indent=2, sort_keys=True))
         else:
             print_family_markdown(payload)
+        return 0
+    if args.command == "init-repo":
+        try:
+            payload = init_repo(Path(args.repo_root), dry_run=args.dry_run, force=args.force)
+        except FileExistsError as exc:
+            print(str(exc))
+            return 2
+        if args.format == "json":
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print_init_repo_markdown(payload)
         return 0
     raise AssertionError(args.command)
 

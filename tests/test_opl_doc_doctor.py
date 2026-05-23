@@ -8,6 +8,7 @@ from scripts.opl_doc_doctor import (
     default_series_repos,
     doctor,
     family_plan,
+    init_repo,
     parse_repo_overrides,
     print_family_markdown,
 )
@@ -33,6 +34,81 @@ def test_doctor_detects_opl_profile_and_core_docs(tmp_path: Path) -> None:
     assert payload["repo_profile"] == "opl_framework"
     assert payload["core_docs"]["docs/project.md"] is True
     assert payload["markdown_doc_count"] == 4
+    assert payload["repo_native"]["present"] is False
+
+
+def test_init_repo_dry_run_reports_repo_native_files_without_writing(tmp_path: Path) -> None:
+    root = tmp_path / "med-autoscience"
+    root.mkdir()
+
+    payload = init_repo(root, dry_run=True)
+
+    assert payload["dry_run"] is True
+    assert payload["repo_profile"] == "foundry_agent"
+    assert payload["created"] == [
+        ".opl-doc-governance/config.json",
+        ".opl-doc-governance/agent-entry.md",
+        ".opl-doc-governance/README.md",
+    ]
+    assert not (root / ".opl-doc-governance").exists()
+
+
+def test_init_repo_writes_repo_native_config_and_agent_entry(tmp_path: Path) -> None:
+    root = tmp_path / "redcube-ai"
+    root.mkdir()
+
+    payload = init_repo(root)
+
+    config_path = root / ".opl-doc-governance" / "config.json"
+    entry_path = root / ".opl-doc-governance" / "agent-entry.md"
+    readme_path = root / ".opl-doc-governance" / "README.md"
+    assert payload["dry_run"] is False
+    assert config_path.exists()
+    assert entry_path.exists()
+    assert readme_path.exists()
+    assert "opl-doc-governance" in config_path.read_text(encoding="utf-8")
+    assert "First agent move" in entry_path.read_text(encoding="utf-8")
+    assert "/path/to" not in entry_path.read_text(encoding="utf-8")
+
+
+def test_init_repo_refuses_to_overwrite_without_force(tmp_path: Path) -> None:
+    root = tmp_path / "one-person-lab"
+    native = root / ".opl-doc-governance"
+    native.mkdir(parents=True)
+    (native / "config.json").write_text("custom\n", encoding="utf-8")
+
+    try:
+        init_repo(root)
+    except FileExistsError as exc:
+        assert ".opl-doc-governance/config.json" in str(exc)
+    else:
+        raise AssertionError("init_repo should refuse to overwrite existing repo-native files")
+
+
+def test_init_repo_dry_run_reports_existing_files_without_force(tmp_path: Path) -> None:
+    root = tmp_path / "one-person-lab"
+    native = root / ".opl-doc-governance"
+    native.mkdir(parents=True)
+    (native / "config.json").write_text("custom\n", encoding="utf-8")
+
+    payload = init_repo(root, dry_run=True)
+
+    assert payload["dry_run"] is True
+    assert payload["skipped_existing"] == [".opl-doc-governance/config.json"]
+    assert (native / "config.json").read_text(encoding="utf-8") == "custom\n"
+
+
+def test_doctor_reports_repo_native_entry_when_present(tmp_path: Path) -> None:
+    root = tmp_path / "opl-meta-agent"
+    root.mkdir()
+    init_repo(root)
+
+    payload = doctor(root)
+
+    assert payload["repo_native"]["present"] is True
+    assert payload["repo_native"]["complete"] is True
+    assert payload["repo_native"]["agent_entry_path"] == ".opl-doc-governance/agent-entry.md"
+    assert payload["repo_native"]["schema_version"] == "opl-doc-governance.repo-native.v1"
 
 
 def test_doctor_flags_active_legacy_vocabulary(tmp_path: Path) -> None:

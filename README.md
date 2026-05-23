@@ -35,6 +35,7 @@ The goal is simple: a user should be able to ask for document governance in one 
 ## What It Provides
 
 - **A Codex skill for document stewardship**: the agent gets a stable reading order, cleanup policy, and closeout discipline.
+- **Repo-native agent context**: target repos can carry `.opl-doc-governance/` so future agents discover local governance rules without a long prompt.
 - **Automatic long-horizon mode**: OPL series, multi-repo, or edit-heavy work creates or resumes a `/goal` without the user remembering a long prompt.
 - **A read-only doctor**: the CLI reports missing canonical docs, missing lifecycle signals, stale active wording, and long incremental-list risks.
 - **An OPL series workflow**: generated guidance for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and future OPL-compatible repositories.
@@ -56,8 +57,17 @@ Restart Codex, then use one sentence:
 
 For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. Short single-repo read-only audits start with the doctor and do not force goal mode.
 
+To make a target repository self-describing for future agents, initialize the repo-native anchor:
+
+```bash
+python3 scripts/opl_doc_doctor.py init-repo /path/to/repo --format json
+```
+
+This writes `.opl-doc-governance/config.json`, `.opl-doc-governance/agent-entry.md`, and `.opl-doc-governance/README.md`. Use `--dry-run` to inspect the files first.
+
 ## How It Works
 
+- The agent first reads `.opl-doc-governance/agent-entry.md` when the target repo carries it.
 - The agent reads the repository guidance, current docs, and live code or contract surfaces before editing.
 - The doctor gives a quick risk map without changing the target repository.
 - The skill classifies docs as current truth, active plan, support reference, history, tombstone, or stale pollution.
@@ -92,6 +102,13 @@ Override or add repositories:
 
 ```bash
 python3 scripts/opl_doc_doctor.py family-plan --repo award=award-agent --format markdown
+```
+
+Initialize repo-native governance in a target repo:
+
+```bash
+python3 scripts/opl_doc_doctor.py init-repo /path/to/repo --dry-run --format json
+python3 scripts/opl_doc_doctor.py init-repo /path/to/repo --format json
 ```
 
 ## Lifecycle Model
@@ -131,6 +148,7 @@ When the change is complete, fold current facts back into canonical docs and mov
 ### Repository Layout
 
 - `.codex-plugin/plugin.json`: local Codex plugin manifest.
+- `.opl-doc-governance/`: repo-native governance anchor for this repository.
 - `skills/opl-doc-governance/SKILL.md`: the skill entry used by Codex.
 - `skills/opl-doc-governance/agents/openai.yaml`: UI metadata and default prompt.
 - `scripts/opl_doc_doctor.py`: read-only doctor and family-plan generator.
@@ -151,7 +169,7 @@ bash scripts/verify.sh
 
 - This repository governs developer documentation lifecycle and engineering closeout workflows.
 - It does not own OPL series project truth, runtime truth, domain verdicts, artifact authority, or owner receipts.
-- It keeps OPL-native taxonomy and does not migrate repositories into OpenArc, OpenSpec, Spec Kit, or Agent OS layouts.
+- It keeps OPL-native taxonomy and does not migrate repositories into OpenArc, OpenSpec, Spec Kit, or Agent OS layouts; `.opl-doc-governance/` is only a local agent-readable anchor.
 - Public defaults use repository names, not local absolute paths. Use `--workspace-root` or `--repo ID=PATH` for local machines.
 
 ### Documentation
