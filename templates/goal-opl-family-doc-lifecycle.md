@@ -23,10 +23,12 @@
 - 每个 repo 先读根层 `AGENTS.md`，存在 `TASTE.md` 时先按当前 `TASTE.md` 校准。
 - 读 canonical docs：`README*`、`docs/README*`、`docs/project.md`、`docs/status.md`、`docs/architecture.md`、`docs/invariants.md`、`docs/decisions.md`。
 - 读 single Active Truth plan 和 ideal-state reference，并用 live source/contracts/tests/read-model 验证重要断言。
+- 先发现 active truth owner：优先 repo 明示入口和 `docs/active/current-state-vs-ideal-gap.md`；多份 active plan 抢同一职责时保留 canonical owner，重写或退役重复文档。
 - 如果某个 repo 缺少稳定 active truth owner，使用 OPL Doc Governance 的 `templates/active-truth-plan.md` 作为章节形状；若已有 canonical active plan，则把同样章节映射进去，不新增第二套计划。
 - 在 active plan 中重写三类派生输出：当前完成进度、现状与理想态差距、下一轮 Agent prompt。
-- 下一轮 Agent prompt 必须包含写入范围、禁止范围、live truth 输入、验证命令、完成口径和 foldback 目标。
+- 下一轮 Agent prompt 必须能直接作为 `/goal` 或长线 Codex prompt 使用，并包含写入范围、禁止范围、live truth 输入、验证命令、完成口径和 foldback 目标。
 - 开发完成后删除或重写已关闭 gap；执行流水、完成记录和弯路归入 `docs/history/` 或 tombstone/provenance。
+- closeout 前检查：closed gap 已删除或重写、当前事实已折回 canonical docs、active path 不保留完成过程包、下一轮 prompt 只保留仍未完成的工作。
 - 可以用 subagent 并行开多个 worktree 推进，但每条线必须有清晰 write scope。
 - 每条线完成后跑新鲜验证，提交，吸收回 `main`，删除对应 worktree/branch。
 - 最终在 `main` 上再次验证，并更新 canonical docs、history/tombstone 和必要的 contracts/read-model references。

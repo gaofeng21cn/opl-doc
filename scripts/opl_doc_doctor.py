@@ -380,10 +380,13 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     primary_reference_docs = build_primary_reference_docs(paths)
     governance_prompt_elements = [
         "series_primary_reference_docs",
+        "active_owner_discovery",
         "single_active_truth_first",
         "rewrite_active_truth",
         "active_truth_plan_shape",
+        "content_routing_table",
         "next_round_agent_prompt",
+        "foldback_closure_check",
         "evaluate_all_docs_item_by_item",
         "cleanup_and_archive_stale_content",
         "unique_task_positioning",
@@ -395,10 +398,13 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     steps = [
         "Use the OPL series primary reference docs: each governed repo contributes its ideal-state reference plus its single Active Truth plan.",
         "Read each repo's AGENTS.md, TASTE.md when present, status, architecture, invariants, docs portfolio guidance, and the series primary reference docs before editing.",
+        "Discover the active truth owner before editing: prefer repo-declared pointers and docs/active/current-state-vs-ideal-gap.md, then retire or rewrite duplicate active plans that claim the same role.",
         "Treat ideal-state as the user-maintained target and rewrite the active plan to the best current truth from live code, contracts, tests, CLI/read-model, and docs.",
         "If a repo lacks a stable active truth owner, use templates/active-truth-plan.md as the section shape; if one already exists, map the same sections into that canonical active plan instead of creating a second plan.",
         "Active docs must keep current completion progress, current-state-vs-ideal gaps, and the next-round Agent prompt; do not append execution diaries, dated closeout logs, or historical checklists.",
-        "The next-round Agent prompt should include write scope, non-goals, live truth inputs, verification commands, completion gate, and foldback target.",
+        "Route sections by role: current truth to canonical docs, active gaps to the Active Truth plan, support material to references/specs/support layers, process history to docs/history, retired surfaces to tombstone/provenance, and stale pollution to rewrite/delete.",
+        "The next-round Agent prompt must be executable as a /goal or long-running Codex prompt and include write scope, non-goals, live truth inputs, required actions, verification commands, completion gate, and foldback target.",
+        "Before closeout, verify closed gaps were removed or rewritten, durable current truth was folded into canonical docs, active paths contain no completed process packet, and the next-round prompt only names remaining work.",
         "逐条评估 docs 下其他所有文档；classify each section as current truth, active gap, support reference, process history, retired/tombstone, or stale pollution.",
         "清理和归档过时内容，避免二次污染；route history to docs/history or tombstone refs instead of active docs.",
         "每个文档必须有唯一任务和定位；update canonical docs so every long-lived document has one owner, one purpose, one state, and one machine boundary.",
@@ -479,10 +485,13 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
     print("## Governance Prompt Elements")
     labels = {
         "series_primary_reference_docs": "OPL series primary reference docs",
+        "active_owner_discovery": "active truth owner 发现顺序",
         "single_active_truth_first": "唯一 Active Truth / SSOT 优先",
         "rewrite_active_truth": "重写 active truth 到当前最优真相",
         "active_truth_plan_shape": "Active Truth plan 推荐形状",
+        "content_routing_table": "按内容角色路由文档章节",
         "next_round_agent_prompt": "下一轮 Agent prompt",
+        "foldback_closure_check": "foldback closeout 闭环检查",
         "evaluate_all_docs_item_by_item": "逐条评估 docs 下其他所有文档",
         "cleanup_and_archive_stale_content": "清理和归档过时内容",
         "unique_task_positioning": "每个文档必须有唯一任务和定位",

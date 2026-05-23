@@ -58,6 +58,16 @@ If the user asks how this differs from OpenArc/OpenSpec/Spec Kit, read `docs/ref
 
 For a repo that lacks a clear active truth owner, use `templates/active-truth-plan.md` from this plugin as the recommended shape. Do not copy it blindly when the target repo already has a canonical active plan; map the same sections into the repo's existing owner document.
 
+## Active Owner Discovery
+
+Find the target repo's active truth owner before creating or rewriting any plan:
+
+1. Read repo guidance for an explicit active plan or docs portfolio pointer.
+2. Prefer `docs/active/current-state-vs-ideal-gap.md` when it exists and is current.
+3. Otherwise search `docs/active/` for a document that owns current progress, current gaps, and next-round agent prompt together.
+4. If multiple active docs claim the same role, choose the one closest to the repo's canonical docs and rewrite/retire the duplicates.
+5. If none exists, create or map the bundled `templates/active-truth-plan.md` shape into the repo's normal active docs location.
+
 ## Repo-Native Reading
 
 Repo-native means the skill and CLI stay external while the agent works from the target repo's own surfaces: `AGENTS.md`, `TASTE.md`, `README*`, `docs/**`, contracts, source, tests, scripts, package metadata, and repo-local verification commands. Do not install this CLI or generate `.opl-doc-governance/` inside target repos.
@@ -82,6 +92,17 @@ Canonical placement:
 - Stable policies/specs/references: `docs/policies/`, `docs/specs/`, `docs/references/`
 - Historical process, retired plans, old specs, tombstones: `docs/history/`
 - Machine truth: `contracts/`, source, tests, CLI/API output, runtime ledger, receipt refs
+
+Route section content by role:
+
+| Section role | Destination |
+| --- | --- |
+| Current truth | Canonical docs |
+| Active gap or next step | Single Active Truth plan |
+| Support reference | `docs/references/`, `docs/specs/`, or the repo's support layer |
+| Process history | `docs/history/` |
+| Retired surface | Tombstone/provenance in history |
+| Stale pollution | Rewrite, delete, or replace with a compact history pointer |
 
 ## Autonomous Development Loop
 
@@ -116,6 +137,8 @@ Rewrite algorithm:
 5. Move only useful provenance into history/tombstone, especially no-resurrection guards for retired surfaces.
 6. Run repo-native verification and rewrite the plan again if verification changes the truth.
 
+The next-round agent prompt must be executable as a `/goal` objective or long-running Codex prompt. It must name the write scope, non-goals, live truth inputs, required actions, verification commands, completion gate, and foldback target. Do not leave a bare TODO list as the baton.
+
 ## Active Truth Governance
 
 OPL Doc Governance is Active Truth first. It is not primarily a history-management system.
@@ -126,6 +149,7 @@ Hard rules:
 - Each governed repo should have one active truth owner for current progress, current gaps, and the next-round agent prompt.
 - The next-round agent prompt must include write scope, non-goals, live truth inputs, verification commands, completion gate, and foldback target.
 - Completed work must remove or rewrite the closed gap in the active truth plan; process trace moves to `docs/history/` or tombstone/provenance.
+- Before closeout, confirm closed gaps were removed or rewritten, canonical docs gained durable current truth, active paths contain no completed process packet, and the next-round prompt only names remaining work.
 - History exists to prevent semantic pollution of Active Truth, not to preserve every intermediate decision in active paths.
 
 ## OPL Series Lifecycle Workflow

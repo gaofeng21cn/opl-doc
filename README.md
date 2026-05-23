@@ -39,7 +39,7 @@ The goal is simple: a user should be able to ask for document governance in one 
 - **Automatic long-horizon mode**: OPL series, multi-repo, or edit-heavy work creates or resumes a `/goal` without the user remembering a long prompt.
 - **A read-only doctor**: the CLI reports missing canonical docs, missing lifecycle signals, stale active wording, and long incremental-list risks.
 - **An autonomous development loop**: ideal state stays as the durable user input; governance refreshes current completion progress, current-state gaps, and the next-round agent prompt from live repo truth.
-- **An Active Truth plan template**: a recommended shape for the single active owner of progress, gaps, next-round prompts, and foldback targets.
+- **An Active Truth plan template**: a recommended shape for the single active owner of progress, gaps, executable next-round prompts, routing decisions, and foldback targets.
 - **An OPL series workflow**: generated guidance for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and future OPL-compatible repositories.
 - **Change packet templates**: a compact active-work packet for changes that need intent, design, tasks, verification, and foldback.
 
@@ -67,6 +67,7 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 - The doctor gives a quick risk map without changing the target repository.
 - The skill treats ideal-state references as the user's maintained intent and derives current progress, open gaps, and the next-round agent prompt from live code, contracts, tests, CLI/read-models, and docs.
 - If a repo lacks a stable active owner, the agent can use `templates/active-truth-plan.md` as the shape for the single Active Truth plan.
+- The skill routes each section by role and checks closeout so closed gaps, process packets, and stale wording do not stay in active paths.
 - The skill classifies docs as current truth, active plan, support reference, history, tombstone, or stale pollution.
 - Active docs are rewritten to current truth; historical process material moves to history or tombstone references.
 - Completed work folds back into canonical docs and ends with repo-native verification.

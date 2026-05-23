@@ -175,10 +175,13 @@ def test_family_plan_json_contains_original_series_governance_prompt_elements() 
     assert len(payload["primary_reference_docs_per_repo"]) == 10
     assert {
         "evaluate_all_docs_item_by_item",
+        "active_owner_discovery",
         "single_active_truth_first",
         "rewrite_active_truth",
         "active_truth_plan_shape",
+        "content_routing_table",
         "next_round_agent_prompt",
+        "foldback_closure_check",
         "cleanup_and_archive_stale_content",
         "unique_task_positioning",
         "fold_long_incremental_lists",
@@ -187,9 +190,12 @@ def test_family_plan_json_contains_original_series_governance_prompt_elements() 
         "absorb_main_and_cleanup_when_complete",
     }.issubset(set(payload["governance_prompt_elements"]))
     assert "series_primary_reference_docs" in payload["governance_prompt_elements"]
+    assert any("active truth owner" in step for step in payload["workflow"])
+    assert any("Route sections by role" in step for step in payload["workflow"])
     assert any("Active Truth" in step for step in payload["workflow"])
     assert any("active-truth-plan.md" in step for step in payload["workflow"])
-    assert any("Agent prompt" in step for step in payload["workflow"])
+    assert any("Agent prompt" in step and "/goal" in step for step in payload["workflow"])
+    assert any("Before closeout" in step for step in payload["workflow"])
     assert any("docs 下其他所有文档" in step for step in payload["workflow"])
     assert any("worktree" in step and "subagent" in step for step in payload["workflow"])
 
@@ -207,10 +213,13 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "create or resume a /goal" in markdown
     assert "10 primary reference docs" in markdown
     assert "single Active Truth plan" in markdown
+    assert "active truth owner 发现顺序" in markdown
     assert "唯一 Active Truth / SSOT 优先" in markdown
     assert "Active Truth plan 推荐形状" in markdown
+    assert "按内容角色路由文档章节" in markdown
     assert "active-truth-plan.md" in markdown
     assert "下一轮 Agent prompt" in markdown
+    assert "foldback closeout 闭环检查" in markdown
     assert "opl-meta-agent" in markdown
     assert "逐条评估 docs 下其他所有文档" in markdown
     assert "清理和归档过时内容" in markdown
