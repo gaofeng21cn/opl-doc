@@ -1,89 +1,146 @@
 # OPL Doc Governance
 
-Owner: `One Person Lab`
-Purpose: `developer_document_lifecycle_governance`
-State: `active_tooling`
-Machine boundary: 本仓提供 Codex skill、CLI doctor、模板和测试，帮助治理开发相关文档生命周期。它不持有 OPL series 的项目真相、runtime truth、domain verdict、artifact authority 或 owner receipt。
+<p align="center">
+  <a href="./README.md"><strong>English</strong></a> | <a href="./README.zh-CN.md">中文</a>
+</p>
 
-`opl-doc-governance` 是 OPL-native 的文档生命周期管理与软件工程闭环工具。它吸收 OpenSpec、Spec Kit、Agent OS、OpenArc、Superpowers / ADD 等项目中有用的 repo-governance 思想，但文件 taxonomy、退役规则和机器边界使用 OPL series 现有约束。
+<p align="center"><strong>Document lifecycle governance for long-running AI software development</strong></p>
+<p align="center">A Codex skill and CLI doctor for keeping developer docs current, layered, and useful for autonomous engineering loops.</p>
 
-## 使用方式
+## Why This Exists
 
-### 安装到本地 Codex
+Long-running AI development fails when documentation becomes a second, stale source of truth. Old plans remain active, historical checklists keep growing, retired interfaces look alive, and agents waste time reconciling contradictory docs.
 
-在本仓根目录执行：
+OPL Doc Governance turns document cleanup into a repeatable workflow. It helps an agent read the current repository truth, classify each document by lifecycle role, retire stale material, fold history into archives or tombstones, and close the loop with verification.
+
+It is OPL-native by design: OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
+
+## What It Provides
+
+- **Codex skill**: a reusable workflow for developer-document lifecycle governance.
+- **Automatic goal mode**: for OPL series, multi-repo, long-running, or edit-heavy cleanup, the skill tells the agent to create or resume a `/goal` before execution.
+- **Read-only doctor**: a CLI scan that reports canonical doc presence, lifecycle headers, stale active wording, and long incremental-list risks.
+- **OPL series workflow**: a generated plan for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and future OPL-compatible repositories.
+- **Change packet templates**: a small active-work packet for non-trivial documentation or engineering changes.
+
+## Quick Start
+
+Install it as a local Codex plugin:
 
 ```bash
 python3 scripts/install_local_plugin.py
 ```
 
-这会把当前仓库复制到 `~/plugins/opl-doc-governance`，并更新 `~/.agents/plugins/marketplace.json`。重启 Codex 后，`opl-doc-governance` skill 会出现在可用 skill/plugin 中。
-
-### 作为 Codex skill
-
-把本仓作为本地 plugin 安装或复制到 Codex 可发现的 plugin 目录后，直接对 Codex 说：
+Restart Codex, then use one sentence:
 
 ```text
-使用 OPL Doc Governance 治理这个 repo 的开发文档生命周期。
+Use OPL Doc Governance to govern this repo's developer documentation lifecycle.
 ```
 
-如果请求是 OPL series、多仓、长周期、会修改文档、需要 worktree/subagent 或完成后吸收回 `main`，skill 会要求代理主动创建或延续 `/goal`，用户不需要额外记 prompt。
-
-对 OPL series 执行长期治理时可以只说：
+For the full OPL series:
 
 ```text
-使用 OPL Doc Governance 治理 OPL series 的开发文档生命周期。
+Use OPL Doc Governance to govern the OPL series developer documentation lifecycle.
 ```
 
-它和 OpenArc 的相似点是：都是 repo governance plugin + skill + doctor。区别是 OpenArc 面向通用 AI-built repo，使用自己的固定治理文件；本仓面向 OPL series，保留 OPL 的 canonical docs、active/history/tombstone、contracts/read-model 边界。
+For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. Short single-repo read-only audits start with the doctor and do not force goal mode.
 
-### 作为 `/goal` 长线目标
+## CLI
 
-本仓提供可复制模板：
-
-```text
-使用 OPL Doc Governance，以 OPL series 各 repo 的 ideal-state reference 和 active gap plan 为主要参考，逐条评估 README 与 docs 下其他文档，清理归档过时内容，折叠历史增量长清单，直接退役过时模块/接口/测试，不保留兼容面。可以用 subagent 并行开多个 worktree 推进；每条线完成后验证、吸收回 main、清理 worktree/branch，并更新对应 canonical docs/history/tombstone。
-```
-
-### 作为 CLI
+Run a read-only audit:
 
 ```bash
 python3 scripts/opl_doc_doctor.py doctor /path/to/repo
 python3 scripts/opl_doc_doctor.py doctor /path/to/repo --format json
+```
+
+Generate the OPL series workflow:
+
+```bash
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
 python3 scripts/opl_doc_doctor.py family-plan --format json
 ```
 
-`doctor` 是只读诊断，不会修改目标仓库。它输出 repo profile、canonical docs 状态、machine-boundary header 状态、active/history/doc lifecycle 风险和建议动作。
+Use local workspace paths when needed:
 
-`family-plan` 把 OPL series 长期文档治理提示固化成可执行工作流，并输出 `goal_mode.objective`，供 Codex 自动创建或延续 `/goal` 使用。
-
-## 设计边界
-
-- 开发文档服务 AI 长期理解目标、规划改动、验证闭环和归档历史。
-- 当前事实进入 canonical docs；过程材料进入 history；还在推进的差距进入 active；机器真相进入 contracts / CLI / tests / ledger。
-- 文档医生只报告风险，不把 Markdown 完整性当作生产 ready。
-- 对 OPL series，清理原则是 direct retirement：已过时模块、接口、测试和文档入口在迁移条件成立后 delete/archive/tombstone，不新增兼容面。
-
-## Change Packet
-
-非平凡开发可以创建短期 active packet：
-
-```text
-docs/active/changes/<change-id>/
-  intent.md
-  design.md
-  tasks.md
-  verification.md
-  foldback.md
+```bash
+python3 scripts/opl_doc_doctor.py family-plan --workspace-root /path/to/workspace --format json
 ```
 
-完成后，当前事实折叠进 canonical docs；过程材料进入 `docs/history/process/`、`docs/history/plans/` 或 `docs/history/specs/`；已退役内容进入 tombstone/provenance。
+Override or add repositories:
 
-## 验证
+```bash
+python3 scripts/opl_doc_doctor.py family-plan --repo award=award-agent --format markdown
+```
+
+## Lifecycle Model
+
+Every long-lived developer document should have one job:
+
+| Lifecycle role | Where it belongs |
+| --- | --- |
+| Current truth | `README*`, `docs/README*`, `docs/project.md`, `docs/status.md`, `docs/architecture.md`, `docs/invariants.md`, `docs/decisions.md` |
+| Active work | `docs/active/` |
+| Product, runtime, source, and delivery support | `docs/product/`, `docs/runtime/`, `docs/source/`, `docs/delivery/` |
+| Stable policies, specs, and references | `docs/policies/`, `docs/specs/`, `docs/references/` |
+| Historical process, retired plans, tombstones | `docs/history/` |
+| Machine truth | source, tests, contracts, CLI/API output, runtime ledger, receipt refs |
+
+The doctor is intentionally read-only. It can identify risks, but it does not declare a repository production-ready and it does not replace code, tests, contracts, read models, or owner receipts.
+
+## Change Packets
+
+For non-trivial work, use a short packet under `docs/active/changes/<change-id>/`:
+
+```text
+intent.md
+design.md
+tasks.md
+verification.md
+foldback.md
+```
+
+When the change is complete, fold current facts back into canonical docs and move process material to history or tombstone references.
+
+## Technical Notes
+
+<details>
+  <summary><strong>Developer and agent details</strong></summary>
+
+### Repository Layout
+
+- `.codex-plugin/plugin.json`: local Codex plugin manifest.
+- `skills/opl-doc-governance/SKILL.md`: the skill entry used by Codex.
+- `skills/opl-doc-governance/agents/openai.yaml`: UI metadata and default prompt.
+- `scripts/opl_doc_doctor.py`: read-only doctor and family-plan generator.
+- `scripts/install_local_plugin.py`: local plugin installer.
+- `templates/`: goal and change-packet templates.
+- `tests/`: pytest coverage for the doctor, goal mode, and installer.
+
+### Verification
 
 ```bash
 python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor .
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
+bash scripts/verify.sh
 ```
+
+### Boundaries
+
+- This repository governs developer documentation lifecycle and engineering closeout workflows.
+- It does not own OPL series project truth, runtime truth, domain verdicts, artifact authority, or owner receipts.
+- It keeps OPL-native taxonomy and does not migrate repositories into OpenArc, OpenSpec, Spec Kit, or Agent OS layouts.
+- Public defaults use repository names, not local absolute paths. Use `--workspace-root` or `--repo ID=PATH` for local machines.
+
+### Documentation
+
+- [Documentation index](./docs/README.md)
+- [Project overview](./docs/project.md)
+- [Current status](./docs/status.md)
+- [Architecture](./docs/architecture.md)
+- [Invariants](./docs/invariants.md)
+- [Decisions](./docs/decisions.md)
+- [Usage](./docs/usage.md)
+
+</details>
