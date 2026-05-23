@@ -28,6 +28,11 @@ FAMILY_REFERENCE_DOCS = [
     "docs/active/production-framework-closure-gap-matrix.md",
 ]
 
+ACTIVE_TRUTH_DOC_NAME_RE = re.compile(
+    r"(?:current-state.*ideal.*gap|ideal.*(?:state)?.*gap.*plan|active.*truth.*plan)",
+    re.IGNORECASE,
+)
+
 CANONICAL_DOC_DIRS = [
     "docs/active",
     "docs/public",
@@ -240,6 +245,24 @@ def incremental_list_risk_details(text: str) -> list[str]:
     return details
 
 
+def active_truth_reference_docs(root: Path) -> list[str]:
+    refs = [
+        path
+        for path in FAMILY_REFERENCE_DOCS
+        if rel_exists(root, path)
+    ]
+    active_root = root / "docs" / "active"
+    if not active_root.exists():
+        return refs
+    for doc in sorted(active_root.glob("*.md")):
+        rel = doc.relative_to(root).as_posix()
+        if rel in refs:
+            continue
+        if ACTIVE_TRUTH_DOC_NAME_RE.search(doc.name):
+            refs.append(rel)
+    return refs
+
+
 def doctor(root: Path) -> dict[str, Any]:
     root = root.resolve()
     profile = detect_profile(root)
@@ -308,11 +331,7 @@ def doctor(root: Path) -> dict[str, Any]:
                 )
             )
 
-    active_gap_docs = [
-        path
-        for path in FAMILY_REFERENCE_DOCS
-        if rel_exists(root, path)
-    ]
+    active_gap_docs = active_truth_reference_docs(root)
 
     return {
         "root": str(root),

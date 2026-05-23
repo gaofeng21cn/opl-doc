@@ -156,6 +156,23 @@ def test_doctor_flags_long_checkbox_incremental_list(tmp_path: Path) -> None:
     )
 
 
+def test_doctor_detects_repo_native_active_truth_plan_names(tmp_path: Path) -> None:
+    root = tmp_path / "redcube-ai"
+    active = root / "docs" / "active"
+    active.mkdir(parents=True)
+    (root / "README.md").write_text("# RCA\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (active / "rca-ideal-state-gap-plan.md").write_text(
+        "# RCA Gap\n\nOwner: `RCA`\nPurpose: `ideal_state_gap_plan`\nState: `active_plan`\nMachine boundary: contracts\n",
+        encoding="utf-8",
+    )
+
+    payload = doctor(root)
+
+    assert payload["active_gap_reference_docs"] == ["docs/active/rca-ideal-state-gap-plan.md"]
+    assert payload["recommendation"] != "Add or map the active ideal-state gap document before long-horizon autonomous development."
+
+
 def test_family_plan_contains_opl_series_workflow() -> None:
     payload = family_plan()
 
