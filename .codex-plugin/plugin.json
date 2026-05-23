@@ -1,0 +1,38 @@
+{
+  "name": "opl-doc-governance",
+  "version": "0.1.0",
+  "description": "OPL-native developer document lifecycle governance and software-engineering closeout skill.",
+  "author": {
+    "name": "One Person Lab"
+  },
+  "homepage": "https://github.com/gaofeng21cn/opl-doc-governance",
+  "repository": "https://github.com/gaofeng21cn/opl-doc-governance",
+  "license": "MIT",
+  "keywords": [
+    "opl",
+    "document-governance",
+    "lifecycle",
+    "software-engineering",
+    "codex-skill"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OPL Doc Governance",
+    "shortDescription": "OPL-native docs lifecycle and engineering closeout governance.",
+    "longDescription": "Provides skills and doctor scripts for OPL family document lifecycle management, stale doc retirement, active/history/tombstone folding, and software-engineering closeout workflows.",
+    "developerName": "One Person Lab",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Analyze",
+      "Review",
+      "Generate"
+    ],
+    "defaultPrompt": [
+      "Use OPL Doc Governance to audit this repo's docs lifecycle.",
+      "Generate an OPL family docs lifecycle work plan.",
+      "Review active docs for stale lifecycle pollution and tombstone candidates."
+    ]
+  }
+}
+

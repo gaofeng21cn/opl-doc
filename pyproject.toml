@@ -1,0 +1,10 @@
+[project]
+name = "opl-doc-governance"
+version = "0.1.0"
+description = "OPL-native developer document lifecycle governance skill and doctor."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
