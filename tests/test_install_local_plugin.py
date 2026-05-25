@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import yaml
+
 from scripts.install_local_plugin import install
 
 
@@ -36,8 +38,11 @@ def test_install_copies_plugin_and_updates_marketplace(tmp_path: Path) -> None:
 
 def test_skill_ui_metadata_supports_direct_invocation() -> None:
     metadata = Path("skills/opl-doc-governance/agents/openai.yaml").read_text(encoding="utf-8")
+    prompt = yaml.safe_load(metadata)["interface"]["default_prompt"]
 
     assert 'display_name: "OPL Doc Governance"' in metadata
     assert "$opl-doc-governance" in metadata
+    assert "/Users/gaofeng/workspace/opl-doc-governance/skills/opl-doc-governance/SKILL.md" in prompt
+    assert "do not treat that as the skill being unavailable" in prompt
     assert "/goal" in metadata
     assert "allow_implicit_invocation: true" in metadata
