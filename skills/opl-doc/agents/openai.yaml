@@ -2,10 +2,9 @@ interface:
   display_name: "OPL Doc"
   short_description: "Short entry for OPL docs lifecycle governance"
   default_prompt: >-
-    Use $opl-doc from
-    /Users/gaofeng/workspace/opl-doc/skills/opl-doc/SKILL.md
-    to govern this repo's developer documentation lifecycle, audit README/docs
-    against live truth, and create or resume a /goal for OPL series or
-    long-running cleanup.
+    Use $opl-doc to govern this repo's developer documentation lifecycle, audit
+    README/docs against live truth, and create or resume a /goal for OPL series
+    or long-running cleanup. The canonical workflow is this plugin's
+    skills/opl-doc/SKILL.md.
 policy:
   allow_implicit_invocation: true

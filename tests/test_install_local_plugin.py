@@ -42,8 +42,9 @@ def test_compatibility_skill_ui_metadata_supports_direct_invocation() -> None:
 
     assert 'display_name: "OPL Doc Governance"' in metadata
     assert "$opl-doc-governance" in metadata
-    assert "/Users/gaofeng/workspace/opl-doc/skills/opl-doc-governance/SKILL.md" in prompt
-    assert "/Users/gaofeng/workspace/opl-doc/skills/opl-doc/SKILL.md" in prompt
+    assert "skills/opl-doc-governance/SKILL.md" in prompt
+    assert "skills/opl-doc/SKILL.md" in prompt
+    assert "/Users/gaofeng" not in prompt
     assert "/goal" in metadata
     assert "allow_implicit_invocation: true" in metadata
 
@@ -57,7 +58,8 @@ def test_short_opl_doc_skill_metadata_exists() -> None:
     assert "# OPL Doc" in skill
     assert 'display_name: "OPL Doc"' in metadata
     assert "$opl-doc" in prompt
-    assert "/Users/gaofeng/workspace/opl-doc/skills/opl-doc/SKILL.md" in prompt
+    assert "skills/opl-doc/SKILL.md" in prompt
+    assert "/Users/gaofeng" not in prompt
     assert "allow_implicit_invocation: true" in metadata
 
 
