@@ -10,7 +10,8 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_NAME = "opl-doc-governance"
+PLUGIN_NAME = "opl-doc"
+LEGACY_PLUGIN_NAMES = ("opl-doc-governance",)
 COMMAND_NAME = "opl-doc-doctor"
 REQUIRED_PLUGIN_FILES = (
     ".codex-plugin/plugin.json",
@@ -45,6 +46,10 @@ def install(
     target = plugins_dir / PLUGIN_NAME
     if target.exists():
         shutil.rmtree(target)
+    for legacy_name in LEGACY_PLUGIN_NAMES:
+        legacy_target = plugins_dir / legacy_name
+        if legacy_target.exists():
+            shutil.rmtree(legacy_target)
     ignore = shutil.ignore_patterns(".git", ".worktrees", ".pytest_cache", "__pycache__")
     shutil.copytree(repo_root, target, ignore=ignore)
 
@@ -61,7 +66,12 @@ def install(
         "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
         "category": "Developer Tools",
     }
-    plugins[:] = [item for item in plugins if not (isinstance(item, dict) and item.get("name") == PLUGIN_NAME)]
+    obsolete_names = {PLUGIN_NAME, *LEGACY_PLUGIN_NAMES}
+    plugins[:] = [
+        item
+        for item in plugins
+        if not (isinstance(item, dict) and item.get("name") in obsolete_names)
+    ]
     plugins.append(entry)
     write_json(marketplace_path, marketplace)
 
@@ -111,7 +121,7 @@ def verify(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Install OPL Doc Governance as a local Codex plugin")
+    parser = argparse.ArgumentParser(description="Install OPL Doc as a local Codex plugin")
     parser.add_argument("--repo-root", default=str(Path(__file__).resolve().parents[1]))
     parser.add_argument("--plugins-dir", default=str(Path.home() / "plugins"))
     parser.add_argument(

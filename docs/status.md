@@ -7,8 +7,8 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 
 当前已落地：
 
-- `skills/opl-doc/SKILL.md`：日常短入口；按同一治理规则转向 canonical workflow。
-- `skills/opl-doc-governance/SKILL.md`：canonical Codex 使用入口，继续支持已有安装和直接调用。
+- `skills/opl-doc/SKILL.md`：canonical Codex 使用入口。
+- `skills/opl-doc-governance/SKILL.md`：兼容 Codex 使用入口，继续支持既有直接调用。
 - `scripts/opl_doc_doctor.py doctor`：单仓文档生命周期只读诊断，并报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
 - `scripts/opl_doc_doctor.py doctor`：保持轻量，只报告 missing canonical docs、lifecycle header、legacy active wording、长清单风险和 repo-native verification surface；Active Truth 语义判断由 Codex 按 skill 读取 live repo truth 后执行。
 - skill 现在明确禁止 doctor-driven 治理：doctor 只做预检风险地图；文档内容必须由 Codex 读取 source/contracts/tests/CLI-read-model/runtime ledger/receipt/blocker 和 docs 后逐段语义审计并重写。

@@ -598,7 +598,7 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
     repo_count = len(repo_paths)
     reference_count = repo_count * 2
     return (
-        "使用 OPL Doc Governance，自动创建或延续 /goal，治理 OPL series "
+        "使用 OPL Doc，自动创建或延续 /goal，治理 OPL series "
         f"{repo_count} 个 repo（{repo_list}）的开发文档生命周期；以各 repo 的 ideal-state "
         f"reference 和 single Active Truth plan 合计 {reference_count} 个主参考文档为主要参考，根据 live code、"
         "contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前"

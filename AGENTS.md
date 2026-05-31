@@ -1,4 +1,4 @@
-# OPL Doc Governance 协作规范
+# OPL Doc 协作规范
 
 你始终用中文回复。
 

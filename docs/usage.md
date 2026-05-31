@@ -48,13 +48,13 @@ opl-doc-doctor doctor /path/to/one-person-lab
 安装为本地 Codex plugin：
 
 ```bash
-git clone git@github.com:gaofeng21cn/opl-doc-governance.git
-cd opl-doc-governance
+git clone git@github.com:gaofeng21cn/opl-doc.git
+cd opl-doc
 python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc-governance`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它同时提供 `opl-doc` 短 skill 入口和 `opl-doc-governance` canonical/stable 入口。目标 repo 不需要安装本仓 CLI。
+安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它同时提供 `opl-doc` canonical 入口和 `opl-doc-governance` 兼容入口。目标 repo 不需要安装本仓 CLI。
 
 然后重启 Codex，在任意 OPL series repo 里直接提：
 

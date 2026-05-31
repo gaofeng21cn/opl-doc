@@ -1,8 +1,8 @@
 # OPL Series Docs Lifecycle Goal
 
-使用 OPL Doc Governance，在 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app` 及后续纳入的 OPL-compatible repo 执行文档生命周期治理。
+使用 OPL Doc，在 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app` 及后续纳入的 OPL-compatible repo 执行文档生命周期治理。
 
-执行代理应自动创建或延续 `/goal`，用户只需要说“使用 OPL Doc Governance 治理 OPL series 的开发文档生命周期”。
+执行代理应自动创建或延续 `/goal`，用户只需要说“使用 OPL Doc 治理 OPL series 的开发文档生命周期”。
 
 默认 OPL series 范围是 6 个 repo；以各 repo 的理想情况和 single Active Truth plan 合计 12 个主参考文档为主要参考，根据现在各个 repo 代码、contracts、tests、CLI/read-model 和 docs 的实际情况，重写刷新各 repo 的当前完成进度、现状与理想态差距、下一轮 Agent prompt，并逐条评估各个 repo `README*` 与 `docs/**/*.md` 下其他所有文档。
 
@@ -27,7 +27,7 @@
 - 读 single Active Truth plan 和 ideal-state reference，并用 live source/contracts/tests/read-model 验证重要断言。
 - 对每个 active plan 和 canonical doc 的实质 claim 做 live truth 语义审计：读取 source、contracts、tests、package scripts、CLI/read-model 输出、runtime ledger、receipt 和 blocker，判断文档内容是当前事实、差距、证据尾项、历史 provenance 还是 stale pollution。
 - 先发现 active truth owner：优先 repo 明示入口和 `docs/active/current-state-vs-ideal-gap.md`；多份 active plan 抢同一职责时保留 canonical owner，重写或退役重复文档。
-- 如果某个 repo 缺少稳定 active truth owner，使用 OPL Doc Governance 的 `templates/active-truth-plan.md` 作为章节形状；若已有 canonical active plan，则把同样章节映射进去，不新增第二套计划。
+- 如果某个 repo 缺少稳定 active truth owner，使用 OPL Doc 的 `templates/active-truth-plan.md` 作为章节形状；若已有 canonical active plan，则把同样章节映射进去，不新增第二套计划。
 - 在 active plan 中重写三类派生输出：当前完成进度、现状与理想态差距、下一轮 Agent prompt；这个 prompt 就是下一轮 `/goal` 或长线 Codex 执行入口，不是普通 TODO。
 - 逐段审阅 `README*` 和 `docs/**/*.md`，根据 live truth 更新文档内容、合并重复职责、清理过时路径；不是只做结构扫描修复。
 - 下一轮 Agent prompt 必须能直接作为 `/goal` 或长线 Codex prompt 使用，并包含目标、写入范围、禁止范围、live truth 输入、必做动作、验证命令、完成口径和 foldback 目标。

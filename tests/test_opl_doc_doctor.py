@@ -62,7 +62,7 @@ def test_doctor_detects_repo_native_verification_without_writing(tmp_path: Path)
         "package.json:scripts.test",
         "package.json:scripts.build",
     ]
-    assert not (root / ".opl-doc-governance").exists()
+    assert not (root / ".opl-doc").exists()
 
 
 def test_doctor_flags_active_legacy_vocabulary(tmp_path: Path) -> None:

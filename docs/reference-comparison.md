@@ -11,7 +11,7 @@ Machine boundary: 本文是人读参考对比；本仓行为以 skill、CLI doct
 
 差异：OpenArc 面向通用 AI-built repo，使用 `PROJECT_BRIEF`、`CHANGELOG_AI`、`SPEC`、`archive` 等固定治理面。本仓面向 OPL series，保留 OPL 当前 docs taxonomy、contracts/read-model 和 tombstone 规则。
 
-分工：OpenArc-like 价值在外置 plugin/doctor 形态；OPL Doc Governance 不让 CLI 接管文档语义，只让 Codex skill 根据 live repo truth 重写 Active Truth。
+分工：OpenArc-like 价值在外置 plugin/doctor 形态；OPL Doc 不让 CLI 接管文档语义，只让 Codex skill 根据 live repo truth 重写 Active Truth。
 
 ## OpenSpec
 
@@ -21,7 +21,7 @@ Machine boundary: 本文是人读参考对比；本仓行为以 skill、CLI doct
 
 不吸收：外部固定 spec 目录结构作为 OPL truth owner。
 
-分工：OpenSpec-like 价值在 change proposal 与 archive foldback；OPL Doc Governance 的长期主面是 single Active Truth plan，用户维护 ideal-state，Codex 派生当前进度、差距和下一轮 Agent prompt。
+分工：OpenSpec-like 价值在 change proposal 与 archive foldback；OPL Doc 的长期主面是 single Active Truth plan，用户维护 ideal-state，Codex 派生当前进度、差距和下一轮 Agent prompt。
 
 ## GitHub Spec Kit
 

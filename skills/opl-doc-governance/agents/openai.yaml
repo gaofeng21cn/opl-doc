@@ -1,17 +1,12 @@
 interface:
   display_name: "OPL Doc Governance"
-  short_description: "Govern OPL docs lifecycle and stale-content audits"
+  short_description: "Compatibility entry for OPL Doc"
   default_prompt: >-
     Use $opl-doc-governance from
-    /Users/gaofeng/workspace/opl-doc-governance/skills/opl-doc-governance/SKILL.md
-    to govern this repo's developer documentation lifecycle, audit README/docs
-    against live truth, and create or resume a /goal for OPL series or
-    long-running cleanup. For OPL series governance, use the six-repo default
-    including one-person-lab-app, the 12 primary reference documents, and
-    long-horizon tranche continuation rules from Goal Mode; do not mark the
-    global goal complete just because one verified tranche was absorbed. If the
-    current session skill index does not list OPL Doc Governance or
-    opl-doc-governance, do not treat that as the skill being unavailable; read
-    the SKILL.md path above directly and follow its Goal Mode instructions.
+    /Users/gaofeng/workspace/opl-doc/skills/opl-doc-governance/SKILL.md
+    as a compatibility entry and follow canonical $opl-doc from
+    /Users/gaofeng/workspace/opl-doc/skills/opl-doc/SKILL.md. Govern this
+    repo's developer documentation lifecycle, audit README/docs against live
+    truth, and create or resume a /goal for OPL series or long-running cleanup.
 policy:
   allow_implicit_invocation: true

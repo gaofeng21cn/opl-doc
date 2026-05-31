@@ -15,4 +15,4 @@ OpenArc、OpenSpec、Spec Kit、Agent OS 等项目作为参考，不作为本仓
 
 ## Repo-native 只读识别
 
-本仓的 repo-native 能力由外置 skill / CLI 读取目标 repo 自己已有的 `AGENTS.md`、`TASTE.md`、canonical docs、machine truth surface 和验证入口。目标 repo 不需要安装本仓 CLI，也不需要生成 `.opl-doc-governance/` 目录。
+OPL Doc 的 repo-native 能力由外置 skill / CLI 读取目标 repo 自己已有的 `AGENTS.md`、`TASTE.md`、canonical docs、machine truth surface 和验证入口。目标 repo 不需要安装本仓 CLI，也不需要生成 `.opl-doc/` 目录。

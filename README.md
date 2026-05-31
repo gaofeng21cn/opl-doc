@@ -1,4 +1,4 @@
-# OPL Doc Governance
+# OPL Doc
 
 <p align="center">
   <a href="./README.md"><strong>English</strong></a> | <a href="./README.zh-CN.md">中文</a>
@@ -19,18 +19,18 @@
     </td>
     <td width="33%" valign="top">
       <strong>How To Start</strong><br/>
-      Ask Codex to use OPL Doc or OPL Doc Governance for the repo or the OPL series
+      Ask Codex to use OPL Doc for the repo or the OPL series
     </td>
   </tr>
 </table>
 
-## Why OPL Doc Governance
+## Why OPL Doc
 
 AI agents can keep building only when the repository tells them what is true now. In long-running development, old plans stay in active docs, historical checklists keep growing, retired interfaces look alive, and the next agent has to spend context reconstructing the real state.
 
-OPL Doc Governance turns that cleanup work into a repeatable steward workflow. It helps Codex read the current repository truth, audit every README and docs section against that truth, rewrite active docs toward the single best Active Truth, make each document keep one job, retire stale surfaces without compatibility prose, fold process material into archives or tombstones, and finish with fresh verification evidence.
+OPL Doc turns that cleanup work into a repeatable steward workflow. It helps Codex read the current repository truth, audit every README and docs section against that truth, rewrite active docs toward the single best Active Truth, make each document keep one job, retire stale surfaces without compatibility prose, fold process material into archives or tombstones, and finish with fresh verification evidence.
 
-`opl-doc` is the short skill entry for day-to-day use. `opl-doc-governance` remains the canonical plugin and stable existing name for installed paths and marketplace entries.
+`opl-doc` is the canonical plugin and skill name. `opl-doc-governance` remains only as a compatibility skill entry for existing prompts.
 
 The goal is simple: a user should be able to ask for document governance in one sentence, and the agent should know how to start, when to create a `/goal`, how to avoid stale-doc pollution, and how to close the loop.
 
@@ -52,19 +52,19 @@ The goal is simple: a user should be able to ask for document governance in one 
 Install it as a local Codex plugin:
 
 ```bash
-git clone git@github.com:gaofeng21cn/opl-doc-governance.git
-cd opl-doc-governance
+git clone git@github.com:gaofeng21cn/opl-doc.git
+cd opl-doc
 python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-This copies the plugin into `~/plugins/opl-doc-governance`, registers it in the personal marketplace, creates a user-level `opl-doc-doctor` command under `~/.local/bin`, and installs both skill entries: `opl-doc` and `opl-doc-governance`. It does not write anything into the repos being governed.
+This copies the plugin into `~/plugins/opl-doc`, registers it in the personal marketplace, creates a user-level `opl-doc-doctor` command under `~/.local/bin`, and installs both skill entries: `opl-doc` and `opl-doc-governance`. It does not write anything into the repos being governed.
 
 Restart Codex, then use one sentence:
 
 - "Use OPL Doc to govern this repo's developer documentation lifecycle."
 - "Use OPL Doc to govern the OPL series developer documentation lifecycle."
-- "Use OPL Doc Governance to clean stale active docs and fold completed plans into history."
+- "Use OPL Doc to clean stale active docs and fold completed plans into history."
 
 For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The default OPL series is six repos and 12 primary reference documents. Short single-repo read-only audits start with the doctor and do not force goal mode.
 
@@ -83,7 +83,7 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 - OPL series governance runs as long-horizon tranches. A verified and absorbed lane is only a tranche closeout; the global `/goal` stays open while the coverage ledger still has unreviewed docs, unresolved stale/retire candidates, or carry-forward gaps.
 - Completed work folds back into canonical docs and ends with repo-native verification.
 
-OPL Doc Governance is OPL-native by design. OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
+OPL Doc is OPL-native by design. OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
 
 ## CLI
 
@@ -150,9 +150,9 @@ When the change is complete, fold current facts back into canonical docs and mov
 ### Repository Layout
 
 - `.codex-plugin/plugin.json`: local Codex plugin manifest.
-- `skills/opl-doc/SKILL.md`: short Codex skill entry.
-- `skills/opl-doc-governance/SKILL.md`: canonical Codex skill entry retained for existing direct invocation.
-- `skills/opl-doc-governance/agents/openai.yaml`: UI metadata and default prompt.
+- `skills/opl-doc/SKILL.md`: canonical Codex skill entry.
+- `skills/opl-doc-governance/SKILL.md`: compatibility Codex skill entry retained for existing direct invocation.
+- `skills/opl-doc/agents/openai.yaml`: UI metadata and default prompt.
 - `scripts/opl_doc_doctor.py`: read-only doctor and family-plan generator.
 - `scripts/install_local_plugin.py`: local plugin installer.
 - `templates/`: Active Truth plan, goal, and change-packet templates.
