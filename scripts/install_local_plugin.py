@@ -12,6 +12,14 @@ from typing import Any
 
 PLUGIN_NAME = "opl-doc-governance"
 COMMAND_NAME = "opl-doc-doctor"
+REQUIRED_PLUGIN_FILES = (
+    ".codex-plugin/plugin.json",
+    "skills/opl-doc-governance/SKILL.md",
+    "skills/opl-doc-governance/agents/openai.yaml",
+    "skills/opl-doc/SKILL.md",
+    "skills/opl-doc/agents/openai.yaml",
+    "scripts/opl_doc_doctor.py",
+)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -70,6 +78,38 @@ def install(
     }
 
 
+def verify(
+    plugins_dir: Path,
+    marketplace_path: Path,
+    bin_dir: Path,
+) -> dict[str, Any]:
+    plugin_path = plugins_dir / PLUGIN_NAME
+    missing = [
+        str(plugin_path / rel)
+        for rel in REQUIRED_PLUGIN_FILES
+        if not (plugin_path / rel).exists()
+    ]
+    marketplace = load_json(marketplace_path)
+    plugins = marketplace.get("plugins", [])
+    marketplace_ok = any(
+        isinstance(item, dict)
+        and item.get("name") == PLUGIN_NAME
+        and item.get("source", {}).get("path") == f"./plugins/{PLUGIN_NAME}"
+        for item in plugins
+    )
+    command_path = bin_dir / COMMAND_NAME
+    command_ok = command_path.is_symlink() and command_path.resolve() == plugin_path / "scripts" / "opl_doc_doctor.py"
+    ok = not missing and marketplace_ok and command_ok
+    return {
+        "ok": ok,
+        "plugin_path": str(plugin_path),
+        "marketplace_ok": marketplace_ok,
+        "command_path": str(command_path),
+        "command_ok": command_ok,
+        "missing": missing,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Install OPL Doc Governance as a local Codex plugin")
     parser.add_argument("--repo-root", default=str(Path(__file__).resolve().parents[1]))
@@ -83,16 +123,25 @@ def parse_args() -> argparse.Namespace:
         default=str(Path.home() / ".local" / "bin"),
         help="User-level directory for the opl-doc-doctor command symlink.",
     )
+    parser.add_argument("--verify-only", action="store_true", help="Only verify an existing local install.")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    plugins_dir = Path(args.plugins_dir).expanduser().resolve()
+    marketplace_path = Path(args.marketplace_path).expanduser().resolve()
+    bin_dir = Path(args.bin_dir).expanduser().resolve()
+    if args.verify_only:
+        result = verify(plugins_dir, marketplace_path, bin_dir)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["ok"] else 1
+
     result = install(
         Path(args.repo_root).resolve(),
-        Path(args.plugins_dir).expanduser().resolve(),
-        Path(args.marketplace_path).expanduser().resolve(),
-        Path(args.bin_dir).expanduser().resolve(),
+        plugins_dir,
+        marketplace_path,
+        bin_dir,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

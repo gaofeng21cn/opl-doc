@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from scripts.install_local_plugin import install
+from scripts.install_local_plugin import install, verify
 
 
 def test_install_copies_plugin_and_updates_marketplace(tmp_path: Path) -> None:
@@ -49,3 +49,31 @@ def test_skill_ui_metadata_supports_direct_invocation() -> None:
     assert "do not treat that as the skill being unavailable" in prompt
     assert "/goal" in metadata
     assert "allow_implicit_invocation: true" in metadata
+
+
+def test_short_opl_doc_skill_metadata_exists() -> None:
+    skill = Path("skills/opl-doc/SKILL.md").read_text(encoding="utf-8")
+    metadata = Path("skills/opl-doc/agents/openai.yaml").read_text(encoding="utf-8")
+    prompt = yaml.safe_load(metadata)["interface"]["default_prompt"]
+
+    assert 'name: "opl-doc"' in skill
+    assert "short skill name for OPL Doc Governance" in skill
+    assert 'display_name: "OPL Doc"' in metadata
+    assert "$opl-doc" in prompt
+    assert "opl-doc-governance" in prompt
+    assert "allow_implicit_invocation: true" in metadata
+
+
+def test_verify_only_checks_installed_short_skill_and_command(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    plugins_dir = tmp_path / "plugins"
+    marketplace_path = tmp_path / "marketplace.json"
+    bin_dir = tmp_path / "bin"
+
+    install(repo_root, plugins_dir, marketplace_path, bin_dir)
+    result = verify(plugins_dir, marketplace_path, bin_dir)
+
+    assert result["ok"] is True
+    assert result["marketplace_ok"] is True
+    assert result["command_ok"] is True
+    assert result["missing"] == []

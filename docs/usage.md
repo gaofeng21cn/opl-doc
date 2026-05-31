@@ -16,13 +16,13 @@ Machine boundary: 本文是人读使用说明；可执行入口以 `skills/` 和
 审计单仓：
 
 ```text
-使用 OPL Doc Governance 审计当前 repo 的 docs 生命周期，指出 stale active docs、history/tombstone 候选和 canonical doc 漂移。
+使用 OPL Doc 审计当前 repo 的 docs 生命周期，指出 stale active docs、history/tombstone 候选和 canonical doc 漂移。
 ```
 
 执行OPL series治理：
 
 ```text
-使用 OPL Doc Governance 治理 OPL series 的开发文档生命周期。
+使用 OPL Doc 治理 OPL series 的开发文档生命周期。
 ```
 
 对 OPL series、多仓、长周期或会修改文档的请求，skill 会让代理主动创建或延续 `/goal`；短单仓只读审计先跑 doctor，不强制 goal。
@@ -48,15 +48,18 @@ opl-doc-doctor doctor /path/to/one-person-lab
 安装为本地 Codex plugin：
 
 ```bash
+git clone git@github.com:gaofeng21cn/opl-doc-governance.git
+cd opl-doc-governance
 python3 scripts/install_local_plugin.py
+python3 scripts/install_local_plugin.py --verify-only
 ```
 
-安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc-governance`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。目标 repo 不需要安装本仓 CLI。
+安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc-governance`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它同时提供 `opl-doc` 短 skill 入口和 `opl-doc-governance` canonical/stable 入口。目标 repo 不需要安装本仓 CLI。
 
 然后重启 Codex，在任意 OPL series repo 里直接提：
 
 ```text
-使用 OPL Doc Governance 审计这里的开发文档生命周期。
+使用 OPL Doc 审计这里的开发文档生命周期。
 ```
 
 doctor 的 JSON 会报告目标 repo 已有的 agent guidance、canonical docs、machine truth surface 和验证入口，并提示明显结构风险。文档内容是否符合 Active Truth / SSOT，由 Codex 按 skill 读取 ideal-state reference、active plan、live code/contracts/tests/read-model 后判断和修改。
