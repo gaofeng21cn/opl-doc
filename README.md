@@ -49,6 +49,8 @@ The goal is simple: a user should be able to ask for document governance in one 
 
 ## One-Sentence Quick Start
 
+For a complete new-machine Codex setup that includes OPL Flow, OPL Doc, One Person Lab App, OPL Framework, and family agent surfaces, start from the [OPL Flow new-machine guide](https://github.com/gaofeng21cn/opl-flow/blob/main/docs/new-machine-codex-setup.md).
+
 Install it as a local Codex plugin:
 
 ```bash

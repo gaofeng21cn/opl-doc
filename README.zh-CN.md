@@ -48,6 +48,8 @@ OPL Doc 把这类清理工作变成可重复的文档管家流程。它帮助 Co
 
 ## 一句话开始
 
+如果是在新机器上配置完整 Codex + OPL 全家桶，包括 OPL Flow、OPL Doc、One Person Lab App、OPL Framework 和 family agent surfaces，先从 [OPL Flow 新机器指南](https://github.com/gaofeng21cn/opl-flow/blob/main/docs/new-machine-codex-setup.md) 开始。
+
 安装为本地 Codex plugin：
 
 ```bash
