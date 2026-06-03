@@ -13,13 +13,15 @@ Machine boundary: 本文是人读架构；可执行行为以 `scripts/opl_doc_do
    - 只读扫描 repo docs，输出 profile、repo-native surfaces、canonical docs 状态和轻量 findings。
 3. Repo-native profile 层
    - 通过 `native-check` / `native-sync` 读取或写入目标 repo 的 `contracts/opl-native-profile.json`，让 repo 声明采用哪个 OPL Flow / OPL Doc profile、Active Truth owner、canonical docs、taxonomy dirs、machine truth surfaces 与验证入口。
-   - 该 profile 只服务插件发现、同步和 drift 检查，不成为 domain truth、runtime truth、artifact authority、quality verdict 或 owner receipt。
+   - 该 profile 只服务插件发现、同步和 drift 检查，不成为 repo truth、domain truth、runtime truth、artifact authority、quality verdict、owner receipt 或 production readiness。
 4. Repo-native surface 层
    - 识别目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口，不向目标 repo 安装治理工具。
 5. Change packet 层
    - 为非平凡开发提供 active change 包，完成后 fold back 到 canonical docs 或 history。
 6. Verification 层
    - 通过 repo-native 测试、diff check、doctor 输出和最终 main checkout 验证闭环。
+7. Support extension 层
+   - `family-plan` 默认只治理 6 个核心 OPL series repo。`opl-doc`、`opl-aion-shell` 等 support repo 只在用户显式要求或当前任务触及 workflow / shell carrier / support docs 时作为 extension 纳入；它们不是默认 Foundry Agent truth set。
 
 ## 自动开发文档回路
 
@@ -27,7 +29,7 @@ Machine boundary: 本文是人读架构；可执行行为以 `scripts/opl_doc_do
 
 当目标 repo 缺少稳定 active owner 时，skill 可使用 `templates/active-truth-plan.md` 的最小形状：ideal-state reference、current completion progress、functional/structural gaps、test/evidence gaps、next-round Agent prompt 和 history/tombstone foldback。该模板只定义文档形状，不承担语义判断。
 
-CLI 不承担 Active Truth 语义治理。doctor 只提示明显结构风险；`native-sync` 只维护 `contracts/opl-native-profile.json` 这种同步声明；真正的文档内容判断由 Codex 按 skill 读取 live repo truth、ideal-state reference、active plan 和 machine-readable evidence 后执行。
+CLI 不承担 Active Truth 语义治理。doctor 只提示明显结构风险；`native-sync` 只维护 `contracts/opl-native-profile.json` 这种同步声明；`family-plan` 只生成 workflow map 和 coverage discipline。真正的文档内容判断由 Codex 按 skill 读取 live repo truth、ideal-state reference、active plan 和 machine-readable evidence 后执行。
 
 ## 文档组合审计
 
@@ -39,4 +41,4 @@ CLI 不承担 Active Truth 语义治理。doctor 只提示明显结构风险；`
 
 ## 边界
 
-doctor 只读，不执行清理、不修改目标仓、不生成 owner receipt。`native-sync --apply` 只允许写目标仓的 `contracts/opl-native-profile.json`，用于插件原生升级和 drift 检查。skill 可以指导 Codex 修改目标仓文档，但必须先读取目标 repo 约束并运行对应验证。
+doctor 只读，不执行清理、不修改目标仓、不生成 owner receipt。`native-sync --apply` 只允许写目标仓的 `contracts/opl-native-profile.json`，用于插件原生升级和 drift 检查。`family-plan` 不生成 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt 或 Foundry Agent truth owner set。skill 可以指导 Codex 修改目标仓文档，但必须先读取目标 repo 约束并运行对应验证。

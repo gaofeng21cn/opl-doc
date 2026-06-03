@@ -97,6 +97,28 @@ DEFAULT_SERIES_REPO_NAMES = {
     "app": "one-person-lab-app",
 }
 
+DEFAULT_SUPPORT_REPO_NAMES = {
+    "opl_doc": "opl-doc",
+    "shell": "opl-aion-shell",
+}
+
+OPL_DOC_AUTHORITY_BOUNDARY = {
+    "doctor_role": "lightweight_risk_map_only",
+    "native_profile_role": "profile_sync_and_drift_check_only",
+    "family_plan_role": "workflow_plan_only",
+    "support_repos_role": "extension_only_not_default_foundry_agent_truth_set",
+    "does_not_own": [
+        "repo_truth",
+        "runtime_truth",
+        "domain_truth",
+        "artifact_authority",
+        "quality_verdicts",
+        "owner_receipts",
+        "production_readiness",
+        "foundry_agent_truth_set",
+    ],
+}
+
 DATED_HEADING_RISK_THRESHOLD = 5
 CHECKBOX_LIST_RISK_THRESHOLD = 10
 
@@ -585,6 +607,7 @@ def doctor(root: Path) -> dict[str, Any]:
         "markdown_doc_count": len(docs),
         "active_gap_reference_docs": active_gap_docs,
         "active_truth_health": active_truth_health,
+        "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
         "finding_count": len(findings),
         "findings": [finding.to_json() for finding in findings],
         "recommendation": recommend(profile, findings, active_gap_docs, active_truth_health),
@@ -631,12 +654,15 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
     managed_by_plugins["opl-doc"] = {
         "management": "profile_check_and_sync",
         "managed_surfaces": [NATIVE_PROFILE_REL_PATH],
+        "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
         "does_not_own": [
+            "repo_truth",
             "domain_truth",
             "runtime_truth",
             "artifact_authority",
             "owner_receipts",
             "quality_verdicts",
+            "production_readiness",
         ],
     }
     return {
@@ -787,8 +813,22 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
 def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     paths = repo_paths or default_series_repos()
     primary_reference_docs = build_primary_reference_docs(paths)
+    support_repos = dict(DEFAULT_SUPPORT_REPO_NAMES)
+    support_repo_policy = {
+        "default_included_in_governed_repo_set": False,
+        "extension_only": True,
+        "not_foundry_agent_truth_set": True,
+        "support_repos": support_repos,
+        "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
+        "include_only_when": [
+            "user_explicitly_requests_support_repo_governance",
+            "current_task_touches_support_repo_docs_or_scripts",
+            "support_repo_is_needed_to_explain_workflow_or_shell_carrier_boundary",
+        ],
+    }
     governance_prompt_elements = [
         "series_primary_reference_docs",
+        "support_repo_extension_boundary",
         "active_owner_discovery",
         "live_truth_semantic_audit",
         "doctor_is_preflight_only",
@@ -812,6 +852,8 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "Use the OPL series primary reference docs: each governed repo contributes its ideal-state reference plus its single Active Truth plan.",
         "Read each repo's AGENTS.md, TASTE.md when present, status, architecture, invariants, docs portfolio guidance, and the series primary reference docs before editing.",
         "Run doctor only as a preflight risk map; do not turn doctor findings into the governance task list.",
+        "Treat doctor, native profile, and family-plan outputs as workflow aids only: they do not own repo truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.",
+        "Keep opl-doc and shell repos as support extensions. They are included only when explicitly requested or when the current task touches their docs/scripts; they are not part of the default Foundry Agent truth set.",
         "Build the semantic input set before editing: ideal-state reference, active truth plan, canonical/support docs, source/contracts/tests, read-model commands, runtime ledgers, receipts, blockers, and stale/retired candidate docs.",
         "Discover the active truth owner before editing: prefer repo-declared pointers and docs/active/current-state-vs-ideal-gap.md, then retire or rewrite duplicate active plans that claim the same role.",
         "Perform a live truth semantic audit: read source, contracts, tests, package scripts, CLI/read-model outputs, runtime ledgers, receipts, and blockers that prove or disprove active-plan and canonical-doc claims.",
@@ -836,6 +878,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     return {
         "objective": "OPL series document lifecycle governance and software-engineering closeout",
         "repos": paths,
+        "support_repo_policy": support_repo_policy,
         "goal_mode": {
             "recommended": True,
             "agent_action": "create_goal_or_resume_goal_before_multi_repo_or_long_horizon_governance",
@@ -858,6 +901,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
             "verification was run on the final main checkout",
             "global goal was not marked complete merely because one tranche finished",
             "coverage ledger records reviewed, edited, archived, tombstoned, deleted, unreviewed, and carry-forward documents for every governed repo",
+            "support repos remain explicit extensions and never become the default Foundry Agent truth set",
         ],
     }
 
@@ -907,6 +951,12 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
     print()
     print("## Repos")
     for name, path in payload["repos"].items():
+        print(f"- `{name}`: `{path}`")
+    print()
+    print("## Support Repos")
+    support_policy = payload["support_repo_policy"]
+    print("support repos are explicit extensions, not the default Foundry Agent truth set.")
+    for name, path in support_policy["support_repos"].items():
         print(f"- `{name}`: `{path}`")
     print()
     print("## Primary References")

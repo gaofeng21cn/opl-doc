@@ -41,6 +41,7 @@ The goal is simple: a user should be able to ask for document governance in one 
 - **Automatic long-horizon mode**: OPL series, multi-repo, or edit-heavy work creates or resumes a `/goal` without the user remembering a long prompt.
 - **A read-only doctor**: the CLI reports missing canonical docs, missing lifecycle signals, stale active wording, and long incremental-list risks.
 - **A repo-native profile sync surface**: the CLI can check or write `contracts/opl-native-profile.json` so an OPL-compatible repo declares which workflow/doc profile it follows without moving domain truth into this plugin.
+- **A no-second-truth boundary**: doctor, native profile, and family-plan outputs are workflow aids only; they do not own repo truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
 - **A live-truth semantic audit loop**: Codex reads code, contracts, tests, read-models, ledgers, receipts, blockers, and docs section by section before rewriting prose.
 - **Whole-portfolio doc cleanup**: every `README*` and `docs/**/*.md` file is classified by role, checked against live truth, and rewritten, merged, archived, tombstoned, or deleted so one document does not carry several jobs.
 - **An autonomous development loop**: ideal state stays as the durable user input; governance refreshes current completion progress, current-state gaps, and the next-round agent prompt from live repo truth.
@@ -87,6 +88,8 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 - Completed work folds back into canonical docs and ends with repo-native verification.
 
 OPL Doc is OPL-native by design. OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
+
+The default OPL series workflow covers the six governed repo set: OPL, MAS, MAG, RCA, OMA, and the App. Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions for workflow or shell-carrier tasks; they are not default Foundry Agent truth owners.
 
 ## CLI
 
@@ -146,6 +149,8 @@ Every long-lived developer document should have one job. If a document mixes cur
 
 The doctor is intentionally read-only and lightweight. It can identify structural risks, but it does not manage document meaning, provide the governance task list, declare a repository production-ready, or replace Codex reading code, tests, contracts, read models, runtime ledgers, blockers, or owner receipts.
 
+`family-plan` is likewise a workflow map, not a repository truth ledger. It keeps support repos as extension-only inputs and leaves current truth in each governed repo's own canonical docs, contracts, tests, runtime ledgers, receipts, and blockers.
+
 ## Change Packets
 
 For non-trivial work, use a short packet under `docs/active/changes/<change-id>/`:
@@ -190,7 +195,7 @@ bash scripts/verify.sh
 ### Boundaries
 
 - This repository governs developer documentation lifecycle and engineering closeout workflows.
-- It does not own OPL series project truth, runtime truth, domain verdicts, artifact authority, or owner receipts.
+- It does not own OPL series project truth, runtime truth, domain verdicts, artifact authority, quality verdicts, owner receipts, production readiness, or the default Foundry Agent truth set.
 - It keeps OPL-native taxonomy and does not migrate repositories into OpenArc, OpenSpec, Spec Kit, or Agent OS layouts.
 - Public defaults use repository names, not local absolute paths. Use `--workspace-root` or `--repo ID=PATH` for local machines.
 

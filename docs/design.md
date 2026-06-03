@@ -23,7 +23,7 @@ Machine boundary: 本文说明设计；行为真相以 `skills/opl-doc/SKILL.md`
 
 - `skill`: 给 Codex 读取的工作流与硬规则。
 - `doctor`: 只读扫描器，输出 profile、repo-native surfaces、canonical doc 状态和 lifecycle findings。
-- `family-plan`: 固化 OPL series 文档治理提示，变成可重复执行的工作流。
+- `family-plan`: 固化 OPL series 文档治理提示，变成可重复执行的工作流；输出 support repo extension policy，但不定义 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt 或 Foundry Agent truth set。
 - `autonomous development loop`: 用户维护 ideal-state reference；治理流程根据 live repo truth 重写当前完成进度、当前差距和下一轮 Agent prompt。
 - `active truth plan template`: 当目标 repo 缺少稳定 active owner 时，提供最小文档形状；语义判断仍由 Codex 按 live repo truth 完成。
 - `doctor guard`: 轻量结构红旗；不替代 Codex 对 Active Truth 语义的判断。

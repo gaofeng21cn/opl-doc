@@ -17,6 +17,8 @@ Machine boundary: 本文是人读项目定位；机器真相以 `.codex-plugin/p
 - 全量文档组合审计：逐个评估 `README*` 与 `docs/**/*.md`，让每份长期文档只有唯一任务和定位，并清理、归档或 tombstone stale pollution。
 - Active Truth plan 推荐模板：当目标 repo 没有稳定 active owner 时，给当前完成进度、功能/结构差距、测试/证据差距、下一轮 Agent prompt 和 foldback target 一个最小形状。
 - 轻量 doctor guard：只提示结构风险；Active Truth 内容治理由 Codex 按 skill 和 live repo truth 主动判断。
+- no-second-truth 边界：doctor、native profile 和 family-plan 都是 workflow / lightweight risk map / profile sync，不是 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
+- support repo extension 规则：`opl-doc` 与 `opl-aion-shell` 这类 support repo 只在任务显式触及 workflow / shell carrier / support docs 时纳入；它们不是默认 Foundry Agent truth owner 集合。
 - 测试覆盖。
 
 本仓不持有 OPL series 的 domain truth、runtime truth、quality verdict、artifact authority 或 owner receipt。

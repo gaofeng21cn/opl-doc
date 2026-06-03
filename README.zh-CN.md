@@ -40,6 +40,7 @@ OPL Doc 把这类清理工作变成可重复的文档管家流程。它帮助 Co
 - **Repo-native 读取**：doctor 报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
 - **自动长线模式**：OPL series、多仓或重编辑治理会自动创建或延续 `/goal`，用户不用记长 prompt。
 - **只读 doctor**：CLI 报告缺失 canonical docs、缺失生命周期信号、active 旧词和历史增量长清单风险。
+- **no-second-truth 边界**：doctor、native profile 和 family-plan 都只是 workflow / risk map / profile sync，不持有 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
 - **live truth 语义审计回路**：Codex 在改文档前逐段读取代码、contracts、tests、read-model、ledger、receipt、blocker 和文档内容。
 - **全量文档组合清理**：逐个审计 `README*` 和 `docs/**/*.md`，按角色分类并根据 live truth 重写、合并、归档、tombstone 或删除，避免一个文档同时承担多种职责。
 - **Active Truth plan 模板**：给当前完成进度、当前差距、可执行下一轮 Agent prompt、内容路由和 foldback target 一个推荐单一 owner 形状。
@@ -86,6 +87,8 @@ python3 scripts/install_local_plugin.py --verify-only
 
 OPL Doc 是 OPL-native 的治理工具。OpenArc、OpenSpec、Spec Kit、Agent OS 等项目是有用参考，但本仓不会把 OPL 系列项目迁移到外部固定文件布局。
 
+默认 OPL series workflow 覆盖 OPL、MAS、MAG、RCA、OMA 和 App 六个治理 repo。`opl-doc`、`opl-aion-shell` 等 support repo 只是 workflow 或 shell-carrier 任务的 explicit extension，不是默认 Foundry Agent truth owner。
+
 ## CLI
 
 只读审计：
@@ -101,6 +104,8 @@ opl-doc-doctor doctor /path/to/repo --format json
 opl-doc-doctor family-plan --format markdown
 opl-doc-doctor family-plan --format json
 ```
+
+`family-plan` 只生成 workflow map，不生成 truth ledger。support repo 会出现在 `support_repo_policy` 中作为 extension-only 输入；当前事实仍回各 repo canonical docs、contracts、tests、runtime ledger、receipt 和 blocker。
 
 需要本机 workspace 路径时：
 
@@ -127,7 +132,7 @@ opl-doc-doctor family-plan --repo award=award-agent --format markdown
 | 历史过程、退役计划、tombstone | `docs/history/` |
 | 机器真相 | 源码、测试、contracts、CLI/API 输出、runtime ledger、receipt refs |
 
-doctor 始终只读。它可以识别风险，但不会管理文档语义、不会提供治理任务清单、不会声明仓库 production-ready，也不会替代代码、测试、contracts、read model、runtime ledger、blocker 或 owner receipt。
+doctor 始终只读。它可以识别风险，但不会管理文档语义、不会提供治理任务清单、不会声明仓库 production-ready，也不会替代代码、测试、contracts、read model、runtime ledger、blocker 或 owner receipt。native profile 只做 profile sync / drift check；family-plan 只做 workflow plan；它们都不能成为第二真相源。
 
 ## Change Packet
 
@@ -171,7 +176,7 @@ bash scripts/verify.sh
 ### 边界
 
 - 本仓治理开发文档生命周期和软件工程闭环。
-- 本仓不持有 OPL series 的项目真相、runtime truth、domain verdict、artifact authority 或 owner receipt。
+- 本仓不持有 OPL series 的项目真相、runtime truth、domain verdict、artifact authority、quality verdict、owner receipt、production readiness 或默认 Foundry Agent truth set。
 - 本仓保留 OPL-native taxonomy，不把项目迁移到 OpenArc、OpenSpec、Spec Kit 或 Agent OS 的固定布局。
 - public 默认值只使用 repo 名称，不写本机绝对路径；本机使用 `--workspace-root` 或 `--repo ID=PATH`。
 

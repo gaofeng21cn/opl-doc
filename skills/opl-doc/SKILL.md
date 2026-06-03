@@ -5,7 +5,7 @@ description: "Use when governing OPL-family developer documentation lifecycle, a
 
 # OPL Doc
 
-Use this skill for developer-document governance: helping AI maintain the current single Active Truth from ideal state and live repo truth, derive current completion progress, maintain current-state gaps and next-round agent prompts, retire stale docs, and close the software-engineering loop. Do not use it for domain truth, runtime provider ownership, artifact authority, quality verdicts, or owner receipts.
+Use this skill for developer-document governance: helping AI maintain the current single Active Truth from ideal state and live repo truth, derive current completion progress, maintain current-state gaps and next-round agent prompts, retire stale docs, and close the software-engineering loop. Do not use it for repo truth, domain truth, runtime provider ownership, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
 
 ## First Move
 
@@ -31,6 +31,8 @@ opl-doc-doctor doctor <repo-root> --format json
 
 Use doctor output only as a preflight risk map. It is never the governance input, never the task list, and never proof that docs are current. Its `active_truth_health` output is only a shape signal for missing progress/gap/prompt sections, non-executable next prompts, or active process-log pollution. Important claims must still be verified from live source, contracts, tests, CLI/read-model output, runtime ledgers, receipts, and the actual document text.
 
+`family-plan` is also workflow guidance only. It can suggest a goal objective, repo list, support repo extension policy, and coverage discipline, but it cannot define repository truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
+
 For edit work, do not start by fixing doctor findings. Start by building the semantic input set: ideal state, current active truth plan, relevant canonical/support docs, implementation surfaces, verification/read-model surfaces, and stale/retired candidate docs.
 
 ## Goal Mode
@@ -38,6 +40,8 @@ For edit work, do not start by fixing doctor findings. Start by building the sem
 When the user asks for OPL series governance, multi-repo cleanup, long-running autonomous development, stale-doc cleanup with edits, or anything that mentions worktrees/subagents/absorbing back to `main`, create or resume a `/goal` before execution. The user should not have to remember to ask for `/goal`.
 
 The default OPL series scope is six repos: `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and `one-person-lab-app`. Their ideal-state references plus single Active Truth plans form 12 primary reference documents. Do not shrink this to the older five-repo set unless the user explicitly excludes the App repo.
+
+Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions. Include them only when the user asks for support repo governance or the current task touches workflow / shell-carrier / support docs. They are not part of the default Foundry Agent truth set.
 
 Use this objective shape:
 
@@ -91,7 +95,8 @@ opl-doc-doctor native-sync <repo-root> --apply
 
 `native-sync` is dry-run unless `--apply` is passed. The apply mode only writes
 `contracts/opl-native-profile.json`; it must not rewrite domain docs, source,
-tests, runtime state, owner receipts, quality verdicts, or artifact authority.
+tests, runtime state, owner receipts, quality verdicts, artifact authority,
+repo truth, production readiness, or the Foundry Agent truth set.
 
 ## Live Truth Audit
 
@@ -227,18 +232,19 @@ Use this when the user asks to refresh OPL series docs from ideal state and gap 
 
 1. Treat the default six repos as the governed OPL series unless the user narrows scope: `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and `one-person-lab-app`.
 2. Treat each governed repo's ideal-state reference and single Active Truth plan as primary references; the default six-repo run has 12 primary reference documents.
-3. Run doctor only as preflight, then set it aside; use `active_truth_health` only to notice shape risks, not as semantic proof.
-4. Read current code/contracts/tests/read-model surfaces before editing docs.
-5. For each active plan, canonical doc, support doc, history/tombstone candidate, and stale/retired candidate, compare substantive claims against live repo truth section by section.
-6. Rewrite the active plan so it states current completion progress, current-state-vs-ideal gaps, and a next-round agent prompt.
-7. Review other `README*` and `docs/**/*.md` content section by section.
-8. Classify each section as current truth, active plan, support reference, process history, retired/tombstone, or stale pollution.
-9. Fold historical incremental lists into compact current-state tables plus history/tombstone pointers.
-10. Retire stale modules/interfaces/tests/docs directly once active callers have moved; do not preserve compatibility aliases, facades, wrappers, or compatibility wording.
-11. Update canonical docs and archive/tombstone supporting docs so each document has one job.
-12. Maintain a repo-by-repo coverage ledger for reviewed docs, edited docs, retired docs, unreviewed docs, unresolved stale/retire candidates, and next tranche write scope.
-13. Run repo-native verification, absorb completed worktree lanes back to `main`, and clean only the current tranche's temporary worktrees/branches.
-14. Close the tranche, not the global goal, unless the coverage ledger proves no unreviewed docs, unresolved stale/retire candidates, or unfinished gaps remain across all governed repos.
+3. Keep support repos such as `opl-doc` and `opl-aion-shell` as explicit extensions, not default Foundry Agent truth owners.
+4. Run doctor only as preflight, then set it aside; use `active_truth_health` only to notice shape risks, not as semantic proof.
+5. Read current code/contracts/tests/read-model surfaces before editing docs.
+6. For each active plan, canonical doc, support doc, history/tombstone candidate, and stale/retired candidate, compare substantive claims against live repo truth section by section.
+7. Rewrite the active plan so it states current completion progress, current-state-vs-ideal gaps, and a next-round agent prompt.
+8. Review other `README*` and `docs/**/*.md` content section by section.
+9. Classify each section as current truth, active plan, support reference, process history, retired/tombstone, or stale pollution.
+10. Fold historical incremental lists into compact current-state tables plus history/tombstone pointers.
+11. Retire stale modules/interfaces/tests/docs directly once active callers have moved; do not preserve compatibility aliases, facades, wrappers, or compatibility wording.
+12. Update canonical docs and archive/tombstone supporting docs so each document has one job.
+13. Maintain a repo-by-repo coverage ledger for reviewed docs, edited docs, retired docs, unreviewed docs, unresolved stale/retire candidates, and next tranche write scope.
+14. Run repo-native verification, absorb completed worktree lanes back to `main`, and clean only the current tranche's temporary worktrees/branches.
+15. Close the tranche, not the global goal, unless the coverage ledger proves no unreviewed docs, unresolved stale/retire candidates, or unfinished gaps remain across all governed repos.
 
 ## Change Packet
 
@@ -260,6 +266,8 @@ Templates live under `templates/change-packet/`.
 - Do not treat Markdown completeness as production readiness.
 - Do not treat active docs as an execution log; Active Truth is a current-state rewrite surface.
 - Do not put runtime truth, domain truth, quality verdicts, artifact authority, or owner receipts in docs.
+- Do not treat doctor, native profile, or family-plan as repo truth, production readiness, or the Foundry Agent truth set.
+- Do not include support repos in the default Foundry Agent truth owner set unless the user explicitly extends scope.
 - Do not keep compatibility aliases or facade docs after retirement gates are met.
 - Do not create a second changelog/memory system when the repo already has history/process and receipt ledgers.
 - Do not convert a verified tranche into global completion while any governed repo still has unreviewed docs, unresolved stale/retire candidates, or carry-forward gaps.

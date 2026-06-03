@@ -15,7 +15,9 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - skill 现在要求治理整个文档组合：逐个审计 `README*` 与 `docs/**/*.md`，根据 live repo truth 判断每个 section 是当前事实、active gap、支撑参考、过程历史、退役 tombstone 还是 stale pollution。
 - skill 现在把一文一责作为 closeout 门槛：每份长期文档只能保留一个任务和定位；混合职责内容必须移动到 canonical owner、history/tombstone，或直接删除。
 - `scripts/opl_doc_doctor.py family-plan`：OPL series 治理工作流生成，默认覆盖 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app`，并可通过 `--repo ID=PATH` 扩展到其他 OPL-compatible repo。
+- `scripts/opl_doc_doctor.py family-plan`：现在输出 `support_repo_policy`，把 `opl-doc` 和 `opl-aion-shell` 标为 explicit extension；默认 governed repo set 仍是 6 个核心 repo / 12 个主参考文档，support repos 不进入默认 Foundry Agent truth set。
 - `scripts/opl_doc_doctor.py native-check|native-sync`：目标 repo 的 plugin-native profile 检查/同步入口；`native-sync --apply` 只写 `contracts/opl-native-profile.json`，用于声明 repo profile、OPL Flow / OPL Doc profile、Active Truth owner、canonical docs、taxonomy dirs、machine truth surfaces、repo-owned paths 和验证入口。
+- `doctor` / `native profile` / `family-plan` 现在共同投影 no-authority boundary：它们只做 lightweight risk map、profile sync / drift check 和 workflow plan，不持有 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
 - `scripts/install_local_plugin.py --verify-only`：新机器安装后的本地插件、marketplace、`opl-doc` 短入口和 `opl-doc-doctor` 命令验证入口。
 - `family-plan` 默认把 6 个 repo 的 ideal-state reference 与 single Active Truth plan 作为 12 个主参考文档；旧的 5 仓/10 文档范围只在用户显式排除 App repo 时使用。
 - `family-plan` 的完成门槛包含每个治理 repo 都要从 live repo truth 重写当前完成进度、现状与理想态差距、下一轮 Agent prompt。
@@ -32,3 +34,4 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - 不能把文档完整性写成 contracts/tests/read-model 已一致。
 - 不能用本仓替代 OPL series 各 repo 的 canonical docs。
 - 不能把 `contracts/opl-native-profile.json` 写成 domain truth、runtime truth、artifact authority、quality verdict、owner receipt 或生产 ready 证据；它只是插件同步和 drift 检查声明。
+- 不能把 `family-plan` 的默认 repo 列表写成 OPL family truth owner set；support repos 只是 extension，当前事实仍回各 repo canonical docs、contracts、tests、runtime ledger、receipt 和 blocker。

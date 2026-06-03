@@ -33,6 +33,8 @@ Machine boundary: 本文是人读使用说明；可执行入口以 `skills/` 和
 opl-doc-doctor family-plan --format markdown
 ```
 
+`family-plan` 只生成治理 workflow 和 coverage discipline。默认 governed repo set 是 OPL、MAS、MAG、RCA、OMA、App 六个核心 repo；`opl-doc`、`opl-aion-shell` 等 support repo 只作为 explicit extension 出现在 `support_repo_policy`，不是默认 Foundry Agent truth set。
+
 机器可读 goal objective：
 
 ```bash
@@ -59,7 +61,8 @@ opl-doc-doctor native-sync /path/to/repo --apply
 dirs、machine truth surfaces、repo-owned paths 和验证入口固定成可检查声明。
 这让 OPL Flow / OPL Doc 后续能做版本化升级和 drift 检查，同时不把目标
 repo 的 domain truth、runtime truth、artifact authority、quality verdict 或
-owner receipt 上收到插件。
+owner receipt 上收到插件。它也不持有 repo truth、production readiness 或
+Foundry Agent truth set。
 
 安装为本地 Codex plugin：
 
@@ -70,7 +73,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它同时提供 `opl-doc` canonical 入口和 `opl-doc-governance` 兼容入口。目标 repo 不需要安装本仓 CLI。
+安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它同时提供 `opl-doc` canonical 入口和 `opl-doc-governance` 迁移期 skill entry。目标 repo 不需要安装本仓 CLI。
 
 然后重启 Codex，在任意 OPL series repo 里直接提：
 
@@ -81,6 +84,8 @@ python3 scripts/install_local_plugin.py --verify-only
 doctor 的 JSON 会报告目标 repo 已有的 agent guidance、canonical docs、machine truth surface 和验证入口，并提示明显结构风险。文档内容是否符合 Active Truth / SSOT，由 Codex 按 skill 读取 ideal-state reference、active plan、live code/contracts/tests/read-model 后判断和修改。
 
 doctor 不能作为治理任务清单。正式治理必须先做 live truth 语义审计：逐段核对 active plan、核心文档和重要支撑文档中的实质 claim，读取 source、contracts、tests、CLI/read-model、runtime ledger、receipt 和 blocker 后，再决定更新、合并、归档、tombstone 或删除。
+
+profile sync 不能作为 truth sync。`native-sync --apply` 的写入面只有 `contracts/opl-native-profile.json`，它声明 OPL Doc / OPL Flow 如何识别目标仓；目标仓当前事实仍归目标仓 canonical docs、contracts、source、tests、runtime ledger、receipt 和 blocker。
 
 治理范围默认覆盖整个文档组合，而不是只覆盖 gap 文档。代理需要逐个审计 `README*` 和 `docs/**/*.md`，确认每个文档的唯一任务和定位；同一文档内混合 current truth、active plan、支撑参考、执行记录和历史时，应把内容移入各自 canonical owner，并归档、tombstone 或删除重复/过时材料。
 

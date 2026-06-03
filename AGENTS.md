@@ -4,6 +4,8 @@
 
 本仓用于维护 OPL-native 文档生命周期治理技能、脚本和参考模板。它只治理开发相关文档、变更包、归档和软件工程闭环，不承载 OPL series 的 domain truth、runtime truth、artifact authority 或 owner receipt。
 
+doctor、native profile 和 family-plan 都只是 workflow / lightweight risk map / profile sync，不是 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。`opl-doc`、`opl-aion-shell` 等 support repo 只作为 explicit extension 纳入，不进入默认 Foundry Agent truth owner 集合。
+
 ## 工作原则
 
 - 修改前先读相关文件、测试和当前仓库约束。
@@ -22,4 +24,3 @@ python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor .
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
 ```
-

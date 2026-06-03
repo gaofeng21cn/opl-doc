@@ -46,6 +46,9 @@ def test_doctor_detects_opl_profile_and_core_docs(tmp_path: Path) -> None:
         "docs/architecture.md",
         "docs/invariants.md",
     ]
+    assert payload["authority_boundary"]["doctor_role"] == "lightweight_risk_map_only"
+    assert "repo_truth" in payload["authority_boundary"]["does_not_own"]
+    assert "owner_receipts" in payload["authority_boundary"]["does_not_own"]
 
 
 def test_detect_profile_uses_package_identity_inside_worktree_named_differently(tmp_path: Path) -> None:
@@ -94,6 +97,11 @@ def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) ->
         "package.json:scripts.verify",
         "package.json:scripts.test",
     ]
+    assert (
+        payload["expected_profile"]["managed_by_plugins"]["opl-doc"]["authority_boundary"]["native_profile_role"]
+        == "profile_sync_and_drift_check_only"
+    )
+    assert "repo_truth" in payload["expected_profile"]["managed_by_plugins"]["opl-doc"]["does_not_own"]
     assert not (contracts / "opl-native-profile.json").exists()
 
 
@@ -423,6 +431,13 @@ def test_family_plan_contains_opl_series_workflow() -> None:
     assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "app"}
     assert payload["repos"]["oma"] == "opl-meta-agent"
     assert payload["repos"]["app"] == "one-person-lab-app"
+    assert payload["support_repo_policy"]["default_included_in_governed_repo_set"] is False
+    assert payload["support_repo_policy"]["extension_only"] is True
+    assert payload["support_repo_policy"]["not_foundry_agent_truth_set"] is True
+    assert payload["support_repo_policy"]["support_repos"] == {
+        "opl_doc": "opl-doc",
+        "shell": "opl-aion-shell",
+    }
     assert payload["primary_reference_doc_count"] == 12
     assert "OPL single Active Truth plan" in payload["primary_reference_docs_per_repo"]
     assert "APP single Active Truth plan" in payload["primary_reference_docs_per_repo"]
@@ -439,6 +454,7 @@ def test_family_plan_json_contains_original_series_governance_prompt_elements() 
     assert len(payload["primary_reference_docs_per_repo"]) == 12
     assert {
         "evaluate_all_docs_item_by_item",
+        "support_repo_extension_boundary",
         "active_owner_discovery",
         "live_truth_semantic_audit",
         "doctor_is_preflight_only",
@@ -459,6 +475,8 @@ def test_family_plan_json_contains_original_series_governance_prompt_elements() 
     }.issubset(set(payload["governance_prompt_elements"]))
     assert "series_primary_reference_docs" in payload["governance_prompt_elements"]
     assert any("preflight risk map" in step and "governance task list" in step for step in payload["workflow"])
+    assert any("workflow aids only" in step and "repo truth" in step for step in payload["workflow"])
+    assert any("support extensions" in step and "Foundry Agent truth set" in step for step in payload["workflow"])
     assert any("semantic input set" in step for step in payload["workflow"])
     assert any("source, contracts, tests" in step and "CLI/read-model" in step for step in payload["workflow"])
     assert any("every README*" in step and "docs/**/*.md" in step for step in payload["workflow"])
@@ -487,6 +505,11 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "Goal Mode" in markdown
     assert "create or resume a /goal" in markdown
     assert "12 primary reference docs" in markdown
+    assert "Support Repos" in markdown
+    assert "explicit extensions" in markdown
+    assert "not the default Foundry Agent truth set" in markdown
+    assert "opl-doc" in markdown
+    assert "opl-aion-shell" in markdown
     assert "single Active Truth plan" in markdown
     assert "active truth owner 发现顺序" in markdown
     assert "live repo truth 语义审计" in markdown
@@ -545,3 +568,17 @@ def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
     assert "alias、facade 或 wrapper" in goal_prompt
     assert "吸收回 main" in goal_prompt
     assert "最终 main checkout" in goal_prompt
+
+
+def test_family_plan_support_repos_are_extension_only() -> None:
+    payload = family_plan()
+
+    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "app"}
+    assert "opl_doc" not in payload["repos"]
+    assert "shell" not in payload["repos"]
+    policy = payload["support_repo_policy"]
+    assert policy["authority_boundary"]["family_plan_role"] == "workflow_plan_only"
+    assert policy["authority_boundary"]["support_repos_role"] == "extension_only_not_default_foundry_agent_truth_set"
+    assert "foundry_agent_truth_set" in policy["authority_boundary"]["does_not_own"]
+    assert "owner_receipts" in policy["authority_boundary"]["does_not_own"]
+    assert "user_explicitly_requests_support_repo_governance" in policy["include_only_when"]

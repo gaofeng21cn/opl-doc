@@ -5,6 +5,8 @@ Purpose: `docs_index`
 State: `active_truth`
 Machine boundary: 本文是人读索引；可执行真相以 skill、CLI doctor 和测试为准。
 
+`opl-doc` 的 doctor、native profile 和 family-plan 都只是 workflow / lightweight risk map / profile sync。它们不持有 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set；support repos 只作为 explicit extension 进入相关任务。
+
 ## 当前入口
 
 - [project.md](./project.md)：项目定位与边界。
