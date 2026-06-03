@@ -7,7 +7,7 @@ Machine boundary: 本文是人读使用说明；可执行入口以 `skills/` 和
 
 ## 它是什么
 
-这是一个 Codex plugin / skill repo，同时带一个只读 CLI doctor。使用形态接近 OpenArc：通过 skill 触发工作流，通过 CLI 产生诊断证据。区别是本仓只服务 OPL-native 文档生命周期，不要求迁移到外部固定文件框架。
+这是一个 Codex plugin / skill repo，同时带一个只读 CLI doctor 和 repo-native profile 同步面。使用形态接近 OpenArc：通过 skill 触发工作流，通过 CLI 产生诊断证据和插件同步声明。区别是本仓只服务 OPL-native 文档生命周期，不要求迁移到外部固定文件框架。
 
 它也支持 OpenSpec-like repo-native 用法：skill 和 CLI 保持外置，进入目标 repo 后读取目标 repo 自己已有的 `AGENTS.md`、`TASTE.md`、`README*`、`docs/**`、contracts、source、tests 和 repo-local verify 入口。
 
@@ -44,6 +44,22 @@ opl-doc-doctor family-plan --format json
 ```bash
 opl-doc-doctor doctor /path/to/one-person-lab
 ```
+
+检查或生成 repo-native profile：
+
+```bash
+opl-doc-doctor native-check /path/to/repo
+opl-doc-doctor native-sync /path/to/repo
+opl-doc-doctor native-sync /path/to/repo --apply
+```
+
+`native-sync` 默认只输出 dry-run 计划。带 `--apply` 时只写
+`contracts/opl-native-profile.json`，把目标 repo 的 `repo_profile`、
+`flow_profile`、`doc_profile`、Active Truth owner、canonical docs、taxonomy
+dirs、machine truth surfaces、repo-owned paths 和验证入口固定成可检查声明。
+这让 OPL Flow / OPL Doc 后续能做版本化升级和 drift 检查，同时不把目标
+repo 的 domain truth、runtime truth、artifact authority、quality verdict 或
+owner receipt 上收到插件。
 
 安装为本地 Codex plugin：
 

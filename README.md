@@ -40,6 +40,7 @@ The goal is simple: a user should be able to ask for document governance in one 
 - **Repo-native reading**: the doctor reports the target repo's own agent guidance, canonical docs, machine-truth surfaces, and verification commands.
 - **Automatic long-horizon mode**: OPL series, multi-repo, or edit-heavy work creates or resumes a `/goal` without the user remembering a long prompt.
 - **A read-only doctor**: the CLI reports missing canonical docs, missing lifecycle signals, stale active wording, and long incremental-list risks.
+- **A repo-native profile sync surface**: the CLI can check or write `contracts/opl-native-profile.json` so an OPL-compatible repo declares which workflow/doc profile it follows without moving domain truth into this plugin.
 - **A live-truth semantic audit loop**: Codex reads code, contracts, tests, read-models, ledgers, receipts, blockers, and docs section by section before rewriting prose.
 - **Whole-portfolio doc cleanup**: every `README*` and `docs/**/*.md` file is classified by role, checked against live truth, and rewritten, merged, archived, tombstoned, or deleted so one document does not carry several jobs.
 - **An autonomous development loop**: ideal state stays as the durable user input; governance refreshes current completion progress, current-state gaps, and the next-round agent prompt from live repo truth.
@@ -95,6 +96,21 @@ Run a read-only audit:
 opl-doc-doctor doctor /path/to/repo
 opl-doc-doctor doctor /path/to/repo --format json
 ```
+
+Check or write an OPL-native repo profile:
+
+```bash
+opl-doc-doctor native-check /path/to/repo
+opl-doc-doctor native-sync /path/to/repo
+opl-doc-doctor native-sync /path/to/repo --apply
+```
+
+`native-sync` defaults to dry-run. With `--apply`, it writes only
+`contracts/opl-native-profile.json`. That file is a plugin sync declaration:
+it records the repo profile, Active Truth owner, canonical docs, taxonomy dirs,
+machine-truth surfaces, repo-owned paths, and verification commands. It does
+not own domain truth, runtime truth, artifact authority, quality verdicts, or
+owner receipts.
 
 Generate the OPL series workflow:
 
@@ -156,6 +172,7 @@ When the change is complete, fold current facts back into canonical docs and mov
 - `skills/opl-doc-governance/SKILL.md`: compatibility Codex skill entry retained for existing direct invocation.
 - `skills/opl-doc/agents/openai.yaml`: UI metadata and default prompt.
 - `scripts/opl_doc_doctor.py`: read-only doctor and family-plan generator.
+- `scripts/opl_doc_doctor.py native-check|native-sync`: repo-native profile check/sync surface for `contracts/opl-native-profile.json`.
 - `scripts/install_local_plugin.py`: local plugin installer.
 - `templates/`: Active Truth plan, goal, and change-packet templates.
 - `tests/`: pytest coverage for the doctor, goal mode, and installer.
@@ -166,6 +183,7 @@ When the change is complete, fold current facts back into canonical docs and mov
 python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor .
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
+python3 scripts/opl_doc_doctor.py native-sync .
 bash scripts/verify.sh
 ```
 

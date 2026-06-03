@@ -46,6 +46,8 @@ CANONICAL_DOC_DIRS = [
     "docs/history",
 ]
 
+NATIVE_PROFILE_REL_PATH = "contracts/opl-native-profile.json"
+
 HEADER_FIELDS = ("Owner:", "Purpose:", "State:", "Machine boundary:")
 
 LEGACY_ACTIVE_TOKENS = (
@@ -209,8 +211,52 @@ def read_text(path: Path) -> str:
         return path.read_text(errors="ignore")
 
 
+def package_json_scripts(root: Path) -> dict[str, str]:
+    package_json = root / "package.json"
+    if not package_json.exists():
+        return {}
+    try:
+        payload = json.loads(read_text(package_json))
+    except json.JSONDecodeError:
+        return {}
+    scripts = payload.get("scripts")
+    return scripts if isinstance(scripts, dict) else {}
+
+
+def package_json_name(root: Path) -> str | None:
+    package_json = root / "package.json"
+    if not package_json.exists():
+        return None
+    try:
+        payload = json.loads(read_text(package_json))
+    except json.JSONDecodeError:
+        return None
+    name = payload.get("name")
+    return name if isinstance(name, str) and name else None
+
+
+def pyproject_name(root: Path) -> str | None:
+    pyproject = root / "pyproject.toml"
+    if not pyproject.exists():
+        return None
+    for line in read_text(pyproject).splitlines():
+        match = re.match(r'\s*name\s*=\s*["\']([^"\']+)["\']', line)
+        if match:
+            return match.group(1)
+    return None
+
+
+def repo_identity(root: Path) -> str:
+    package_name = package_json_name(root)
+    if package_name == "opl-framework-shared":
+        return "one-person-lab"
+    if package_name == "redcube-ai-mono":
+        return "redcube-ai"
+    return package_name or pyproject_name(root) or root.name
+
+
 def detect_profile(root: Path) -> str:
-    name = root.name
+    name = repo_identity(root)
     if name == "one-person-lab":
         return "opl_framework"
     if name == "one-person-lab-app":
@@ -224,18 +270,6 @@ def detect_profile(root: Path) -> str:
     if rel_exists(root, "pyproject.toml") or rel_exists(root, "package.json"):
         return "tooling_repo"
     return "generic_repo"
-
-
-def package_json_scripts(root: Path) -> dict[str, str]:
-    package_json = root / "package.json"
-    if not package_json.exists():
-        return {}
-    try:
-        payload = json.loads(read_text(package_json))
-    except json.JSONDecodeError:
-        return {}
-    scripts = payload.get("scripts")
-    return scripts if isinstance(scripts, dict) else {}
 
 
 def inspect_repo_native_surfaces(root: Path, core_status: dict[str, bool]) -> dict[str, Any]:
@@ -557,6 +591,141 @@ def doctor(root: Path) -> dict[str, Any]:
     }
 
 
+def _profile_doc_role(path: str) -> str:
+    roles = {
+        "README.md": "root_entry",
+        "AGENTS.md": "repo_agent_working_rules",
+        "TASTE.md": "maintenance_preferences",
+        "docs/README.md": "docs_entry",
+        "docs/project.md": "project_positioning",
+        "docs/status.md": "current_status",
+        "docs/architecture.md": "architecture_boundary",
+        "docs/invariants.md": "hard_constraints",
+        "docs/decisions.md": "active_decision_record",
+    }
+    return roles.get(path, "canonical_doc")
+
+
+def _owned_by_repo(active_truth_owner: str | None) -> list[str]:
+    owned = ["contracts/**", "src/**", "tests/**", "docs/status.md"]
+    if active_truth_owner:
+        owned.append(active_truth_owner)
+    return owned
+
+
+def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -> dict[str, Any]:
+    payload = doctor(root)
+    surfaces = payload["repo_native_surfaces"]
+    active_truth_owner = next(iter(payload["active_truth_health"]["owner_docs"]), None)
+    canonical_docs = [
+        {"path": path, "role": _profile_doc_role(path)}
+        for path in surfaces["canonical_docs"]["present"]
+    ]
+    taxonomy_dirs = [
+        path
+        for path, exists in payload["canonical_dirs"].items()
+        if exists
+    ]
+    repo_profile = payload["repo_profile"]
+    managed_by_plugins = dict((current or {}).get("managed_by_plugins") or {})
+    managed_by_plugins["opl-doc"] = {
+        "management": "profile_check_and_sync",
+        "managed_surfaces": [NATIVE_PROFILE_REL_PATH],
+        "does_not_own": [
+            "domain_truth",
+            "runtime_truth",
+            "artifact_authority",
+            "owner_receipts",
+            "quality_verdicts",
+        ],
+    }
+    return {
+        "schema": "opl_native_profile.v1",
+        "repo_id": repo_identity(root),
+        "repo_profile": repo_profile,
+        "flow_profile": repo_profile,
+        "doc_profile": repo_profile,
+        "active_truth_owner": active_truth_owner,
+        "canonical_docs": canonical_docs,
+        "taxonomy_dirs": taxonomy_dirs,
+        "machine_truth_surfaces": surfaces["machine_truth"],
+        "verification_commands": surfaces["verification"],
+        "owned_by_repo": _owned_by_repo(active_truth_owner),
+        "managed_by_plugins": managed_by_plugins,
+        "plugin_native_status": "profile_declared",
+    }
+
+
+def _native_profile_text(payload: dict[str, Any]) -> str:
+    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+
+
+def _load_native_profile(path: Path) -> tuple[dict[str, Any] | None, str | None]:
+    if not path.exists():
+        return None, None
+    try:
+        payload = json.loads(read_text(path))
+    except json.JSONDecodeError as exc:
+        return None, f"{NATIVE_PROFILE_REL_PATH} is not valid JSON: {exc}"
+    if not isinstance(payload, dict):
+        return None, f"{NATIVE_PROFILE_REL_PATH} must contain a JSON object"
+    return payload, None
+
+
+def native_check(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    profile_path = root / NATIVE_PROFILE_REL_PATH
+    current, load_error = _load_native_profile(profile_path)
+    expected = expected_native_profile(root, current)
+    missing = [] if profile_path.exists() else [NATIVE_PROFILE_REL_PATH]
+    errors = [load_error] if load_error else []
+    drift: list[str] = []
+    if current is not None:
+        for key, expected_value in expected.items():
+            if current.get(key) != expected_value:
+                drift.append(key)
+    ok = not missing and not errors and not drift
+    return {
+        "ok": ok,
+        "mode": "native-check",
+        "apply": False,
+        "repo_root": str(root),
+        "profile_path": str(profile_path),
+        "missing": missing,
+        "errors": errors,
+        "drift": drift,
+        "expected_profile": expected,
+    }
+
+
+def native_sync(root: Path, apply: bool = False) -> dict[str, Any]:
+    root = root.resolve()
+    profile_path = root / NATIVE_PROFILE_REL_PATH
+    current, _load_error = _load_native_profile(profile_path)
+    expected = expected_native_profile(root, current)
+    expected_text = _native_profile_text(expected)
+    current_text = read_text(profile_path) if profile_path.exists() else None
+    planned_changes = []
+    if current_text != expected_text:
+        planned_changes.append(
+            {
+                "path": NATIVE_PROFILE_REL_PATH,
+                "action": "create" if current_text is None else "update",
+            }
+        )
+    if apply and planned_changes:
+        profile_path.parent.mkdir(parents=True, exist_ok=True)
+        profile_path.write_text(expected_text, encoding="utf-8")
+    check = native_check(root)
+    return {
+        **check,
+        "mode": "native-sync",
+        "apply": apply,
+        "applied": bool(apply and planned_changes),
+        "planned_changes": planned_changes,
+    }
+
+
 def recommend(
     profile: str,
     findings: list[Finding],
@@ -801,6 +970,15 @@ def parse_args() -> argparse.Namespace:
         help="Optional local workspace root used to expand default public repo names into local paths.",
     )
 
+    native_check_parser = subparsers.add_parser("native-check")
+    native_check_parser.add_argument("repo_root", nargs="?", default=".")
+    native_check_parser.add_argument("--format", choices=["json"], default="json")
+
+    native_sync_parser = subparsers.add_parser("native-sync")
+    native_sync_parser.add_argument("repo_root", nargs="?", default=".")
+    native_sync_parser.add_argument("--apply", action="store_true")
+    native_sync_parser.add_argument("--format", choices=["json"], default="json")
+
     return parser.parse_args()
 
 
@@ -841,6 +1019,14 @@ def main() -> int:
         else:
             print_family_markdown(payload)
         return 0
+    if args.command == "native-check":
+        payload = native_check(Path(args.repo_root))
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if payload["ok"] else 1
+    if args.command == "native-sync":
+        payload = native_sync(Path(args.repo_root), apply=args.apply)
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if payload["ok"] or (not args.apply and payload["planned_changes"]) else 1
     raise AssertionError(args.command)
 
 

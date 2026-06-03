@@ -6,8 +6,11 @@ from contextlib import redirect_stdout
 
 from scripts.opl_doc_doctor import (
     default_series_repos,
+    detect_profile,
     doctor,
     family_plan,
+    native_check,
+    native_sync,
     parse_repo_overrides,
     print_family_markdown,
 )
@@ -43,6 +46,136 @@ def test_doctor_detects_opl_profile_and_core_docs(tmp_path: Path) -> None:
         "docs/architecture.md",
         "docs/invariants.md",
     ]
+
+
+def test_detect_profile_uses_package_identity_inside_worktree_named_differently(tmp_path: Path) -> None:
+    root = tmp_path / "opl-native-profile-pilot"
+    root.mkdir()
+    (root / "package.json").write_text('{"name":"opl-meta-agent"}\n', encoding="utf-8")
+
+    assert detect_profile(root) == "opl_meta_agent"
+
+
+def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) -> None:
+    root = tmp_path / "opl-meta-agent"
+    docs = root / "docs" / "active"
+    contracts = root / "contracts"
+    docs.mkdir(parents=True)
+    contracts.mkdir()
+    (root / "README.md").write_text("# OMA\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (root / "package.json").write_text('{"scripts":{"verify":"scripts/verify.sh","test":"node --test"}}\n', encoding="utf-8")
+    (root / "scripts").mkdir()
+    (root / "scripts" / "verify.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    (docs / "opl-meta-agent-ideal-state-gap-plan.md").write_text(
+        "# OMA Gap\n\n"
+        "Owner: `OMA`\nPurpose: `active_truth_plan`\nState: `active_plan`\n"
+        "Machine boundary: contracts\n\n"
+        "## Current Completion Progress\n\nok\n\n"
+        "## Current-State vs Ideal-State Gaps\n\nok\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope: docs\n\nNon-goals: runtime\n\nLive truth inputs: contracts\n\n"
+        "Verification commands: npm test\n\nCompletion gate: profile checked\n\nFoldback target: docs/status.md\n",
+        encoding="utf-8",
+    )
+
+    payload = native_check(root)
+
+    assert payload["ok"] is False
+    assert payload["profile_path"] == str(root / "contracts" / "opl-native-profile.json")
+    assert payload["missing"] == ["contracts/opl-native-profile.json"]
+    assert payload["expected_profile"]["repo_id"] == "opl-meta-agent"
+    assert payload["expected_profile"]["repo_profile"] == "opl_meta_agent"
+    assert payload["expected_profile"]["doc_profile"] == "opl_meta_agent"
+    assert payload["expected_profile"]["flow_profile"] == "opl_meta_agent"
+    assert payload["expected_profile"]["active_truth_owner"] == "docs/active/opl-meta-agent-ideal-state-gap-plan.md"
+    assert payload["expected_profile"]["verification_commands"] == [
+        "scripts/verify.sh",
+        "package.json:scripts.verify",
+        "package.json:scripts.test",
+    ]
+    assert not (contracts / "opl-native-profile.json").exists()
+
+
+def test_native_sync_apply_writes_profile_and_then_check_passes(tmp_path: Path) -> None:
+    root = tmp_path / "med-autoscience"
+    (root / "docs" / "active").mkdir(parents=True)
+    (root / "contracts").mkdir()
+    (root / "src").mkdir()
+    (root / "tests").mkdir()
+    (root / "pyproject.toml").write_text("[project]\nname='med-autoscience'\n", encoding="utf-8")
+    (root / "scripts").mkdir()
+    (root / "scripts" / "verify.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    (root / "docs" / "active" / "mas-ideal-state-gap-plan.md").write_text(
+        "# MAS Gap\n\n"
+        "Owner: `MAS`\nPurpose: `active_truth_plan`\nState: `active_plan`\n"
+        "Machine boundary: contracts\n\n"
+        "## Current Completion Progress\n\nok\n\n"
+        "## Current-State vs Ideal-State Gaps\n\nok\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope: docs\n\nNon-goals: domain truth\n\nLive truth inputs: contracts\n\n"
+        "Verification commands: scripts/verify.sh\n\nCompletion gate: profile checked\n\nFoldback target: docs/status.md\n",
+        encoding="utf-8",
+    )
+
+    sync_payload = native_sync(root, apply=True)
+
+    profile_path = root / "contracts" / "opl-native-profile.json"
+    assert sync_payload["applied"] is True
+    assert profile_path.exists()
+    assert native_check(root)["ok"] is True
+
+    profile = __import__("json").loads(profile_path.read_text(encoding="utf-8"))
+    assert profile["schema"] == "opl_native_profile.v1"
+    assert profile["repo_id"] == "med-autoscience"
+    assert profile["plugin_native_status"] == "profile_declared"
+    assert profile["owned_by_repo"] == [
+        "contracts/**",
+        "src/**",
+        "tests/**",
+        "docs/status.md",
+        "docs/active/mas-ideal-state-gap-plan.md",
+    ]
+
+
+def test_native_sync_preserves_other_plugin_profile_entries(tmp_path: Path) -> None:
+    root = tmp_path / "one-person-lab-app"
+    (root / "docs" / "active").mkdir(parents=True)
+    (root / "contracts").mkdir()
+    (root / "tests").mkdir()
+    (root / "package.json").write_text('{"name":"one-person-lab-app","scripts":{"test":"node --test"}}\n', encoding="utf-8")
+    (root / "docs" / "active" / "app-ideal-state-gap-plan.md").write_text(
+        "# App Gap\n\n"
+        "Owner: `APP`\nPurpose: `active_truth_plan`\nState: `active_plan`\n"
+        "Machine boundary: contracts\n\n"
+        "## Current Completion Progress\n\nok\n\n"
+        "## Current-State vs Ideal-State Gaps\n\nok\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope: docs\n\nNon-goals: runtime\n\nLive truth inputs: contracts\n\n"
+        "Verification commands: npm test\n\nCompletion gate: profile checked\n\nFoldback target: docs/status.md\n",
+        encoding="utf-8",
+    )
+    existing = {
+        "managed_by_plugins": {
+            "opl-flow": {
+                "version": "0.1.0",
+                "management": "workflow_profile_pointer",
+                "managed_surfaces": [
+                    {"path": "AGENTS.md", "management": "managed_block", "kind": "repo_agent_instructions"}
+                ],
+            }
+        }
+    }
+    (root / "contracts" / "opl-native-profile.json").write_text(
+        __import__("json").dumps(existing, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    native_sync(root, apply=True)
+
+    profile = __import__("json").loads((root / "contracts" / "opl-native-profile.json").read_text(encoding="utf-8"))
+    assert profile["managed_by_plugins"]["opl-flow"] == existing["managed_by_plugins"]["opl-flow"]
+    assert profile["managed_by_plugins"]["opl-doc"]["management"] == "profile_check_and_sync"
 
 
 def test_doctor_detects_repo_native_verification_without_writing(tmp_path: Path) -> None:

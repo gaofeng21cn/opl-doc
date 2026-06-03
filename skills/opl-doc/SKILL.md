@@ -81,6 +81,18 @@ Repo-native means the skill and CLI stay external while the agent works from the
 
 The local plugin installer creates the user-level `opl-doc-doctor` command. If it is unavailable, run the bundled script from this plugin checkout instead.
 
+For plugin-native repo upgrades, use:
+
+```bash
+opl-doc-doctor native-check <repo-root>
+opl-doc-doctor native-sync <repo-root>
+opl-doc-doctor native-sync <repo-root> --apply
+```
+
+`native-sync` is dry-run unless `--apply` is passed. The apply mode only writes
+`contracts/opl-native-profile.json`; it must not rewrite domain docs, source,
+tests, runtime state, owner receipts, quality verdicts, or artifact authority.
+
 ## Live Truth Audit
 
 Document governance must start from current repository reality, not from doctor findings.
