@@ -32,22 +32,19 @@ OPL Doc turns that cleanup work into a repeatable steward workflow. It helps Cod
 
 `opl-doc` is the canonical plugin and skill name. `opl-doc-governance` remains only as a compatibility skill entry for existing prompts.
 
+It also helps OPL-family repositories keep one current narrative: user entries explain product value, developer entries explain boundaries and verification, and stale technical wording is folded into history or tombstones. OPL Doc only checks whether those document claims match each repo's current truth; it does not become a second source of truth.
+
 The goal is simple: a user should be able to ask for document governance in one sentence, and the agent should know how to start, when to create a `/goal`, how to avoid stale-doc pollution, and how to close the loop.
 
 ## What It Provides
 
-- **A Codex skill for document stewardship**: the agent gets a stable reading order, cleanup policy, and closeout discipline.
-- **Repo-native reading**: the doctor reports the target repo's own agent guidance, canonical docs, machine-truth surfaces, and verification commands.
-- **Automatic long-horizon mode**: OPL series, multi-repo, or edit-heavy work creates or resumes a `/goal` without the user remembering a long prompt.
-- **A read-only doctor**: the CLI reports missing canonical docs, missing lifecycle signals, stale active wording, and long incremental-list risks.
-- **A repo-native profile sync surface**: the CLI can check or write `contracts/opl-native-profile.json` so an OPL-compatible repo declares which workflow/doc profile it follows without moving domain truth into this plugin.
-- **A no-second-truth boundary**: doctor, native profile, and family-plan outputs are workflow aids only; they do not own repo truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
-- **A live-truth semantic audit loop**: Codex reads code, contracts, tests, read-models, ledgers, receipts, blockers, and docs section by section before rewriting prose.
-- **Whole-portfolio doc cleanup**: every `README*` and `docs/**/*.md` file is classified by role, checked against live truth, and rewritten, merged, archived, tombstoned, or deleted so one document does not carry several jobs.
-- **An autonomous development loop**: ideal state stays as the durable user input; governance refreshes current completion progress, current-state gaps, and the next-round agent prompt from live repo truth.
-- **An Active Truth plan template**: a recommended shape for the single active owner of progress, gaps, executable next-round prompts, routing decisions, and foldback targets.
-- **An OPL series workflow**: generated guidance for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `one-person-lab-app`, and future OPL-compatible repositories.
-- **Change packet templates**: a compact active-work packet for changes that need intent, design, tasks, verification, and foldback.
+- **A stable document-steward entry**: Codex knows what to read first, how to judge stale content, and how to close out without the user repeating a long prompt.
+- **Current-fact reading**: it starts from the target repo's guidance, README, docs, code, contracts, and verification entries before deciding what prose needs to change.
+- **README narrative repair**: it checks whether entry pages explain product value, usage scenarios, and how to start, while keeping technical detail in developer sections.
+- **Stale-plan cleanup**: completed plans, retired routes, and process material are folded into history or tombstones instead of staying in active docs.
+- **Whole-portfolio cleanup**: every `README*` and `docs/**/*.md` file is reviewed so each long-lived document keeps one clear job.
+- **OPL series governance**: generated guidance for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `one-person-lab-app`, and future compatible repositories.
+- **Change packet templates**: compact temporary packets for work that needs intent, design, tasks, verification, and foldback.
 
 ## One-Sentence Quick Start
 
@@ -74,10 +71,10 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 
 ## How It Works
 
-- The agent reads the repository guidance and current docs before editing, but treats existing prose as claims to verify against live code, contracts, tests, CLI/read-models, ledgers, and receipts.
+- The agent reads repository guidance and current docs before editing. Existing prose is treated as claims to verify against code, contracts, tests, command output, and runtime evidence.
 - The doctor gives a quick risk map without changing the target repository; it is not the governance input or task list.
-- The skill treats ideal-state references as the user's maintained intent and derives current progress, open gaps, and the next-round agent prompt from live repo truth; canonical docs are reconciled into that truth rather than trusted as proof by themselves.
-- The agent reviews substantive document claims against live repo truth before editing, then rewrites content, merges duplicate responsibilities, and routes stale material.
+- The skill treats ideal-state references as the user's maintained intent and derives current progress, open gaps, and the next-round agent prompt from the current repository facts; canonical docs are reconciled into those facts rather than trusted as proof by themselves.
+- The agent reviews substantive document claims against current repository facts before editing, then rewrites content, merges duplicate responsibilities, and routes stale material.
 - The agent audits the whole doc portfolio, not only the gap document: each long-lived document must retain one owner, one purpose, one state, and one machine boundary.
 - If a repo lacks a stable active owner, the agent can use `templates/active-truth-plan.md` as the shape for the single Active Truth plan.
 - The skill routes each section by role and checks closeout so closed gaps, process packets, and stale wording do not stay in active paths.
@@ -111,9 +108,8 @@ opl-doc-doctor native-sync /path/to/repo --apply
 `native-sync` defaults to dry-run. With `--apply`, it writes only
 `contracts/opl-native-profile.json`. That file is a plugin sync declaration:
 it records the repo profile, Active Truth owner, canonical docs, taxonomy dirs,
-machine-truth surfaces, repo-owned paths, and verification commands. It does
-not own domain truth, runtime truth, artifact authority, quality verdicts, or
-owner receipts.
+machine-truth surfaces, repo-owned paths, and verification commands. It is
+not a second source of project, runtime, delivery, or quality truth.
 
 Generate the OPL series workflow:
 
@@ -145,11 +141,11 @@ Every long-lived developer document should have one job. If a document mixes cur
 | Product, runtime, source, and delivery support | `docs/product/`, `docs/runtime/`, `docs/source/`, `docs/delivery/` |
 | Stable policies, specs, and references | `docs/policies/`, `docs/specs/`, `docs/references/` |
 | Historical process, retired plans, tombstones | `docs/history/` |
-| Machine truth | source, tests, contracts, CLI/API output, runtime ledger, receipt refs |
+| Machine truth | source, tests, contracts, CLI/API output, and runtime evidence |
 
-The doctor is intentionally read-only and lightweight. It can identify structural risks, but it does not manage document meaning, provide the governance task list, declare a repository production-ready, or replace Codex reading code, tests, contracts, read models, runtime ledgers, blockers, or owner receipts.
+The doctor is intentionally read-only and lightweight. It can identify structural risks, but it does not manage document meaning, provide the governance task list, declare a repository production-ready, or replace Codex reading code, tests, contracts, read models, or runtime evidence.
 
-`family-plan` is likewise a workflow map, not a repository truth ledger. It keeps support repos as extension-only inputs and leaves current truth in each governed repo's own canonical docs, contracts, tests, runtime ledgers, receipts, and blockers.
+`family-plan` is likewise a workflow map, not a second source of repository truth. It keeps support repos as extension-only inputs and leaves current truth in each governed repo's own canonical docs, contracts, tests, and runtime evidence.
 
 ## Change Packets
 
@@ -198,6 +194,7 @@ bash scripts/verify.sh
 - It does not own OPL series project truth, runtime truth, domain verdicts, artifact authority, quality verdicts, owner receipts, production readiness, or the default Foundry Agent truth set.
 - It keeps OPL-native taxonomy and does not migrate repositories into OpenArc, OpenSpec, Spec Kit, or Agent OS layouts.
 - Public defaults use repository names, not local absolute paths. Use `--workspace-root` or `--repo ID=PATH` for local machines.
+- OPL-family root READMEs are user-facing by default: they should start from problems, value, and usage scenarios. Terms such as `executor-first`, stage, route, receipt, typed blocker, and Tool Affordance Boundary belong in folded Agent / developer / operator sections or canonical technical docs.
 
 ### Documentation
 

@@ -22,3 +22,4 @@ Machine boundary: 本文是人读硬约束；守门以测试和 review 执行。
 15. 长线治理必须区分本轮 tranche closeout 与全局 `/goal` 完成；coverage ledger 仍有未覆盖文档、未折回 stale/retire 候选或未完成 gap 时，不得把全局目标标记 complete。
 16. doctor、native profile 和 family-plan 只能作为 workflow / lightweight risk map / profile sync；不得写成 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
 17. `opl-doc`、`opl-aion-shell` 等 support repo 默认是 extension。除非用户显式要求或当前任务触及 support repo，本仓不得把它们加入默认 governed Foundry Agent truth owner 集合。
+18. OPL series 根层 `README*` 面向用户，默认采用问题、价值、场景、开始方式和效果的叙事；`executor-first`、stage、route、receipt、typed blocker、Tool Affordance Boundary、domain truth、quality verdict 等技术边界只放在折叠的 Agent / 开发者 / operator 区或 canonical 技术文档。

@@ -95,6 +95,12 @@ profile sync 不能作为 truth sync。`native-sync --apply` 的写入面只有 
 
 [active-truth-plan.md](../templates/active-truth-plan.md) 是 single Active Truth plan 的推荐形状。目标 repo 已经有 canonical active plan 时，不新增第二份计划文档；把模板中的 `Ideal-State Reference`、`Active Owner Discovery`、`Current Completion Progress`、`Current-State vs Ideal-State Gaps`、`Next-Round Agent Prompt` 和 `History / Tombstone Foldback` 映射进现有 owner 文档即可。下一轮 Agent prompt 必须能直接作为 `/goal` 或长线 Codex prompt 使用。
 
+## README 叙事口径
+
+OPL series 根层 `README*` 是面向使用者的入口，应先回答“解决什么问题、为什么有用、怎么开始、能带来什么结果”。新概念进入 README 时，需要被翻译成用户能直觉理解的产品价值；`executor-first`、stage、route、receipt、typed blocker、Tool Affordance Boundary、domain truth、quality verdict 等技术边界只在折叠的 Agent / 开发者 / operator 区，或 `docs/architecture.md`、`docs/invariants.md`、`docs/decisions.md` 等 canonical 技术文档中展开。
+
+治理 README 时不要为了同步技术概念而硬插术语。若某个技术概念必须出现在入口页，先写用户问题和效果，再把机制细节放进折叠区；中英文 README 需同步这个叙事层级。
+
 ## `/goal` 模板
 
 skill 会优先主动创建或延续 `/goal`；[goal-opl-family-doc-lifecycle.md](../templates/goal-opl-family-doc-lifecycle.md) 是人工查看和外部复制用模板。该模板已经整合原先不定期手动执行的 OPL series 文档治理提示，包括按 repo 读取 ideal-state reference 与 single Active Truth plan、自动重写完成进度/差距/下一轮 Agent prompt、逐条评估 README/docs、清理归档、唯一任务定位、长清单折叠、直接退役旧模块/接口/测试、并行 worktree/subagent、吸收 main 和清理。

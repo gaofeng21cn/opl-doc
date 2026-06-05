@@ -32,20 +32,19 @@ OPL Doc 把这类清理工作变成可重复的文档管家流程。它帮助 Co
 
 `opl-doc` 是 canonical plugin 和 skill 名。`opl-doc-governance` 只保留为既有 prompt 的兼容 skill 入口。
 
+它也帮助 OPL 系列仓库保持同一套当前叙事：用户入口讲清产品价值，开发者入口讲清边界和验证，过时的技术说法及时折回历史或 tombstone。OPL Doc 只治理这些文档 claim 是否与各仓当前事实一致，不成为第二真相源。
+
 目标很直接：用户只需要一句话说“治理文档”，代理就应该知道如何开始、什么时候创建 `/goal`、如何避免旧文档二次污染，以及如何完成工程闭环。
 
 ## 它提供什么
 
-- **Codex 文档管家 skill**：给代理稳定的读取顺序、清理原则和 closeout 纪律。
-- **Repo-native 读取**：doctor 报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
-- **自动长线模式**：OPL series、多仓或重编辑治理会自动创建或延续 `/goal`，用户不用记长 prompt。
-- **只读 doctor**：CLI 报告缺失 canonical docs、缺失生命周期信号、active 旧词和历史增量长清单风险。
-- **no-second-truth 边界**：doctor、native profile 和 family-plan 都只是 workflow / risk map / profile sync，不持有 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
-- **live truth 语义审计回路**：Codex 在改文档前逐段读取代码、contracts、tests、read-model、ledger、receipt、blocker 和文档内容。
-- **全量文档组合清理**：逐个审计 `README*` 和 `docs/**/*.md`，按角色分类并根据 live truth 重写、合并、归档、tombstone 或删除，避免一个文档同时承担多种职责。
-- **Active Truth plan 模板**：给当前完成进度、当前差距、可执行下一轮 Agent prompt、内容路由和 foldback target 一个推荐单一 owner 形状。
-- **OPL series 工作流**：为 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app` 以及后续 OPL-compatible repo 生成治理计划。
-- **Change packet 模板**：为需要 intent、design、tasks、verification、foldback 的变更提供短期 active 工作包。
+- **稳定的文档管家入口**：让 Codex 知道先读什么、怎么判断旧内容、如何收尾，不需要用户反复写长 prompt。
+- **从当前事实出发**：先读取目标仓现有规则、README、docs、代码、合同和验证入口，再决定哪些文案需要更新。
+- **让 README 回到用户问题**：检查入口页是否讲清产品价值、使用场景和开始方式，把底层技术细节放回开发者区。
+- **清理旧计划和旧入口**：把已完成计划、退役路线和过程材料折回 history 或 tombstone，避免继续污染 active 文档。
+- **全量文档组合清理**：逐个审计 `README*` 和 `docs/**/*.md`，让每份长期文档只承担一个清晰任务。
+- **OPL series 长线治理**：为 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app` 以及后续兼容仓库生成治理计划。
+- **短期变更包模板**：为需要意图、设计、任务、验证和折回的变更提供临时工作包。
 
 ## 一句话开始
 
@@ -72,10 +71,10 @@ python3 scripts/install_local_plugin.py --verify-only
 
 ## 它如何工作
 
-- 代理先读取仓库协作规则和当前文档，再开始编辑；现有 prose 只是待验证 claim，必须用 live code、contracts、tests、CLI/read-model、ledger 和 receipt 校准。
+- 代理先读取仓库协作规则和当前文档，再开始编辑；现有文案只是待验证的说法，必须用代码、合同、测试、命令输出和运行证据校准。
 - doctor 先给出风险地图，但它不是治理输入，也不是任务清单。
-- skill 把 ideal-state reference 当作用户维护的目标输入，从 live repo truth 派生当前完成进度、当前差距和下一轮 Agent prompt；canonical docs 要被折回这个 truth，而不是单独当作证明。
-- 代理必须把实质文档 claim 与 live repo truth 逐段对照，再更新文档内容、合并重复职责、路由 stale material。
+- skill 把 ideal-state reference 当作用户维护的目标输入，从当前仓库事实派生完成进度、当前差距和下一轮 Agent prompt；canonical docs 要折回当前事实，而不是单独当作证明。
+- 代理必须把实质文档说法与当前仓库事实逐段对照，再更新文档内容、合并重复职责、路由 stale material。
 - 代理必须审计整个文档组合，而不只改 gap 文档；每份长期文档都应保留一个 owner、一个 purpose、一个 state 和一个 machine boundary。
 - 如果目标 repo 缺少稳定 active owner，代理可以用 `templates/active-truth-plan.md` 作为 single Active Truth plan 的形状。
 - skill 按内容角色路由章节，并在 closeout 前检查 closed gap、完成过程包和 stale wording 没有继续留在 active path。
@@ -105,7 +104,7 @@ opl-doc-doctor family-plan --format markdown
 opl-doc-doctor family-plan --format json
 ```
 
-`family-plan` 只生成 workflow map，不生成 truth ledger。support repo 会出现在 `support_repo_policy` 中作为 extension-only 输入；当前事实仍回各 repo canonical docs、contracts、tests、runtime ledger、receipt 和 blocker。
+`family-plan` 只生成 workflow map，不生成第二事实表。support repo 会出现在 `support_repo_policy` 中作为 extension-only 输入；当前事实仍回各 repo 自己的 canonical docs、contracts、tests 和运行证据。
 
 需要本机 workspace 路径时：
 
@@ -130,9 +129,9 @@ opl-doc-doctor family-plan --repo award=award-agent --format markdown
 | 产品、运行时、source、delivery 支撑 | `docs/product/`、`docs/runtime/`、`docs/source/`、`docs/delivery/` |
 | 稳定政策、规格和参考 | `docs/policies/`、`docs/specs/`、`docs/references/` |
 | 历史过程、退役计划、tombstone | `docs/history/` |
-| 机器真相 | 源码、测试、contracts、CLI/API 输出、runtime ledger、receipt refs |
+| 机器真相 | 源码、测试、contracts、CLI/API 输出和运行证据 |
 
-doctor 始终只读。它可以识别风险，但不会管理文档语义、不会提供治理任务清单、不会声明仓库 production-ready，也不会替代代码、测试、contracts、read model、runtime ledger、blocker 或 owner receipt。native profile 只做 profile sync / drift check；family-plan 只做 workflow plan；它们都不能成为第二真相源。
+doctor 始终只读。它可以识别风险，但不会管理文档语义、不会提供治理任务清单、不会声明仓库 production-ready，也不会替代代码、测试、contracts、read model 或运行证据。native profile 只做 profile sync / drift check；family-plan 只做 workflow plan；它们都不能成为第二真相源。
 
 ## Change Packet
 
@@ -179,6 +178,7 @@ bash scripts/verify.sh
 - 本仓不持有 OPL series 的项目真相、runtime truth、domain verdict、artifact authority、quality verdict、owner receipt、production readiness 或默认 Foundry Agent truth set。
 - 本仓保留 OPL-native taxonomy，不把项目迁移到 OpenArc、OpenSpec、Spec Kit 或 Agent OS 的固定布局。
 - public 默认值只使用 repo 名称，不写本机绝对路径；本机使用 `--workspace-root` 或 `--repo ID=PATH`。
+- OPL series 根层 README 面向用户，默认从问题、价值和使用场景讲起；`executor-first`、stage、route、receipt、typed blocker、Tool Affordance Boundary 等技术边界只在折叠的 Agent / 开发者 / operator 区或 canonical 技术文档中展开。
 
 ### 文档
 
