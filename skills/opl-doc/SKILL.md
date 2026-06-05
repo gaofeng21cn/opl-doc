@@ -69,6 +69,14 @@ If the user asks how this differs from OpenArc/OpenSpec/Spec Kit, read `docs/ref
 
 For a repo that lacks a clear active truth owner, use `templates/active-truth-plan.md` from this plugin as the recommended shape. Do not copy it blindly when the target repo already has a canonical active plan; map the same sections into the repo's existing owner document.
 
+## README Narrative Discipline
+
+Root `README*` files are user-facing entry points. Govern them like product pages: start from the user's problem, product value, use cases, how to start, and visible outcomes. Do not lead with framework internals.
+
+If a new concept must appear in the public README, keep the concept name but translate it into user value immediately. For OPL, `认知计算` / `cognitive computation` should be explained as AI understanding, comparing, creating, reviewing, and revising inside an observable stage. Do not hide the concept only in technical details, and do not present it as a kernel or contract term in the user-facing narrative.
+
+Put `executor-first`, stage/route mechanics, receipts, typed blockers, Tool Affordance Boundary, domain truth, quality verdicts, authority functions, runtime ledgers, and similar boundary language in folded Agent / developer / operator sections or canonical technical docs. The public README body should not read like a contract, runtime spec, or migration plan.
+
 ## Active Owner Discovery
 
 Find the target repo's active truth owner before creating or rewriting any plan:
