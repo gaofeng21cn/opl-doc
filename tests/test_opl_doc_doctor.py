@@ -7,16 +7,15 @@ from io import StringIO
 from pathlib import Path
 from contextlib import redirect_stdout
 
-from scripts.opl_doc_doctor_parts import (
+from scripts.opl_doc_doctor_parts.family_plan import (
     default_series_repos,
-    detect_profile,
-    doctor,
     family_plan,
-    native_check,
-    native_sync,
     parse_repo_overrides,
-    print_family_markdown,
 )
+from scripts.opl_doc_doctor_parts.invariant_checks import doctor
+from scripts.opl_doc_doctor_parts.plugin_sync import native_check, native_sync
+from scripts.opl_doc_doctor_parts.profile_discovery import detect_profile
+from scripts.opl_doc_doctor_parts.rendering import print_family_markdown
 
 
 def test_doctor_entrypoint_is_command_bootstrap_not_api_facade() -> None:
@@ -36,6 +35,14 @@ def test_doctor_entrypoint_is_command_bootstrap_not_api_facade() -> None:
     assert "from scripts.opl_doc_doctor_parts import (" not in source
     assert "__all__" not in source
     assert payload["repo_profile"] == "codex_plugin"
+
+
+def test_doctor_parts_package_root_is_not_api_facade() -> None:
+    package_root = Path("scripts/opl_doc_doctor_parts/__init__.py")
+    source = package_root.read_text(encoding="utf-8")
+
+    assert "from ." not in source
+    assert "__all__" not in source
 
 
 def test_doctor_detects_opl_profile_and_core_docs(tmp_path: Path) -> None:
