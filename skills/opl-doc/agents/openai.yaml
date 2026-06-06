@@ -1,10 +1,12 @@
 interface:
   display_name: "OPL Doc"
-  short_description: "Short entry for OPL docs lifecycle governance"
+  short_description: "OPL docs SSOT and lifecycle governance"
   default_prompt: >-
-    Use $opl-doc to govern this repo's developer documentation lifecycle, audit
-    README/docs against live truth, and create or resume a /goal for OPL series
-    or long-running cleanup. The canonical workflow is this plugin's
-    skills/opl-doc/SKILL.md.
+    Use $opl-doc to govern OPL-family developer documentation through
+    Single Source of Truth selection, content-level consolidation, historical
+    increment compression, stale surface retirement without compatibility
+    shims, and live-truth README/docs audits. Create or resume a /goal for
+    OPL series or long-running cleanup. The canonical workflow is this
+    plugin's skills/opl-doc/SKILL.md.
 policy:
   allow_implicit_invocation: true

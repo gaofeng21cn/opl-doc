@@ -1,11 +1,31 @@
 ---
 name: "opl-doc"
-description: "Use when governing OPL-family developer documentation lifecycle, auditing every README/docs claim against live repo truth, enforcing one-document-one-role taxonomy, folding active plans into canonical docs/history/tombstones, directly retiring stale modules/interfaces/tests/docs without compatibility surfaces, creating long-horizon change packets, or running the OPL docs doctor across one-person-lab, med-autoscience, med-autogrant, redcube-ai, opl-meta-agent, one-person-lab-app, or adjacent OPL-compatible repositories."
+description: "Use when governing OPL-family developer documentation lifecycle through Single Source of Truth selection, content-level semantic consolidation, historical increment compression, stale module/interface/test/workflow retirement without compatibility surfaces, live-truth README/docs audits, one-document-one-role taxonomy, long-horizon change packets, or OPL docs doctor runs across one-person-lab, med-autoscience, med-autogrant, redcube-ai, opl-meta-agent, one-person-lab-app, or adjacent OPL-compatible repositories."
 ---
 
 # OPL Doc
 
 Use this skill for developer-document governance: helping AI maintain the current single Active Truth from ideal state and live repo truth, derive current completion progress, maintain current-state gaps and next-round agent prompts, retire stale docs, and close the software-engineering loop. Do not use it for repo truth, domain truth, runtime provider ownership, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
+
+## Core Governance Principles
+
+OPL Doc governance is SSOT-first semantic consolidation. Do not start from files. Start from the content theme, determine its Single Source of Truth, then make every other document align with that truth.
+
+1. **Single Source of Truth**: every current semantic theme has one owner. Prefer machine-readable contracts, schemas, source, package/scripts, validators, tests, runtime/read-model evidence, and then canonical docs such as `docs/status.md`, `docs/invariants.md`, `docs/architecture.md`, `docs/decisions.md`, `docs/project.md`, or the active truth plan. File recency, length, path, or repetition count does not make a document authoritative.
+2. **Content-level governance**: audit and edit by semantic section, not by document as a unit. A single document can contain current truth, support detail, stale pollution, and history; classify the sections before deciding whether to merge, rewrite, archive, tombstone, or delete.
+3. **Historical increment compression**: long chronological lists of completed tranches, dated proof, branch/SHA notes, worktree closeouts, receipts, attempt logs, or process deltas do not belong in active/current docs. Fold them into current owner summaries, remaining blockers, next-owner prompts, and compact history/provenance pointers.
+4. **Full stale-surface retirement**: stale modules, interfaces, tests, docs, workflows, CLI/API entries, package scripts, contract fields, generated/app surfaces, aliases, facades, wrappers, and fallbacks are retired rather than preserved for compatibility. When no-active-caller, replacement-owner, or ideal-state elimination evidence exists, remove or tombstone the surface and make docs say it is retired; do not add compatibility wording or legacy shims.
+
+## SSOT Consolidation Algorithm
+
+Use this algorithm for every document-governance lane:
+
+1. Name the semantic theme, such as current topology, domain owner boundary, runtime substrate, public README narrative, package/release boundary, active gap plan, source intake, delivery lifecycle, or App shell boundary.
+2. Determine the Single Source of Truth and write down why it wins over peer docs.
+3. Build the peer-doc set with `rg` over README*, `docs/**/*.md`, and relevant source/contract/test references.
+4. Classify each relevant section as `covered_by_ssot`, `more_specific_detail`, `conflicts_with_ssot`, `stale_or_superseded`, `history_or_provenance`, or `out_of_scope`.
+5. Delete or thin `covered_by_ssot` duplicates into pointers; move `more_specific_detail` into the SSOT owner system or mark it as support reference; rewrite/archive/delete `conflicts_with_ssot` and `stale_or_superseded`; move `history_or_provenance` to history/tombstone context.
+6. If the SSOT cannot be determined, do not perform broad consolidation. Record the candidate docs, conflict, missing evidence, and next owner, then switch to a higher-confidence theme.
 
 ## First Move
 
@@ -22,8 +42,9 @@ Use this skill for developer-document governance: helping AI maintain the curren
    - `docs/decisions.md`
    - `docs/active/current-state-vs-ideal-gap.md`
 4. Locate the ideal-state reference and single Active Truth plan, then identify the live repo surfaces that can prove or disprove their claims. The live surfaces, not the existing prose, decide the governed current truth.
-5. Inventory all `README*` and `docs/**/*.md` files before editing. The audit scope is not only the gap plan: every long-lived doc section must be checked for current role, current truth, and stale pollution risk.
-6. Optionally run the doctor as a preflight risk map:
+5. Pick a semantic theme and determine its SSOT before editing. Inventory all `README*` and `docs/**/*.md` files that mention that theme; the audit scope is content-related peer docs, not only the gap plan or one file.
+6. For full portfolio governance, repeat the SSOT lane until every long-lived doc section has been checked for current role, current truth, historical-increment pollution, and stale-surface risk.
+7. Optionally run the doctor as a preflight risk map:
 
 ```bash
 opl-doc-doctor doctor <repo-root> --format json
@@ -33,7 +54,7 @@ Use doctor output only as a preflight risk map. It is never the governance input
 
 `family-plan` is also workflow guidance only. It can suggest a goal objective, repo list, support repo extension policy, and coverage discipline, but it cannot define repository truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
 
-For edit work, do not start by fixing doctor findings. Start by building the semantic input set: ideal state, current active truth plan, relevant canonical/support docs, implementation surfaces, verification/read-model surfaces, and stale/retired candidate docs.
+For edit work, do not start by fixing doctor findings or by selecting a file to polish. Start by building the semantic input set: theme, SSOT owner, ideal state, current active truth plan, relevant canonical/support/history docs, implementation surfaces, verification/read-model surfaces, and stale/retired candidate docs.
 
 ## Goal Mode
 
@@ -176,6 +197,8 @@ For every `README*` and `docs/**/*.md` file:
 5. If a section describes an outdated module, interface, test, doc path, workflow, or entrypoint, prove whether active callers remain. Once replacement and no-active-caller evidence exists, retire it directly and do not add compatibility aliases, facades, wrappers, or "legacy still works" prose.
 6. Ensure the remaining document has one owner, one purpose, one state, and one machine boundary. If a document cannot be given one durable role, archive, tombstone, or delete it.
 
+For each semantic theme, the portfolio audit must leave one current owner. Other documents may keep only entry summaries, pointers, unique support detail, machine-boundary notes, or history/provenance. Do not let peer docs preserve parallel current narratives for the same theme.
+
 The output should make the current unique truth obvious at first scan. Detailed reasoning belongs in evidence references, history, or tombstones, not in active current-truth docs.
 
 For long-horizon OPL series work, maintain a coverage ledger for each repo: reviewed docs/sections, edited docs, archived/tombstoned/deleted docs, unreviewed docs, unresolved stale/retire candidates, and next tranche write scope. A verified tranche can be absorbed back to `main`, but it does not close the global `/goal` while the coverage ledger still has unreviewed docs or unresolved carry-forward items.
@@ -247,8 +270,8 @@ Use this when the user asks to refresh OPL series docs from ideal state and gap 
 5. Read current code/contracts/tests/read-model surfaces before editing docs.
 6. For each active plan, canonical doc, support doc, history/tombstone candidate, and stale/retired candidate, compare substantive claims against live repo truth section by section.
 7. Rewrite the active plan so it states current completion progress, current-state-vs-ideal gaps, and a next-round agent prompt.
-8. Review other `README*` and `docs/**/*.md` content section by section.
-9. Classify each section as current truth, active plan, support reference, process history, retired/tombstone, or stale pollution.
+8. Review other `README*` and `docs/**/*.md` content by semantic theme and section, not by file path alone.
+9. For each theme, determine the SSOT and classify peer sections as covered duplicate, specific support detail, conflict, stale/superseded text, history/provenance, or out of scope.
 10. Fold historical incremental lists into compact current-state tables plus history/tombstone pointers.
 11. Retire stale modules/interfaces/tests/docs directly once active callers have moved; do not preserve compatibility aliases, facades, wrappers, or compatibility wording.
 12. Update canonical docs and archive/tombstone supporting docs so each document has one job.

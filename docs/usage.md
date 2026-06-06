@@ -35,6 +35,8 @@ opl-doc-doctor family-plan --format markdown
 
 `family-plan` 只生成治理 workflow 和 coverage discipline。默认 governed repo set 是 OPL、MAS、MAG、RCA、OMA、App 六个核心 repo；`opl-doc`、`opl-aion-shell` 等 support repo 只作为 explicit extension 出现在 `support_repo_policy`，不是默认 Foundry Agent truth set。
 
+日常文档治理使用同一条核心路径：先按语义主题确定 Single Source of Truth，再对 peer docs 做内容级分类和合并。重复内容删除或收薄成指针；更细的内容纳入 owner 体系或标成 support reference；冲突或 stale 内容改写、归档或删除；历史增量长清单压缩成 current summary、remaining blocker、next owner 和 history pointer。
+
 机器可读 goal objective：
 
 ```bash

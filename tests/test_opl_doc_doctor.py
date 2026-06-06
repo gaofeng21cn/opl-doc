@@ -459,6 +459,8 @@ def test_family_plan_json_contains_original_series_governance_prompt_elements() 
         "live_truth_semantic_audit",
         "doctor_is_preflight_only",
         "single_active_truth_first",
+        "ssot_first_semantic_consolidation",
+        "content_level_not_file_level",
         "rewrite_active_truth",
         "active_truth_plan_shape",
         "content_routing_table",
@@ -477,10 +479,12 @@ def test_family_plan_json_contains_original_series_governance_prompt_elements() 
     assert any("preflight risk map" in step and "governance task list" in step for step in payload["workflow"])
     assert any("workflow aids only" in step and "repo truth" in step for step in payload["workflow"])
     assert any("support extensions" in step and "Foundry Agent truth set" in step for step in payload["workflow"])
-    assert any("semantic input set" in step for step in payload["workflow"])
+    assert any("semantic input set" in step and "SSOT owner" in step for step in payload["workflow"])
+    assert any("Single Source of Truth" in step and "peer docs" in step for step in payload["workflow"])
+    assert any("content theme and section" in step and "covered_by_ssot" in step for step in payload["workflow"])
     assert any("source, contracts, tests" in step and "CLI/read-model" in step for step in payload["workflow"])
     assert any("every README*" in step and "docs/**/*.md" in step for step in payload["workflow"])
-    assert any("merge, archive, tombstone, or delete decision" in step for step in payload["workflow"])
+    assert any("merge, archive, tombstone, or delete decision" in step and "SSOT owner" in step for step in payload["workflow"])
     assert any("active truth owner" in step for step in payload["workflow"])
     assert any("Route sections by role" in step for step in payload["workflow"])
     assert any("Active Truth" in step for step in payload["workflow"])
@@ -515,6 +519,10 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "live repo truth 语义审计" in markdown
     assert "doctor 只做预检 guard" in markdown
     assert "唯一 Active Truth / SSOT 优先" in markdown
+    assert "先定 Single Source of Truth 再内容级合并" in markdown
+    assert "按语义内容治理，不按文件机械整理" in markdown
+    assert "Single Source of Truth" in markdown
+    assert "covered_by_ssot" in markdown
     assert "Active Truth plan 推荐形状" in markdown
     assert "按内容角色路由文档章节" in markdown
     assert "active-truth-plan.md" in markdown
@@ -531,7 +539,9 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "semantic input set" in markdown
     assert "preflight risk map" in markdown
     assert "every README* and docs/**/*.md" in markdown
+    assert "SSOT owner" in markdown
     assert "merge, archive, tombstone, or delete decision" in markdown
+    assert "peer docs keep only entry summaries" in markdown
     assert "tranche" in markdown
     assert "coverage ledger" in markdown
 

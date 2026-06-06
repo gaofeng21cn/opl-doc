@@ -12,7 +12,7 @@ Machine boundary: 本文是人读项目定位；机器真相以 `.codex-plugin/p
 - Codex plugin manifest。
 - `opl-doc` canonical skill。
 - 只读 CLI doctor。
-- OPL series 文档治理 workflow，默认覆盖 OPL、MAS、MAG、RCA、OMA，并可扩展到其他 OPL-compatible repo。
+- OPL series 文档治理 workflow，默认覆盖 OPL、MAS、MAG、RCA、OMA、App，并可扩展到其他 OPL-compatible repo。
 - 自动开发文档回路：用户维护理想态，治理流程根据 live repo truth 自动刷新完成进度、差距和下一轮 Agent prompt。
 - 全量文档组合审计：逐个评估 `README*` 与 `docs/**/*.md`，让每份长期文档只有唯一任务和定位，并清理、归档或 tombstone stale pollution。
 - Active Truth plan 推荐模板：当目标 repo 没有稳定 active owner 时，给当前完成进度、功能/结构差距、测试/证据差距、下一轮 Agent prompt 和 foldback target 一个最小形状。

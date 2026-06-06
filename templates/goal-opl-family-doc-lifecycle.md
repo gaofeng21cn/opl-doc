@@ -29,7 +29,8 @@
 - 先发现 active truth owner：优先 repo 明示入口和 `docs/active/current-state-vs-ideal-gap.md`；多份 active plan 抢同一职责时保留 canonical owner，重写或退役重复文档。
 - 如果某个 repo 缺少稳定 active truth owner，使用 OPL Doc 的 `templates/active-truth-plan.md` 作为章节形状；若已有 canonical active plan，则把同样章节映射进去，不新增第二套计划。
 - 在 active plan 中重写三类派生输出：当前完成进度、现状与理想态差距、下一轮 Agent prompt；这个 prompt 就是下一轮 `/goal` 或长线 Codex 执行入口，不是普通 TODO。
-- 逐段审阅 `README*` 和 `docs/**/*.md`，根据 live truth 更新文档内容、合并重复职责、清理过时路径；不是只做结构扫描修复。
+- 逐段审阅 `README*` 和 `docs/**/*.md`，先按语义主题确定 Single Source of Truth，再把同主题材料分类为 canonical owner、covered_by_ssot support detail、conflict、stale pollution 或 history/provenance；根据 live truth 更新文档内容、合并重复职责、清理过时路径；不是只做结构扫描修复。
+- 遇到重复章节时，优先保留当前 truth owner 中的唯一表述；support detail 只能指向 canonical owner，conflict/stale 内容直接重写、退役或归档，不保留 alias、facade、wrapper 或兼容说明。
 - 下一轮 Agent prompt 必须能直接作为 `/goal` 或长线 Codex prompt 使用，并包含目标、写入范围、禁止范围、live truth 输入、必做动作、验证命令、完成口径和 foldback 目标。
 - 开发完成后删除或重写已关闭 gap；执行流水、完成记录和弯路归入 `docs/history/` 或 tombstone/provenance。
 - closeout 前检查：closed gap 已删除或重写、当前事实已折回 canonical docs、active path 不保留完成过程包、下一轮 prompt 只保留仍未完成的工作。

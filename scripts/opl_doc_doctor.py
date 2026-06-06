@@ -798,7 +798,8 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
         f"reference 和 single Active Truth plan 合计 {reference_count} 个主参考文档为主要参考，根据 live code、"
         "contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前"
         "完成进度、现状与理想态差距、下一轮 Agent prompt；逐条评估 "
-        "README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；"
+        "README* 与 docs/**/*.md 下其他所有文档和章节，先按语义主题确定 Single Source of Truth，"
+        "再做内容层面的合并、收薄、归档、删除和细节纳入，清理归档过时内容，避免二次污染；"
         "保证每个长期文档只有唯一任务和定位，active docs 不保存执行流水或历史"
         "增量日志，过时模块/接口/测试/文档/workflow/入口按"
         "理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，"
@@ -833,6 +834,8 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "live_truth_semantic_audit",
         "doctor_is_preflight_only",
         "single_active_truth_first",
+        "ssot_first_semantic_consolidation",
+        "content_level_not_file_level",
         "rewrite_active_truth",
         "active_truth_plan_shape",
         "content_routing_table",
@@ -854,18 +857,20 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "Run doctor only as a preflight risk map; do not turn doctor findings into the governance task list.",
         "Treat doctor, native profile, and family-plan outputs as workflow aids only: they do not own repo truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.",
         "Keep opl-doc and shell repos as support extensions. They are included only when explicitly requested or when the current task touches their docs/scripts; they are not part of the default Foundry Agent truth set.",
-        "Build the semantic input set before editing: ideal-state reference, active truth plan, canonical/support docs, source/contracts/tests, read-model commands, runtime ledgers, receipts, blockers, and stale/retired candidate docs.",
+        "Build the semantic input set before editing: semantic theme, SSOT owner candidate, ideal-state reference, active truth plan, canonical/support/history docs, source/contracts/tests, read-model commands, runtime ledgers, receipts, blockers, and stale/retired candidate docs.",
         "Discover the active truth owner before editing: prefer repo-declared pointers and docs/active/current-state-vs-ideal-gap.md, then retire or rewrite duplicate active plans that claim the same role.",
+        "For each docs lane, determine the Single Source of Truth before editing peer docs. Prefer machine-readable contracts/schemas/source/package scripts/validators/tests/runtime evidence, then canonical owner docs, then active plans, then support/history.",
+        "Govern by content theme and section rather than by file path: classify peer sections as covered_by_ssot, more_specific_detail, conflicts_with_ssot, stale_or_superseded, history_or_provenance, or out_of_scope.",
         "Perform a live truth semantic audit: read source, contracts, tests, package scripts, CLI/read-model outputs, runtime ledgers, receipts, and blockers that prove or disprove active-plan and canonical-doc claims.",
         "Treat ideal-state as the user-maintained target and rewrite the active plan to the best current truth from live code, contracts, tests, CLI/read-model, and docs.",
         "If a repo lacks a stable active truth owner, use templates/active-truth-plan.md as the section shape; if one already exists, map the same sections into that canonical active plan instead of creating a second plan.",
         "Active docs must keep current completion progress, current-state-vs-ideal gaps, and the next-round Agent prompt; do not append execution diaries, dated closeout logs, or historical checklists.",
         "Route sections by role: current truth to canonical docs, active gaps to the Active Truth plan, support material to references/specs/support layers, process history to docs/history, retired surfaces to tombstone/provenance, and stale pollution to rewrite/delete.",
-        "Review every README* and docs/**/*.md file section by section against live repo truth; update content because the code/contracts/tests/read-model changed or disproved prose, not because a structural scanner emitted a warning.",
-        "For every merge, archive, tombstone, or delete decision, record the content role, destination owner, and evidence that the old text is current support material, process history, retired provenance, or stale pollution.",
+        "Review every README* and docs/**/*.md semantic section against live repo truth and the theme SSOT; update content because the code/contracts/tests/read-model or owner doc changed or disproved prose, not because a structural scanner emitted a warning.",
+        "For every merge, archive, tombstone, or delete decision, record the SSOT owner, content role, destination owner, and evidence that the old text is covered duplicate, specific support material, process history, retired provenance, or stale pollution.",
         "The next-round Agent prompt must be executable as a /goal or long-running Codex prompt and include write scope, non-goals, live truth inputs, required actions, verification commands, completion gate, and foldback target.",
         "Before closeout, verify closed gaps were removed or rewritten, durable current truth was folded into canonical docs, active paths contain no completed process packet, and the next-round prompt only names remaining work.",
-        "逐条评估 docs 下其他所有文档；classify each section as current truth, active gap, support reference, process history, retired/tombstone, or stale pollution.",
+        "逐条评估 docs 下其他所有文档；for each semantic theme, keep one current owner and classify peer sections as covered duplicate, support detail, conflict, stale/superseded, history/provenance, or out of scope.",
         "清理和归档过时内容，避免二次污染；route history to docs/history or tombstone refs instead of active docs.",
         "每个长期文档必须有唯一任务和定位；update canonical docs so every long-lived document has one owner, one purpose, one state, and one machine boundary.",
         "历史增量长清单要折叠 into compact current-state tables plus archive pointers.",
@@ -894,6 +899,8 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
             "active docs were rewritten to the single best Active Truth",
             "active truth includes current completion progress, current-state gaps, and next-round Agent prompt",
             "stale process material is archived or tombstoned",
+            "each governed semantic theme has one documented SSOT owner",
+            "peer docs keep only entry summaries, pointers, unique support detail, machine-boundary notes, or history/provenance",
             "no active compatibility-resurrection wording remains",
             "contracts/tests/read-model references are not contradicted by prose",
             "outdated modules/interfaces/tests/docs/workflows/entrypoints are directly retired when their active callers have moved",
@@ -971,6 +978,8 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
         "live_truth_semantic_audit": "live repo truth 语义审计",
         "doctor_is_preflight_only": "doctor 只做预检 guard",
         "single_active_truth_first": "唯一 Active Truth / SSOT 优先",
+        "ssot_first_semantic_consolidation": "先定 Single Source of Truth 再内容级合并",
+        "content_level_not_file_level": "按语义内容治理，不按文件机械整理",
         "rewrite_active_truth": "重写 active truth 到当前最优真相",
         "active_truth_plan_shape": "Active Truth plan 推荐形状",
         "content_routing_table": "按内容角色路由文档章节",
