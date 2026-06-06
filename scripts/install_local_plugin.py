@@ -18,6 +18,15 @@ REQUIRED_PLUGIN_FILES = (
     "skills/opl-doc/SKILL.md",
     "skills/opl-doc/agents/openai.yaml",
     "scripts/opl_doc_doctor.py",
+    "scripts/opl_doc_doctor_parts/__init__.py",
+    "scripts/opl_doc_doctor_parts/cli.py",
+    "scripts/opl_doc_doctor_parts/common.py",
+    "scripts/opl_doc_doctor_parts/constants.py",
+    "scripts/opl_doc_doctor_parts/family_plan.py",
+    "scripts/opl_doc_doctor_parts/invariant_checks.py",
+    "scripts/opl_doc_doctor_parts/plugin_sync.py",
+    "scripts/opl_doc_doctor_parts/profile_discovery.py",
+    "scripts/opl_doc_doctor_parts/rendering.py",
 )
 
 

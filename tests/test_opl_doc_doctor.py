@@ -4,6 +4,7 @@ from io import StringIO
 from pathlib import Path
 from contextlib import redirect_stdout
 
+import scripts.opl_doc_doctor as doctor_entrypoint
 from scripts.opl_doc_doctor import (
     default_series_repos,
     detect_profile,
@@ -14,6 +15,15 @@ from scripts.opl_doc_doctor import (
     parse_repo_overrides,
     print_family_markdown,
 )
+
+
+def test_doctor_entrypoint_stays_thin_and_exports_public_api() -> None:
+    source = Path(doctor_entrypoint.__file__).read_text(encoding="utf-8")
+
+    assert source.count("\n") < 80
+    assert "scripts.opl_doc_doctor_parts" in source
+    assert doctor_entrypoint.doctor is doctor
+    assert doctor_entrypoint.native_sync is native_sync
 
 
 def test_doctor_detects_opl_profile_and_core_docs(tmp_path: Path) -> None:

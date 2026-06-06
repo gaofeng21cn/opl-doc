@@ -171,7 +171,8 @@ When the change is complete, fold current facts back into canonical docs and mov
 - `.codex-plugin/plugin.json`: local Codex plugin manifest.
 - `skills/opl-doc/SKILL.md`: canonical Codex skill entry.
 - `skills/opl-doc/agents/openai.yaml`: UI metadata and default prompt.
-- `scripts/opl_doc_doctor.py`: read-only doctor and family-plan generator.
+- `scripts/opl_doc_doctor.py`: thin CLI/import compatibility entrypoint.
+- `scripts/opl_doc_doctor_parts/`: doctor implementation split by profile discovery, invariant checks, plugin-native profile sync, family-plan generation, and report rendering.
 - `scripts/opl_doc_doctor.py native-check|native-sync`: repo-native profile check/sync surface for `contracts/opl-native-profile.json`.
 - `scripts/install_local_plugin.py`: local plugin installer.
 - `docs/history/opl-doc-governance-tombstone.md`: provenance for the retired `opl-doc-governance` entrypoint.
