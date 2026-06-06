@@ -3,7 +3,7 @@
 Owner: `One Person Lab`
 Purpose: `usage`
 State: `active_reference`
-Machine boundary: 本文是人读使用说明；可执行入口以 `skills/` 和 `scripts/opl_doc_doctor.py` 为准。
+Machine boundary: 本文是人读使用说明；可执行命令入口以 `skills/` 和 `scripts/opl_doc_doctor.py` 为准，import API 以 `scripts/opl_doc_doctor_parts/` 为准。
 
 ## 它是什么
 

@@ -157,8 +157,8 @@ foldback.md
 - `.codex-plugin/plugin.json`：本地 Codex plugin manifest。
 - `skills/opl-doc/SKILL.md`：canonical Codex skill 入口。
 - `skills/opl-doc/agents/openai.yaml`：UI 元数据和默认 prompt。
-- `scripts/opl_doc_doctor.py`：CLI/import 兼容薄入口。
-- `scripts/opl_doc_doctor_parts/`：按 profile discovery、invariant checks、plugin-native profile sync、family-plan 生成和 report rendering 拆分的 doctor 实现。
+- `scripts/opl_doc_doctor.py`：`doctor`、`family-plan`、`native-check` 和 `native-sync` 的仓内命令 bootstrap。
+- `scripts/opl_doc_doctor_parts/`：按 profile discovery、invariant checks、plugin-native profile sync、family-plan 生成、CLI parsing 和 report rendering 拆分的 doctor 实现与 import API。
 - `scripts/install_local_plugin.py`：本地 plugin 安装脚本。
 - `docs/history/opl-doc-governance-tombstone.md`：已退役 `opl-doc-governance` 入口的 provenance。
 - `templates/`：Active Truth plan、goal 和 change-packet 模板。

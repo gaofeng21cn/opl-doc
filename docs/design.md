@@ -3,7 +3,7 @@
 Owner: `One Person Lab`
 Purpose: `design`
 State: `active_reference`
-Machine boundary: 本文说明设计；行为真相以 `skills/opl-doc/SKILL.md`、`scripts/opl_doc_doctor.py` 和测试为准。
+Machine boundary: 本文说明设计；命令行为以 `skills/opl-doc/SKILL.md`、`scripts/opl_doc_doctor.py` 和测试为准，doctor import API 以 `scripts/opl_doc_doctor_parts/` 为准。
 
 ## 目标
 

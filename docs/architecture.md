@@ -3,7 +3,7 @@
 Owner: `One Person Lab`
 Purpose: `architecture`
 State: `active_truth`
-Machine boundary: 本文是人读架构；可执行行为以 `scripts/opl_doc_doctor.py` 和 skill 为准。
+Machine boundary: 本文是人读架构；可执行命令行为以 `scripts/opl_doc_doctor.py` 和 skill 为准，doctor import API 以 `scripts/opl_doc_doctor_parts/` 为准。
 
 ## 分层
 

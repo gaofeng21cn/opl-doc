@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
+import subprocess
+import sys
 from io import StringIO
 from pathlib import Path
 from contextlib import redirect_stdout
 
-import scripts.opl_doc_doctor as doctor_entrypoint
-from scripts.opl_doc_doctor import (
+from scripts.opl_doc_doctor_parts import (
     default_series_repos,
     detect_profile,
     doctor,
@@ -17,13 +19,23 @@ from scripts.opl_doc_doctor import (
 )
 
 
-def test_doctor_entrypoint_stays_thin_and_exports_public_api() -> None:
-    source = Path(doctor_entrypoint.__file__).read_text(encoding="utf-8")
+def test_doctor_entrypoint_is_command_bootstrap_not_api_facade() -> None:
+    entrypoint = Path("scripts/opl_doc_doctor.py")
+    source = entrypoint.read_text(encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(entrypoint), "doctor", ".", "--format", "json"],
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+    )
+    payload = json.loads(result.stdout)
 
-    assert source.count("\n") < 80
-    assert "scripts.opl_doc_doctor_parts" in source
-    assert doctor_entrypoint.doctor is doctor
-    assert doctor_entrypoint.native_sync is native_sync
+    assert source.count("\n") < 20
+    assert "scripts.opl_doc_doctor_parts.cli import main" in source
+    assert "from scripts.opl_doc_doctor_parts import (" not in source
+    assert "__all__" not in source
+    assert payload["repo_profile"] == "codex_plugin"
 
 
 def test_doctor_detects_opl_profile_and_core_docs(tmp_path: Path) -> None:
