@@ -73,7 +73,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它同时提供 `opl-doc` canonical 入口和 `opl-doc-governance` 迁移期 skill entry。目标 repo 不需要安装本仓 CLI。
+安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它提供 `opl-doc` canonical 入口，并清理已安装的退役 plugin 注册。目标 repo 不需要安装本仓 CLI。
 
 然后重启 Codex，在任意 OPL series repo 里直接提：
 
@@ -100,6 +100,8 @@ profile sync 不能作为 truth sync。`native-sync --apply` 的写入面只有 
 OPL series 根层 `README*` 是面向使用者的入口，应先回答“解决什么问题、为什么有用、怎么开始、能带来什么结果”。新概念进入 README 时，需要被翻译成用户能直觉理解的产品价值；`executor-first`、stage、route、receipt、typed blocker、Tool Affordance Boundary、domain truth、quality verdict 等技术边界只在折叠的 Agent / 开发者 / operator 区，或 `docs/architecture.md`、`docs/invariants.md`、`docs/decisions.md` 等 canonical 技术文档中展开。
 
 治理 README 时不要为了同步技术概念而硬插术语。若某个技术概念必须出现在入口页，先写用户问题和效果，再把机制细节放进折叠区；中英文 README 需同步这个叙事层级。
+
+推荐写法：`认知计算让 AI 在一个可见阶段里读资料、比较方案、根据审阅修订，并产出下一版可检查成果。` 避免写法：`Route 保持 owner、receipt、typed blocker 和 route-back 证据，stage attempt 承载认知计算内核。` 后者属于 architecture、operator 或开发者折叠区。
 
 ## `/goal` 模板
 

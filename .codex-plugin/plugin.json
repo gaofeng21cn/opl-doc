@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "OPL Doc",
     "shortDescription": "OPL-native docs lifecycle and engineering closeout governance.",
-    "longDescription": "Provides OPL Doc skills and doctor scripts for OPL family document lifecycle management, stale doc retirement, active/history/tombstone folding, and software-engineering closeout workflows. The opl-doc-governance skill name remains as a compatibility entry.",
+    "longDescription": "Provides the OPL Doc skill and doctor scripts for OPL family document lifecycle management, stale doc retirement, active/history/tombstone folding, and software-engineering closeout workflows.",
     "developerName": "One Person Lab",
     "category": "Developer Tools",
     "capabilities": [

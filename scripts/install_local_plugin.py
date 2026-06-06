@@ -15,8 +15,6 @@ LEGACY_PLUGIN_NAMES = ("opl-doc-governance",)
 COMMAND_NAME = "opl-doc-doctor"
 REQUIRED_PLUGIN_FILES = (
     ".codex-plugin/plugin.json",
-    "skills/opl-doc-governance/SKILL.md",
-    "skills/opl-doc-governance/agents/openai.yaml",
     "skills/opl-doc/SKILL.md",
     "skills/opl-doc/agents/openai.yaml",
     "scripts/opl_doc_doctor.py",

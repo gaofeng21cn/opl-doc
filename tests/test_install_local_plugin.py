@@ -36,19 +36,6 @@ def test_install_copies_plugin_and_updates_marketplace(tmp_path: Path) -> None:
     assert "Developer Tools" in marketplace
 
 
-def test_compatibility_skill_ui_metadata_supports_direct_invocation() -> None:
-    metadata = Path("skills/opl-doc-governance/agents/openai.yaml").read_text(encoding="utf-8")
-    prompt = yaml.safe_load(metadata)["interface"]["default_prompt"]
-
-    assert 'display_name: "OPL Doc Governance"' in metadata
-    assert "$opl-doc-governance" in metadata
-    assert "skills/opl-doc-governance/SKILL.md" in prompt
-    assert "skills/opl-doc/SKILL.md" in prompt
-    assert "/Users/gaofeng" not in prompt
-    assert "/goal" in metadata
-    assert "allow_implicit_invocation: true" in metadata
-
-
 def test_short_opl_doc_skill_metadata_exists() -> None:
     skill = Path("skills/opl-doc/SKILL.md").read_text(encoding="utf-8")
     metadata = Path("skills/opl-doc/agents/openai.yaml").read_text(encoding="utf-8")
@@ -61,6 +48,12 @@ def test_short_opl_doc_skill_metadata_exists() -> None:
     assert "skills/opl-doc/SKILL.md" in prompt
     assert "/Users/gaofeng" not in prompt
     assert "allow_implicit_invocation: true" in metadata
+
+
+def test_retired_governance_skill_is_not_an_active_surface() -> None:
+    assert not Path("skills/opl-doc-governance/SKILL.md").exists()
+    assert not Path("skills/opl-doc-governance/agents/openai.yaml").exists()
+    assert Path("docs/history/opl-doc-governance-tombstone.md").exists()
 
 
 def test_verify_only_checks_installed_short_skill_and_command(tmp_path: Path) -> None:

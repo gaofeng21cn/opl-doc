@@ -16,3 +16,4 @@ Machine boundary: 本文是人读索引；可执行真相以 skill、CLI doctor 
 - [decisions.md](./decisions.md)：当前关键决策。
 - [design.md](./design.md)：实现设计参考。
 - [usage.md](./usage.md)：使用说明。
+- [history/opl-doc-governance-tombstone.md](./history/opl-doc-governance-tombstone.md)：已退役旧入口 provenance。

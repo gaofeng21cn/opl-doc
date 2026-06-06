@@ -26,11 +26,11 @@
 
 ## 为什么是 OPL Doc
 
-AI 代理能否持续开发，取决于仓库是否清楚告诉它“现在什么是真的”。长时间工程推进后，旧计划会留在 active 文档里，历史清单越堆越长，已经退役的接口看起来仍然有效，下一位代理就要花大量上下文重新判断真实状态。
+AI 代理能否持续开发，取决于仓库是否清楚告诉它“现在什么是真的”。长时间工程推进后，旧计划会留在 active 文档里，历史清单越堆越长，已经退役的接口看起来仍然有效，下一位代理就要花大量上下文重新判断真实状态。OPL Doc 的目标是防止这种文档漂移，让每一轮 AI 工程接力都能从当前事实、清楚入口和可验证下一步开始。
 
 OPL Doc 把这类清理工作变成可重复的文档管家流程。它帮助 Codex 读取当前仓库事实，逐段审计 README 和 docs 中的实质 claim，区分 active plan 和历史材料，让每个文档只保留一个任务，直接退役过时 surface，把过程内容折叠进 archive 或 tombstone，并用新鲜验证证据收口。
 
-`opl-doc` 是 canonical plugin 和 skill 名。`opl-doc-governance` 只保留为既有 prompt 的兼容 skill 入口。
+`opl-doc` 是 canonical plugin 和 skill 名。
 
 它也帮助 OPL 系列仓库保持同一套当前叙事：用户入口讲清产品价值，开发者入口讲清边界和验证，过时的技术说法及时折回历史或 tombstone。OPL Doc 只治理这些文档 claim 是否与各仓当前事实一致，不成为第二真相源。
 
@@ -59,7 +59,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-这会把 plugin 复制到 `~/plugins/opl-doc`，注册到个人 marketplace，在 `~/.local/bin` 下创建用户级 `opl-doc-doctor` 命令，并安装 `opl-doc` 与 `opl-doc-governance` 两个 skill 入口。它不会向被治理的 repo 写入任何文件。
+这会把 plugin 复制到 `~/plugins/opl-doc`，注册到个人 marketplace，在 `~/.local/bin` 下创建用户级 `opl-doc-doctor` 命令，并安装 `opl-doc` skill 入口；若发现已安装的退役 plugin 注册，会一并清理。它不会向被治理的 repo 写入任何文件。
 
 重启 Codex 后，一句话使用：
 
@@ -156,10 +156,10 @@ foldback.md
 
 - `.codex-plugin/plugin.json`：本地 Codex plugin manifest。
 - `skills/opl-doc/SKILL.md`：canonical Codex skill 入口。
-- `skills/opl-doc-governance/SKILL.md`：保留给既有直接调用的兼容 Codex skill 入口。
 - `skills/opl-doc/agents/openai.yaml`：UI 元数据和默认 prompt。
 - `scripts/opl_doc_doctor.py`：只读 doctor 和 family-plan 生成器。
 - `scripts/install_local_plugin.py`：本地 plugin 安装脚本。
+- `docs/history/opl-doc-governance-tombstone.md`：已退役 `opl-doc-governance` 入口的 provenance。
 - `templates/`：Active Truth plan、goal 和 change-packet 模板。
 - `tests/`：doctor、goal mode 和安装流程测试。
 

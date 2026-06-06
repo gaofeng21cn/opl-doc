@@ -10,7 +10,7 @@ Machine boundary: 本文是人读项目定位；机器真相以 `.codex-plugin/p
 本仓提供：
 
 - Codex plugin manifest。
-- `opl-doc` canonical skill 和 `opl-doc-governance` 兼容 skill。
+- `opl-doc` canonical skill。
 - 只读 CLI doctor。
 - OPL series 文档治理 workflow，默认覆盖 OPL、MAS、MAG、RCA、OMA，并可扩展到其他 OPL-compatible repo。
 - 自动开发文档回路：用户维护理想态，治理流程根据 live repo truth 自动刷新完成进度、差距和下一轮 Agent prompt。

@@ -77,6 +77,8 @@ If a new concept must appear in the public README, keep the concept name but tra
 
 Put `executor-first`, stage/route mechanics, receipts, typed blockers, Tool Affordance Boundary, domain truth, quality verdicts, authority functions, runtime ledgers, and similar boundary language in folded Agent / developer / operator sections or canonical technical docs. The public README body should not read like a contract, runtime spec, or migration plan.
 
+Prefer affirmative product language. For example: "Cognitive computation lets AI read sources, compare options, revise from review, and produce the next inspectable version inside a visible stage." Avoid README prose such as: "Route keeps owner, receipt, typed blocker, route-back evidence, and the stage attempt hosts the cognitive computation kernel." The latter belongs in architecture or operator docs.
+
 ## Active Owner Discovery
 
 Find the target repo's active truth owner before creating or rewriting any plan:

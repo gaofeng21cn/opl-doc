@@ -26,11 +26,11 @@
 
 ## Why OPL Doc
 
-AI agents can keep building only when the repository tells them what is true now. In long-running development, old plans stay in active docs, historical checklists keep growing, retired interfaces look alive, and the next agent has to spend context reconstructing the real state.
+AI agents can keep building only when the repository tells them what is true now. In long-running development, old plans stay in active docs, historical checklists keep growing, retired interfaces look alive, and the next agent has to spend context reconstructing the real state. OPL Doc prevents that documentation drift so every AI engineering handoff can start from current facts, clear entry points, and a verifiable next step.
 
 OPL Doc turns that cleanup work into a repeatable steward workflow. It helps Codex read the current repository truth, audit every README and docs section against that truth, rewrite active docs toward the single best Active Truth, make each document keep one job, retire stale surfaces without compatibility prose, fold process material into archives or tombstones, and finish with fresh verification evidence.
 
-`opl-doc` is the canonical plugin and skill name. `opl-doc-governance` remains only as a compatibility skill entry for existing prompts.
+`opl-doc` is the canonical plugin and skill name.
 
 It also helps OPL-family repositories keep one current narrative: user entries explain product value, developer entries explain boundaries and verification, and stale technical wording is folded into history or tombstones. OPL Doc only checks whether those document claims match each repo's current truth; it does not become a second source of truth.
 
@@ -59,7 +59,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-This copies the plugin into `~/plugins/opl-doc`, registers it in the personal marketplace, creates a user-level `opl-doc-doctor` command under `~/.local/bin`, and installs both skill entries: `opl-doc` and `opl-doc-governance`. It does not write anything into the repos being governed.
+This copies the plugin into `~/plugins/opl-doc`, registers it in the personal marketplace, creates a user-level `opl-doc-doctor` command under `~/.local/bin`, and installs the `opl-doc` skill entry. It also removes stale retired plugin registrations when present. It does not write anything into the repos being governed.
 
 Restart Codex, then use one sentence:
 
@@ -170,11 +170,11 @@ When the change is complete, fold current facts back into canonical docs and mov
 
 - `.codex-plugin/plugin.json`: local Codex plugin manifest.
 - `skills/opl-doc/SKILL.md`: canonical Codex skill entry.
-- `skills/opl-doc-governance/SKILL.md`: compatibility Codex skill entry retained for existing direct invocation.
 - `skills/opl-doc/agents/openai.yaml`: UI metadata and default prompt.
 - `scripts/opl_doc_doctor.py`: read-only doctor and family-plan generator.
 - `scripts/opl_doc_doctor.py native-check|native-sync`: repo-native profile check/sync surface for `contracts/opl-native-profile.json`.
 - `scripts/install_local_plugin.py`: local plugin installer.
+- `docs/history/opl-doc-governance-tombstone.md`: provenance for the retired `opl-doc-governance` entrypoint.
 - `templates/`: Active Truth plan, goal, and change-packet templates.
 - `tests/`: pytest coverage for the doctor, goal mode, and installer.
 
