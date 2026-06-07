@@ -1,0 +1,104 @@
+# OPL Doc active truth plan
+
+Owner: `OPL Doc`
+Purpose: `active_truth_plan`
+State: `active_plan`
+Machine boundary: 本文是人读开发计划与当前真相折返面；机器真相以 `.codex-plugin/plugin.json`、`skills/opl-doc/SKILL.md`、`scripts/opl_doc_doctor.py`、`scripts/opl_doc_doctor_parts/`、`scripts/install_local_plugin.py`、`tests/` 和 repo-native verification 输出为准。
+
+## Ideal-State Reference
+
+- Canonical target-state document: `skills/opl-doc/SKILL.md`
+- Target-state summary: `opl-doc` 是 OPL-native 开发文档生命周期治理入口；doctor / native profile / family-plan 只提供 workflow、risk map 和 profile sync；正式治理必须从 live repo truth 出发，维护 Active Truth、coverage ledger、next-round prompt 和 stale-surface retirement。
+- Non-negotiable invariants: `docs/invariants.md`，尤其是 no-second-truth、support repo extension、SSOT-first、whole-portfolio audit、tranche closeout 与 global goal 分离，以及退役旧模块/接口/测试/文档入口时不保留 alias / facade / wrapper / compatibility prose。
+
+## Active Owner Discovery
+
+- Existing active truth owner: 本文。
+- Duplicate or competing active docs to retire: 当前没有其他 `docs/active/*` active truth owner。
+- Mapping note: 本仓此前由 `docs/status.md` 描述当前状态，但缺少 long-horizon active owner。`docs/status.md` 继续保留 durable current status；本文件持有当前完成进度、当前差距、下一轮 Agent prompt 和 coverage / next-scope foldback。
+
+## Current Completion Progress
+
+| Area | Current status | Live evidence | Notes |
+| --- | --- | --- | --- |
+| Canonical skill surface | done | `skills/opl-doc/SKILL.md`; `skills/opl-doc/agents/openai.yaml`; `tests/test_install_local_plugin.py` | Active skill name is `opl-doc`; `opl-doc-governance` is tombstone-only. |
+| Doctor CLI split | done | `scripts/opl_doc_doctor.py`; `scripts/opl_doc_doctor_parts/`; `tests/test_opl_doc_doctor.py`; `docs/history/opl-doc-doctor-entrypoint-facade-retirement.md`; `docs/history/opl-doc-doctor-parts-package-facade-retirement.md` | Command bootstrap and implementation modules are separated; old broad import facades are retired. |
+| Local installer surface | done | `scripts/install_local_plugin.py`; `tests/test_install_local_plugin.py`; `docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md` | Installer installs only `opl-doc`, updates marketplace entry for `opl-doc`, and creates `opl-doc-doctor`; old-name cleanup tail is retired. |
+| Family governance workflow | done | `scripts/opl_doc_doctor_parts/family_plan.py`; `templates/goal-opl-family-doc-lifecycle.md`; `tests/test_opl_doc_doctor.py` | Six core repos are the default OPL series; support repos are explicit extension. |
+| Native profile sync | done | `scripts/opl_doc_doctor_parts/plugin_sync.py`; `scripts/opl_doc_doctor_parts/profile_discovery.py`; `tests/test_opl_doc_doctor.py`; `docs/architecture.md` | `native-sync --apply` writes only `contracts/opl-native-profile.json` in a target repo; it does not create repo truth. |
+| Support repo active truth owner | done | `opl-doc-doctor doctor . --format json`; this document | The support repo now has a detected Active Truth owner for current progress, gaps and next-round prompt. |
+
+## Current-State vs Ideal-State Gaps
+
+### Functional / Structural Gaps
+
+| Gap | Ideal state | Current state | Required change | Owner surface | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| support-repo-profile-contract | Support repo participates in OPL native profile drift checks without becoming a Foundry Agent truth owner. | `native-sync .` dry-run reports missing `contracts/opl-native-profile.json`; this is acceptable today but leaves profile drift unmaterialized. | Decide whether to add `contracts/opl-native-profile.json` in this repo, with explicit support-repo boundary and verification. | `contracts/opl-native-profile.json`; `scripts/opl_doc_doctor_parts/plugin_sync.py`; `docs/decisions.md` | `scripts/verify.sh` includes dry-run `native-sync .`; current file tree has no `contracts/`. |
+| active-support-coverage-ledger | OPL series tranches keep repo-by-repo coverage / next-scope evidence, including explicit support repos touched by the task. | Core skill requires coverage ledger, but `opl-doc` support repo previously had no active owner to carry current support-repo coverage state. | Keep this document updated when support repo governance changes; mirror cross-repo tranche coverage into the relevant governed repo ledger. | `docs/active/opl-doc-active-truth-plan.md`; OPL family ledger in `one-person-lab` | Current objective explicitly includes support repos touched this round. |
+
+### Test / Evidence Gaps
+
+| Gap | Existing implementation state | Missing evidence | Required verification | Foldback target |
+| --- | --- | --- | --- | --- |
+| full-install-live-verify | Installer and verify-only tests exist; default verification runs unit tests. | Live user-level install was not changed in this tranche. | For install-surface changes, run `python3 scripts/install_local_plugin.py --verify-only` after install/sync scope is explicitly assigned. | `docs/status.md`; this active plan |
+| profile-contract-materialization | `native-sync` supports dry-run and apply. | No committed support-repo profile contract in this repo. | If materialized, run `python3 scripts/opl_doc_doctor.py native-check .`, `python3 scripts/opl_doc_doctor.py native-sync . --apply`, and `bash scripts/verify.sh`. | `docs/decisions.md`; this active plan |
+
+## Next-Round Agent Prompt
+
+Objective:
+
+- Use OPL Doc to continue support-repo governance for `opl-doc` while preserving its extension-only boundary: decide whether to materialize `contracts/opl-native-profile.json`, update docs only from live source/tests/CLI evidence, and keep old `opl-doc-governance` surfaces tombstone-only without restoring compatibility hooks.
+
+Write scope:
+
+- `contracts/opl-native-profile.json` only if profile materialization is selected.
+- `docs/active/opl-doc-active-truth-plan.md`, `docs/status.md`, `docs/decisions.md`, and relevant history tombstones only when live evidence changes.
+- Tests under `tests/` only when source behavior changes.
+
+Non-goals:
+
+- Do not make `opl-doc` part of the default Foundry Agent truth owner set.
+- Do not restore `opl-doc-governance` skill, marketplace entry, installer cleanup hook, alias, facade, wrapper, or active README quick-start wording.
+- Do not write target repo truth, runtime truth, artifact authority, quality verdict, owner receipt, or production readiness into doctor/native-profile/family-plan output.
+
+Live truth inputs:
+
+- `AGENTS.md`
+- `README.md`, `README.zh-CN.md`, `docs/README.md`, `docs/project.md`, `docs/status.md`, `docs/architecture.md`, `docs/invariants.md`, `docs/decisions.md`
+- `.codex-plugin/plugin.json`
+- `skills/opl-doc/SKILL.md`
+- `scripts/opl_doc_doctor.py`, `scripts/opl_doc_doctor_parts/`, `scripts/install_local_plugin.py`
+- `tests/test_opl_doc_doctor.py`, `tests/test_install_local_plugin.py`
+
+Required actions:
+
+- Re-run doctor before editing and treat findings as risk map only.
+- Compare any current-state claim against live source/tests/CLI output.
+- Keep this plan as the support repo's active owner; route process material to `docs/history/`.
+
+Verification commands:
+
+```bash
+python3 -m pytest -q
+python3 scripts/opl_doc_doctor.py doctor . --format json
+python3 scripts/opl_doc_doctor.py family-plan --format markdown
+python3 scripts/opl_doc_doctor.py native-sync .
+bash scripts/verify.sh
+git diff --check
+```
+
+Completion / foldback gate:
+
+- Closed gaps are removed or rewritten in this plan.
+- Durable current facts are folded to `docs/status.md` or canonical docs.
+- Process material is moved to history/tombstone.
+- Active paths contain no dated execution diary.
+- Next-round prompt names only remaining work.
+- Final main checkout verification is complete.
+
+## History / Tombstone Foldback
+
+- Process material to archive: none in this tranche.
+- Retired surfaces to tombstone: `docs/history/opl-doc-governance-tombstone.md`, `docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md`, `docs/history/opl-doc-doctor-entrypoint-facade-retirement.md`, and `docs/history/opl-doc-doctor-parts-package-facade-retirement.md` remain the current no-resurrection records.
+- No-resurrection guard: do not restore old-name skill files, installer cleanup tail, broad doctor entrypoint re-export, or package-root API facade.

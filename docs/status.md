@@ -8,6 +8,7 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 当前已落地：
 
 - `skills/opl-doc/SKILL.md`：canonical Codex 使用入口。
+- `docs/active/opl-doc-active-truth-plan.md`：support repo Active Truth owner，持有当前完成进度、现状与理想态差距、下一轮 Agent prompt，以及 support repo coverage / next-scope foldback。
 - `docs/history/opl-doc-governance-tombstone.md`：已退役 `opl-doc-governance` 入口的 provenance；旧名不再作为 active skill、UI entry 或 workflow 暴露。
 - `scripts/opl_doc_doctor.py doctor`：单仓文档生命周期只读诊断，并报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
 - `scripts/opl_doc_doctor.py`：现在只是仓内命令 bootstrap；doctor 实现和 import API 归 `scripts/opl_doc_doctor_parts/` 中的 profile discovery、invariant checks、plugin-native profile sync、family-plan generation、CLI parsing 和 report rendering 分层维护。
