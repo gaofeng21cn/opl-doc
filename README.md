@@ -59,7 +59,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-This copies the plugin into `~/plugins/opl-doc`, registers it in the personal marketplace, creates a user-level `opl-doc-doctor` command under `~/.local/bin`, and installs the `opl-doc` skill entry. It also removes stale retired plugin registrations when present. It does not write anything into the repos being governed.
+This copies the plugin into `~/plugins/opl-doc`, registers it in the personal marketplace, creates a user-level `opl-doc-doctor` command under `~/.local/bin`, and installs the `opl-doc` skill entry. It does not write anything into the repos being governed.
 
 Restart Codex, then use one sentence:
 

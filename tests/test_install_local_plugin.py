@@ -69,23 +69,3 @@ def test_verify_only_checks_installed_short_skill_and_command(tmp_path: Path) ->
     assert result["marketplace_ok"] is True
     assert result["command_ok"] is True
     assert result["missing"] == []
-
-
-def test_install_removes_legacy_plugin_entry_and_directory(tmp_path: Path) -> None:
-    repo_root = Path(__file__).resolve().parents[1]
-    plugins_dir = tmp_path / "plugins"
-    legacy_dir = plugins_dir / "opl-doc-governance"
-    legacy_dir.mkdir(parents=True)
-    (legacy_dir / "legacy.txt").write_text("legacy\n", encoding="utf-8")
-    marketplace_path = tmp_path / "marketplace.json"
-    marketplace_path.write_text(
-        '{"plugins":[{"name":"opl-doc-governance","source":{"path":"./plugins/opl-doc-governance"}}]}\n',
-        encoding="utf-8",
-    )
-
-    install(repo_root, plugins_dir, marketplace_path, tmp_path / "bin")
-
-    assert not legacy_dir.exists()
-    marketplace = marketplace_path.read_text(encoding="utf-8")
-    assert '"name": "opl-doc"' in marketplace
-    assert '"name": "opl-doc-governance"' not in marketplace

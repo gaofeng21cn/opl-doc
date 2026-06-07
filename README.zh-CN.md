@@ -59,7 +59,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-这会把 plugin 复制到 `~/plugins/opl-doc`，注册到个人 marketplace，在 `~/.local/bin` 下创建用户级 `opl-doc-doctor` 命令，并安装 `opl-doc` skill 入口；若发现已安装的退役 plugin 注册，会一并清理。它不会向被治理的 repo 写入任何文件。
+这会把 plugin 复制到 `~/plugins/opl-doc`，注册到个人 marketplace，在 `~/.local/bin` 下创建用户级 `opl-doc-doctor` 命令，并安装 `opl-doc` skill 入口。它不会向被治理的 repo 写入任何文件。
 
 重启 Codex 后，一句话使用：
 

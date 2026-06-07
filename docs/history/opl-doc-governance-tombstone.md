@@ -11,6 +11,6 @@ Retirement rule:
 
 - Do not expose `opl-doc-governance` as a skill, UI entry, README quick-start entry, or active workflow.
 - Do not add aliases, facades, wrappers, or prose that presents the old name as usable.
-- The installer may continue deleting an already-installed `~/plugins/opl-doc-governance` directory and removing marketplace entries with that name. That cleanup is migration hygiene, not an active compatibility path.
+- Do not restore installer cleanup hooks, marketplace cleanup branches, or tests that keep the old name in an active install path.
 
 Use `opl-doc` for all current documentation lifecycle governance work.

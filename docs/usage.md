@@ -75,7 +75,7 @@ python3 scripts/install_local_plugin.py
 python3 scripts/install_local_plugin.py --verify-only
 ```
 
-安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它提供 `opl-doc` canonical 入口，并清理已安装的退役 plugin 注册。目标 repo 不需要安装本仓 CLI。
+安装脚本按 Codex personal plugin 标准复制到 `~/plugins/opl-doc`，更新 `~/.agents/plugins/marketplace.json`，并在 `~/.local/bin` 下创建 `opl-doc-doctor` 命令。它只提供 `opl-doc` canonical 入口；已退役旧名只保留在 history provenance。目标 repo 不需要安装本仓 CLI。
 
 然后重启 Codex，在任意 OPL series repo 里直接提：
 
