@@ -396,6 +396,42 @@ def test_doctor_reports_active_truth_health_for_executable_plan(tmp_path: Path) 
     assert all(finding["code"] != "active_truth_plan_incomplete" for finding in payload["findings"])
 
 
+def test_doctor_accepts_active_goal_agent_prompt_heading(tmp_path: Path) -> None:
+    root = tmp_path / "one-person-lab"
+    active = root / "docs" / "active"
+    active.mkdir(parents=True)
+    (active / "current-state-vs-ideal-gap.md").write_text(
+        "# Current State vs Ideal Gap\n\n"
+        "Owner: `OPL`\nPurpose: `active_truth_plan`\nState: `active_plan`\n"
+        "Machine boundary: contracts\n\n"
+        "## Current Completion Progress\n\n"
+        "| Area | Current status | Live evidence |\n| --- | --- | --- |\n"
+        "| runtime | partial | src/runtime.ts |\n\n"
+        "## Current-State vs Ideal-State Gaps\n\n"
+        "### Functional / Structural Gaps\n\n"
+        "| Gap | Ideal state | Current state |\n| --- | --- | --- |\n"
+        "| provider | Temporal | local proof only |\n\n"
+        "### Test / Evidence Gaps\n\n"
+        "| Gap | Existing implementation state | Missing evidence |\n| --- | --- | --- |\n"
+        "| soak | implemented | long-soak receipt |\n\n"
+        "## Active-Goal Agent Prompt\n\n"
+        "Write scope:\n- docs and runtime tests\n\n"
+        "Non-goals:\n- domain verdicts\n\n"
+        "Live truth inputs:\n- source/contracts/tests\n\n"
+        "Verification commands:\n```bash\n./scripts/verify.sh\n```\n\n"
+        "Completion / foldback gate:\n- active plan rewritten\n\n"
+        "Foldback target:\n- docs/status.md\n",
+        encoding="utf-8",
+    )
+
+    payload = doctor(root)
+
+    health = payload["active_truth_health"]
+    assert health["status"] == "pass"
+    assert health["documents"][0]["next_round_agent_prompt_ready"] is True
+    assert all(finding["code"] != "active_truth_plan_incomplete" for finding in payload["findings"])
+
+
 def test_doctor_flags_active_truth_plan_without_agent_prompt_fields(tmp_path: Path) -> None:
     root = tmp_path / "med-autogrant"
     active = root / "docs" / "active"

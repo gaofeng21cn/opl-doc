@@ -175,8 +175,12 @@ ACTIVE_GAP_MARKERS = (
 )
 
 NEXT_AGENT_PROMPT_MARKERS = (
+    "Active-Goal Agent Prompt",
+    "Active Goal Agent Prompt",
     "Next-Round Agent Prompt",
     "Next-round Agent Prompt",
+    "Active-Goal Agent prompt",
+    "Active Goal Agent prompt",
     "下一轮 Agent prompt",
     "下一轮 Agent Prompt",
     "下一轮提示词",
