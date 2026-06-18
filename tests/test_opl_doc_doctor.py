@@ -493,8 +493,9 @@ def test_doctor_flags_process_log_headings_in_active_truth_owner(tmp_path: Path)
 def test_family_plan_contains_opl_series_workflow() -> None:
     payload = family_plan()
 
-    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "app"}
+    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app"}
     assert payload["repos"]["oma"] == "opl-meta-agent"
+    assert payload["repos"]["bookforge"] == "opl-bookforge"
     assert payload["repos"]["app"] == "one-person-lab-app"
     assert payload["support_repo_policy"]["default_included_in_governed_repo_set"] is False
     assert payload["support_repo_policy"]["extension_only"] is True
@@ -503,8 +504,9 @@ def test_family_plan_contains_opl_series_workflow() -> None:
         "opl_doc": "opl-doc",
         "shell": "opl-aion-shell",
     }
-    assert payload["primary_reference_doc_count"] == 12
+    assert payload["primary_reference_doc_count"] == 14
     assert "OPL single Active Truth plan" in payload["primary_reference_docs_per_repo"]
+    assert "BOOKFORGE single Active Truth plan" in payload["primary_reference_docs_per_repo"]
     assert "APP single Active Truth plan" in payload["primary_reference_docs_per_repo"]
     assert payload["goal_mode"]["recommended"] is True
     assert "create_goal" in payload["goal_mode"]["agent_action"]
@@ -516,7 +518,7 @@ def test_family_plan_contains_opl_series_workflow() -> None:
 def test_family_plan_json_contains_original_series_governance_prompt_elements() -> None:
     payload = family_plan()
 
-    assert len(payload["primary_reference_docs_per_repo"]) == 12
+    assert len(payload["primary_reference_docs_per_repo"]) == 14
     assert {
         "evaluate_all_docs_item_by_item",
         "support_repo_extension_boundary",
@@ -573,7 +575,7 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "OPL Series Docs Lifecycle Workflow" in markdown
     assert "Goal Mode" in markdown
     assert "create or resume a /goal" in markdown
-    assert "12 primary reference docs" in markdown
+    assert "14 primary reference docs" in markdown
     assert "Support Repos" in markdown
     assert "explicit extensions" in markdown
     assert "not the default Foundry Agent truth set" in markdown
@@ -594,6 +596,7 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "下一轮 Agent prompt" in markdown
     assert "foldback closeout 闭环检查" in markdown
     assert "opl-meta-agent" in markdown
+    assert "opl-bookforge" in markdown
     assert "逐条评估 README/docs 下其他所有文档和章节" in markdown
     assert "清理和归档过时内容" in markdown
     assert "每个长期文档必须有唯一任务和定位" in markdown
@@ -614,7 +617,7 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
 def test_parse_repo_overrides_keeps_default_series_and_adds_extra_repo() -> None:
     repos = parse_repo_overrides(["award=award-agent"])
 
-    assert set(repos) == {"opl", "mas", "mag", "rca", "oma", "app", "award"}
+    assert set(repos) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app", "award"}
     assert repos["award"] == "award-agent"
 
 
@@ -623,6 +626,7 @@ def test_default_series_repos_can_expand_from_workspace_root() -> None:
 
     assert repos["opl"] == "/workspace/one-person-lab"
     assert repos["oma"] == "/workspace/opl-meta-agent"
+    assert repos["bookforge"] == "/workspace/opl-bookforge"
     assert repos["app"] == "/workspace/one-person-lab-app"
 
 
@@ -636,8 +640,8 @@ def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
     assert "下一轮 Agent prompt" in goal_prompt
     assert "逐条评估" in goal_prompt
     assert "其他所有文档和章节" in goal_prompt
-    assert "6 个 repo" in goal_prompt
-    assert "12 个主参考文档" in goal_prompt
+    assert "7 个 repo" in goal_prompt
+    assert "14 个主参考文档" in goal_prompt
     assert "本轮 tranche" in goal_prompt
     assert "未覆盖文档" in goal_prompt
     assert "alias、facade 或 wrapper" in goal_prompt
@@ -648,7 +652,7 @@ def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
 def test_family_plan_support_repos_are_extension_only() -> None:
     payload = family_plan()
 
-    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "app"}
+    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app"}
     assert "opl_doc" not in payload["repos"]
     assert "shell" not in payload["repos"]
     policy = payload["support_repo_policy"]

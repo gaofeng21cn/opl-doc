@@ -43,12 +43,12 @@ OPL Doc 把这类清理工作变成可重复的文档管家流程。它帮助 Co
 - **让 README 回到用户问题**：检查入口页是否讲清产品价值、使用场景和开始方式，把底层技术细节放回开发者区。
 - **清理旧计划和旧入口**：把已完成计划、退役路线和过程材料折回 history 或 tombstone，避免继续污染 active 文档。
 - **全量文档组合清理**：逐个审计 `README*` 和 `docs/**/*.md`，让每份长期文档只承担一个清晰任务。
-- **OPL series 长线治理**：为 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app` 以及后续兼容仓库生成治理计划。
+- **OPL series 长线治理**：为 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`opl-bookforge`、`one-person-lab-app` 以及后续兼容仓库生成治理计划。
 - **短期变更包模板**：为需要意图、设计、任务、验证和折回的变更提供临时工作包。
 
 ## 一句话开始
 
-如果是在新机器上配置完整 Codex + OPL 全家桶，包括 OPL runtime、MAS/MAG/RCA/OMA 智能体可见面、OPL Flow、OPL Doc、One Person Lab App 和 companion tools，先从 [One Person Lab 新机器 Codex 全家桶安装入口](https://github.com/gaofeng21cn/one-person-lab/blob/main/docs/references/current-support/opl-new-machine-codex-bootstrap.md) 开始。
+如果是在新机器上配置完整 Codex + OPL 全家桶，包括 OPL runtime、MAS/MAG/RCA/OMA 智能体可见面、BookForge 系列治理覆盖、OPL Flow、OPL Doc、One Person Lab App 和 companion tools，先从 [One Person Lab 新机器 Codex 全家桶安装入口](https://github.com/gaofeng21cn/one-person-lab/blob/main/docs/references/current-support/opl-new-machine-codex-bootstrap.md) 开始。
 
 安装为本地 Codex plugin：
 
@@ -67,7 +67,7 @@ python3 scripts/install_local_plugin.py --verify-only
 - “使用 OPL Doc 治理 OPL series 的开发文档生命周期。”
 - “使用 OPL Doc 清理 stale active docs，并把已完成计划折回 history。”
 
-对于 OPL series、多仓清理、长周期自治、或提到 worktree/subagent/吸收回 `main` 的任务，skill 会主动进入或延续 `/goal`。默认 OPL series 是 6 个 repo、12 个主参考文档；短单仓只读审计先跑 doctor，不强制 goal。
+对于 OPL series、多仓清理、长周期自治、或提到 worktree/subagent/吸收回 `main` 的任务，skill 会主动进入或延续 `/goal`。默认 OPL series 是 7 个 repo、14 个主参考文档；短单仓只读审计先跑 doctor，不强制 goal。
 
 ## 它如何工作
 
@@ -86,7 +86,7 @@ python3 scripts/install_local_plugin.py --verify-only
 
 OPL Doc 是 OPL-native 的治理工具。OpenArc、OpenSpec、Spec Kit、Agent OS 等项目是有用参考，但本仓不会把 OPL 系列项目迁移到外部固定文件布局。
 
-默认 OPL series workflow 覆盖 OPL、MAS、MAG、RCA、OMA 和 App 六个治理 repo。`opl-doc`、`opl-aion-shell` 等 support repo 只是 workflow 或 shell-carrier 任务的 explicit extension，不是默认 Foundry Agent truth owner。
+默认 OPL series workflow 覆盖 OPL、MAS、MAG、RCA、OMA、BookForge 和 App 七个治理 repo。`opl-doc`、`opl-aion-shell` 等 support repo 只是 workflow 或 shell-carrier 任务的 explicit extension，不是默认 Foundry Agent truth owner。
 
 ## CLI
 

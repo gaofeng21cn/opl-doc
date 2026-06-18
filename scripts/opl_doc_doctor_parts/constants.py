@@ -88,6 +88,7 @@ DEFAULT_SERIES_REPO_NAMES = {
     "mag": "med-autogrant",
     "rca": "redcube-ai",
     "oma": "opl-meta-agent",
+    "bookforge": "opl-bookforge",
     "app": "one-person-lab-app",
 }
 

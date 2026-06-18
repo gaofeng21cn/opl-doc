@@ -17,12 +17,12 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - skill 现在要求治理整个文档组合：逐个审计 `README*` 与 `docs/**/*.md`，根据 live repo truth 判断每个 section 是当前事实、active gap、支撑参考、过程历史、退役 tombstone 还是 stale pollution。
 - skill 现在把文档治理固定为 SSOT-first 内容级合并：每个语义主题先确定 Single Source of Truth，再让 peer docs 删除重复、收薄成指针、纳入细节、归档历史或清理 stale pollution；不能按文件名、目录或最近编辑时间机械合并。
 - skill 现在把一文一责作为 closeout 门槛：每份长期文档只能保留一个任务和定位；混合职责内容必须移动到 canonical owner、history/tombstone，或直接删除。
-- `scripts/opl_doc_doctor.py family-plan`：OPL series 治理工作流生成，默认覆盖 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app`，并可通过 `--repo ID=PATH` 扩展到其他 OPL-compatible repo。
-- `scripts/opl_doc_doctor.py family-plan`：现在输出 `support_repo_policy`，把 `opl-doc` 和 `opl-aion-shell` 标为 explicit extension；默认 governed repo set 仍是 6 个核心 repo / 12 个主参考文档，support repos 不进入默认 Foundry Agent truth set。
+- `scripts/opl_doc_doctor.py family-plan`：OPL series 治理工作流生成，默认覆盖 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`opl-bookforge`、`one-person-lab-app`，并可通过 `--repo ID=PATH` 扩展到其他 OPL-compatible repo。
+- `scripts/opl_doc_doctor.py family-plan`：现在输出 `support_repo_policy`，把 `opl-doc` 和 `opl-aion-shell` 标为 explicit extension；默认 governed repo set 是 7 个核心 repo / 14 个主参考文档，support repos 不进入默认 Foundry Agent truth set。
 - `scripts/opl_doc_doctor.py native-check|native-sync`：目标 repo 的 plugin-native profile 检查/同步入口；`native-sync --apply` 只写 `contracts/opl-native-profile.json`，用于声明 repo profile、OPL Flow / OPL Doc profile、Active Truth owner、canonical docs、taxonomy dirs、machine truth surfaces、repo-owned paths 和验证入口。
 - `doctor` / `native profile` / `family-plan` 现在共同投影 no-authority boundary：它们只做 lightweight risk map、profile sync / drift check 和 workflow plan，不持有 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
 - `scripts/install_local_plugin.py --verify-only`：新机器安装后的本地插件、marketplace、`opl-doc` 短入口和 `opl-doc-doctor` 命令验证入口。
-- `family-plan` 默认把 6 个 repo 的 ideal-state reference 与 single Active Truth plan 作为 12 个主参考文档；旧的 5 仓/10 文档范围只在用户显式排除 App repo 时使用。
+- `family-plan` 默认把 7 个 repo 的 ideal-state reference 与 single Active Truth plan 作为 14 个主参考文档；旧的 6 仓/12 文档范围只在用户显式排除 BookForge repo 时使用。
 - `family-plan` 的完成门槛包含每个治理 repo 都要从 live repo truth 重写当前完成进度、现状与理想态差距、下一轮 Agent prompt。
 - `family-plan` 现在输出 SSOT-first semantic consolidation workflow：治理前必须确定语义主题、SSOT owner、peer docs 和 section 分类，完成门槛包含每个语义主题只有一个 documented SSOT owner。
 - `family-plan` 明确区分 tranche closeout 和全局 `/goal` 完成：单轮 verified / absorbed 不能关闭全局目标，除非 coverage ledger 已覆盖所有 `README*` 与 `docs/**/*.md` 且剩余项已清空或折进下一轮 prompt。

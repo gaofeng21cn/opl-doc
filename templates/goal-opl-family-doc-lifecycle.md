@@ -1,10 +1,10 @@
 # OPL Series Docs Lifecycle Goal
 
-使用 OPL Doc，在 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`one-person-lab-app` 及后续纳入的 OPL-compatible repo 执行文档生命周期治理。
+使用 OPL Doc，在 `one-person-lab`、`med-autoscience`、`med-autogrant`、`redcube-ai`、`opl-meta-agent`、`opl-bookforge`、`one-person-lab-app` 及后续纳入的 OPL-compatible repo 执行文档生命周期治理。
 
 执行代理应自动创建或延续 `/goal`，用户只需要说“使用 OPL Doc 治理 OPL series 的开发文档生命周期”。
 
-默认 OPL series 范围是 6 个 repo；以各 repo 的理想情况和 single Active Truth plan 合计 12 个主参考文档为主要参考，根据现在各个 repo 代码、contracts、tests、CLI/read-model 和 docs 的实际情况，重写刷新各 repo 的当前完成进度、现状与理想态差距、下一轮 Agent prompt，并逐条评估各个 repo `README*` 与 `docs/**/*.md` 下其他所有文档。
+默认 OPL series 范围是 7 个 repo；以各 repo 的理想情况和 single Active Truth plan 合计 14 个主参考文档为主要参考，根据现在各个 repo 代码、contracts、tests、CLI/read-model 和 docs 的实际情况，重写刷新各 repo 的当前完成进度、现状与理想态差距、下一轮 Agent prompt，并逐条评估各个 repo `README*` 与 `docs/**/*.md` 下其他所有文档。
 
 目标：
 
@@ -49,4 +49,4 @@
 - prose 文档不与 contracts、tests、CLI/read-model 矛盾。
 - 没有新增兼容污染面或旧路线复活文案。
 - 最终 main checkout 验证通过，且临时 worktree/branch 已清理。
-- 全局完成还要求 6 个 repo 的 `README*` 与 `docs/**/*.md` 已逐段覆盖，coverage ledger 没有未覆盖文档或未折回的 stale/retire 候选。
+- 全局完成还要求 7 个 repo 的 `README*` 与 `docs/**/*.md` 已逐段覆盖，coverage ledger 没有未覆盖文档或未折回的 stale/retire 候选。

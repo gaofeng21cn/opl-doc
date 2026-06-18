@@ -43,12 +43,12 @@ The goal is simple: a user should be able to ask for document governance in one 
 - **README narrative repair**: it checks whether entry pages explain product value, usage scenarios, and how to start, while keeping technical detail in developer sections.
 - **Stale-plan cleanup**: completed plans, retired routes, and process material are folded into history or tombstones instead of staying in active docs.
 - **Whole-portfolio cleanup**: every `README*` and `docs/**/*.md` file is reviewed so each long-lived document keeps one clear job.
-- **OPL series governance**: generated guidance for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `one-person-lab-app`, and future compatible repositories.
+- **OPL series governance**: generated guidance for `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, `one-person-lab-app`, and future compatible repositories.
 - **Change packet templates**: compact temporary packets for work that needs intent, design, tasks, verification, and foldback.
 
 ## One-Sentence Quick Start
 
-For a complete new-machine Codex setup that includes OPL runtime, MAS/MAG/RCA/OMA agent surfaces, OPL Flow, OPL Doc, One Person Lab App, and companion tools, start from the [One Person Lab new-machine Codex bootstrap guide](https://github.com/gaofeng21cn/one-person-lab/blob/main/docs/references/current-support/opl-new-machine-codex-bootstrap.md).
+For a complete new-machine Codex setup that includes OPL runtime, MAS/MAG/RCA/OMA agent surfaces, BookForge series-governance coverage, OPL Flow, OPL Doc, One Person Lab App, and companion tools, start from the [One Person Lab new-machine Codex bootstrap guide](https://github.com/gaofeng21cn/one-person-lab/blob/main/docs/references/current-support/opl-new-machine-codex-bootstrap.md).
 
 Install it as a local Codex plugin:
 
@@ -67,7 +67,7 @@ Restart Codex, then use one sentence:
 - "Use OPL Doc to govern the OPL series developer documentation lifecycle."
 - "Use OPL Doc to clean stale active docs and fold completed plans into history."
 
-For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The default OPL series is six repos and 12 primary reference documents. Short single-repo read-only audits start with the doctor and do not force goal mode.
+For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The default OPL series is seven repos and 14 primary reference documents. Short single-repo read-only audits start with the doctor and do not force goal mode.
 
 ## How It Works
 
@@ -86,7 +86,7 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 
 OPL Doc is OPL-native by design. OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
 
-The default OPL series workflow covers the six governed repo set: OPL, MAS, MAG, RCA, OMA, and the App. Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions for workflow or shell-carrier tasks; they are not default Foundry Agent truth owners.
+The default OPL series workflow covers the seven governed repo set: OPL, MAS, MAG, RCA, OMA, BookForge, and the App. Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions for workflow or shell-carrier tasks; they are not default Foundry Agent truth owners.
 
 ## CLI
 

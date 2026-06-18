@@ -43,7 +43,7 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
         "增量日志，过时模块/接口/测试/文档/workflow/入口按"
         "理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，"
         "每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，"
-        "不得把全局 /goal 标记 complete，除非 6 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、"
+        f"不得把全局 /goal 标记 complete，除非 {repo_count} 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、"
         "未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、"
         "未覆盖文档、剩余 stale/retire 候选和下一轮写入范围。最终 main checkout 必须重新验证，"
         "且 canonical docs、history/tombstone 与必要的 contracts/read-model references 已同步。"

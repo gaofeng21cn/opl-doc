@@ -1,6 +1,6 @@
 ---
 name: "opl-doc"
-description: "Use when governing OPL-family developer documentation lifecycle through Single Source of Truth selection, content-level semantic consolidation, historical increment compression, stale module/interface/test/workflow retirement without compatibility surfaces, live-truth README/docs audits, one-document-one-role taxonomy, long-horizon change packets, or OPL docs doctor runs across one-person-lab, med-autoscience, med-autogrant, redcube-ai, opl-meta-agent, one-person-lab-app, or adjacent OPL-compatible repositories."
+description: "Use when governing OPL-family developer documentation lifecycle through Single Source of Truth selection, content-level semantic consolidation, historical increment compression, stale module/interface/test/workflow retirement without compatibility surfaces, live-truth README/docs audits, one-document-one-role taxonomy, long-horizon change packets, or OPL docs doctor runs across one-person-lab, med-autoscience, med-autogrant, redcube-ai, opl-meta-agent, opl-bookforge, one-person-lab-app, or adjacent OPL-compatible repositories."
 ---
 
 # OPL Doc
@@ -60,14 +60,14 @@ For edit work, do not start by fixing doctor findings or by selecting a file to 
 
 When the user asks for OPL series governance, multi-repo cleanup, long-running autonomous development, stale-doc cleanup with edits, or anything that mentions worktrees/subagents/absorbing back to `main`, create or resume a `/goal` before execution. The user should not have to remember to ask for `/goal`.
 
-The default OPL series scope is six repos: `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and `one-person-lab-app`. Their ideal-state references plus single Active Truth plans form 12 primary reference documents. Do not shrink this to the older five-repo set unless the user explicitly excludes the App repo.
+The default OPL series scope is seven repos: `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, and `one-person-lab-app`. Their ideal-state references plus single Active Truth plans form 14 primary reference documents. Do not shrink this to the older six-repo set unless the user explicitly excludes the BookForge repo.
 
 Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions. Include them only when the user asks for support repo governance or the current task touches workflow / shell-carrier / support docs. They are not part of the default Foundry Agent truth set.
 
 Use this objective shape:
 
 ```text
-使用 OPL Doc，自动创建或延续 /goal，治理 OPL series 6 个 repo 的开发文档生命周期；以各 repo 的 ideal-state reference 和 single Active Truth plan 合计 12 个主参考文档为主要参考，根据 live code、contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前完成进度、现状与理想态差距、下一轮 Agent prompt；逐条评估 README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；保证每个文档只有唯一任务和定位，active docs 不保存执行流水或历史增量日志，过时模块/接口/测试/文档/workflow/入口按理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，不得把全局 /goal 标记 complete，除非 6 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围；最终 main checkout 必须重新验证。
+使用 OPL Doc，自动创建或延续 /goal，治理 OPL series 7 个 repo 的开发文档生命周期；以各 repo 的 ideal-state reference 和 single Active Truth plan 合计 14 个主参考文档为主要参考，根据 live code、contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前完成进度、现状与理想态差距、下一轮 Agent prompt；逐条评估 README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；保证每个文档只有唯一任务和定位，active docs 不保存执行流水或历史增量日志，过时模块/接口/测试/文档/workflow/入口按理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，不得把全局 /goal 标记 complete，除非 7 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围；最终 main checkout 必须重新验证。
 ```
 
 For a short single-repo read-only audit, run doctor first and do not force `/goal` unless the user asks for cleanup or long-running execution.
@@ -263,8 +263,8 @@ Hard rules:
 
 Use this when the user asks to refresh OPL series docs from ideal state and gap plans.
 
-1. Treat the default six repos as the governed OPL series unless the user narrows scope: `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, and `one-person-lab-app`.
-2. Treat each governed repo's ideal-state reference and single Active Truth plan as primary references; the default six-repo run has 12 primary reference documents.
+1. Treat the default seven repos as the governed OPL series unless the user narrows scope: `one-person-lab`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, and `one-person-lab-app`.
+2. Treat each governed repo's ideal-state reference and single Active Truth plan as primary references; the default seven-repo run has 14 primary reference documents.
 3. Keep support repos such as `opl-doc` and `opl-aion-shell` as explicit extensions, not default Foundry Agent truth owners.
 4. Run doctor only as preflight, then set it aside; use `active_truth_health` only to notice shape risks, not as semantic proof.
 5. Read current code/contracts/tests/read-model surfaces before editing docs.
