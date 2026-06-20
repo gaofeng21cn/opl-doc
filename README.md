@@ -185,7 +185,7 @@ When the change is complete, fold current facts back into canonical docs and mov
 python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor .
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
-python3 scripts/opl_doc_doctor.py native-sync .
+python3 scripts/opl_doc_doctor.py native-check .
 bash scripts/verify.sh
 ```
 

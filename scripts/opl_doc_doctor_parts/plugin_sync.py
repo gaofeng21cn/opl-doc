@@ -139,6 +139,8 @@ def native_sync(root: Path, apply: bool = False) -> dict[str, Any]:
         )
     if apply and planned_changes:
         profile_path.parent.mkdir(parents=True, exist_ok=True)
+        expected = expected_native_profile(root, current)
+        expected_text = _native_profile_text(expected)
         profile_path.write_text(expected_text, encoding="utf-8")
     check = native_check(root)
     return {

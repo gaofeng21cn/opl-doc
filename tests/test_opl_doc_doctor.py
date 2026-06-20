@@ -175,6 +175,67 @@ def test_native_sync_apply_writes_profile_and_then_check_passes(tmp_path: Path) 
     ]
 
 
+def test_native_sync_apply_recomputes_profile_after_creating_contracts_dir(tmp_path: Path) -> None:
+    root = tmp_path / "opl-doc"
+    (root / "docs" / "active").mkdir(parents=True)
+    (root / "docs").mkdir(exist_ok=True)
+    (root / "tests").mkdir()
+    (root / ".codex-plugin").mkdir()
+    (root / "scripts").mkdir()
+    (root / ".codex-plugin" / "plugin.json").write_text('{"name":"opl-doc"}\n', encoding="utf-8")
+    (root / "README.md").write_text("# OPL Doc\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (root / "docs" / "README.md").write_text("# Docs\n", encoding="utf-8")
+    (root / "docs" / "status.md").write_text("# Status\n", encoding="utf-8")
+    (root / "docs" / "project.md").write_text("# Project\n", encoding="utf-8")
+    (root / "docs" / "architecture.md").write_text("# Architecture\n", encoding="utf-8")
+    (root / "docs" / "invariants.md").write_text("# Invariants\n", encoding="utf-8")
+    (root / "docs" / "decisions.md").write_text("# Decisions\n", encoding="utf-8")
+    (root / "pyproject.toml").write_text("[project]\nname='opl-doc'\n", encoding="utf-8")
+    (root / "scripts" / "verify.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    (root / "docs" / "active" / "opl-doc-active-truth-plan.md").write_text(
+        "# Active Truth\n\n"
+        "Owner: `OPL Doc`\nPurpose: `active_truth_plan`\nState: `active_plan`\n"
+        "Machine boundary: tests\n\n"
+        "## Current Completion Progress\n\nok\n\n"
+        "## Current-State vs Ideal-State Gaps\n\nok\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope: docs\n\nNon-goals: repo truth\n\nLive truth inputs: tests\n\n"
+        "Verification commands: scripts/verify.sh\n\nCompletion gate: profile checked\n\n"
+        "Foldback target: docs/status.md\n",
+        encoding="utf-8",
+    )
+
+    sync_payload = native_sync(root, apply=True)
+
+    assert sync_payload["applied"] is True
+    assert sync_payload["ok"] is True
+    assert sync_payload["drift"] == []
+    profile = json.loads((root / "contracts" / "opl-native-profile.json").read_text(encoding="utf-8"))
+    assert profile["machine_truth_surfaces"] == ["contracts", "tests", "pyproject.toml"]
+
+
+def test_support_repo_profile_contract_is_materialized() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile_path = root / "contracts" / "opl-native-profile.json"
+
+    assert profile_path.exists()
+    payload = native_check(root)
+    assert payload["ok"] is True
+    assert payload["missing"] == []
+    assert payload["drift"] == []
+
+    profile = json.loads(profile_path.read_text(encoding="utf-8"))
+    assert profile["schema"] == "opl_native_profile.v1"
+    assert profile["repo_id"] == "opl-doc"
+    assert profile["repo_profile"] == "codex_plugin"
+    assert profile["active_truth_owner"] == "docs/active/opl-doc-active-truth-plan.md"
+    assert profile["managed_by_plugins"]["opl-doc"]["authority_boundary"][
+        "support_repos_role"
+    ] == "extension_only_not_default_foundry_agent_truth_set"
+    assert "repo_truth" in profile["managed_by_plugins"]["opl-doc"]["does_not_own"]
+
+
 def test_native_sync_preserves_other_plugin_profile_entries(tmp_path: Path) -> None:
     root = tmp_path / "one-person-lab-app"
     (root / "docs" / "active").mkdir(parents=True)
