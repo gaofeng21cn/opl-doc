@@ -21,7 +21,7 @@ Machine boundary: 本文是人读开发计划与当前真相折返面；机器�
 
 | Area | Current status | Live evidence | Notes |
 | --- | --- | --- | --- |
-| Canonical skill surface | done | `skills/opl-doc/SKILL.md`; `skills/opl-doc/agents/openai.yaml`; `tests/test_install_local_plugin.py` | Active skill name is `opl-doc`; `opl-doc-governance` is tombstone-only. |
+| Canonical skill surface | done | `skills/opl-doc/SKILL.md`; `skills/opl-doc/agents/openai.yaml`; `tests/test_install_local_plugin.py` | Active skill name is `opl-doc`; `opl-doc-governance` is tombstone-only, with a no-resurrection test scanning active plugin / skill / script / template surfaces. |
 | Doctor CLI split | done | `scripts/opl_doc_doctor.py`; `scripts/opl_doc_doctor_parts/`; `tests/test_opl_doc_doctor.py`; `docs/history/opl-doc-doctor-entrypoint-facade-retirement.md`; `docs/history/opl-doc-doctor-parts-package-facade-retirement.md` | Command bootstrap and implementation modules are separated; old broad import facades are retired. |
 | Local installer surface | done | `scripts/install_local_plugin.py`; `tests/test_install_local_plugin.py`; `docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md` | Installer installs only `opl-doc`, updates marketplace entry for `opl-doc`, and creates `opl-doc-doctor`; old-name cleanup tail is retired. |
 | Family governance workflow | done | `scripts/opl_doc_doctor_parts/family_plan.py`; `templates/goal-opl-family-doc-lifecycle.md`; `tests/test_opl_doc_doctor.py` | Seven core repos are the default OPL series, now including OPL BookForge; support repos are explicit extension. |
@@ -101,4 +101,4 @@ Completion / foldback gate:
 
 - Process material to archive: none in this tranche.
 - Retired surfaces to tombstone: `docs/history/opl-doc-governance-tombstone.md`, `docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md`, `docs/history/opl-doc-doctor-entrypoint-facade-retirement.md`, and `docs/history/opl-doc-doctor-parts-package-facade-retirement.md` remain the current no-resurrection records.
-- No-resurrection guard: do not restore old-name skill files, installer cleanup tail, broad doctor entrypoint re-export, or package-root API facade.
+- No-resurrection guard: `tests/test_install_local_plugin.py` blocks active `opl-doc-governance` resurfacing outside tombstone / negative guard paths; the same test file also blocks old-name skill files. `tests/test_opl_doc_doctor.py` blocks the broad doctor entrypoint re-export and package-root API facade. Do not restore the installer cleanup tail.
