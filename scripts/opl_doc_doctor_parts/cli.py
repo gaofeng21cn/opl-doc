@@ -40,7 +40,10 @@ def parse_args() -> argparse.Namespace:
 
     native_sync_parser = subparsers.add_parser("native-sync")
     native_sync_parser.add_argument("repo_root", nargs="?", default=".")
-    native_sync_parser.add_argument("--apply", action="store_true")
+    native_sync_apply = native_sync_parser.add_mutually_exclusive_group()
+    native_sync_apply.add_argument("--apply", action="store_true", dest="apply")
+    native_sync_apply.add_argument("--dry-run", action="store_false", dest="apply")
+    native_sync_parser.set_defaults(apply=False)
     native_sync_parser.add_argument("--format", choices=["json"], default="json")
 
     return parser.parse_args()

@@ -102,10 +102,12 @@ Check or write an OPL-native repo profile:
 ```bash
 opl-doc-doctor native-check /path/to/repo
 opl-doc-doctor native-sync /path/to/repo
+opl-doc-doctor native-sync /path/to/repo --dry-run
 opl-doc-doctor native-sync /path/to/repo --apply
 ```
 
-`native-sync` defaults to dry-run. With `--apply`, it writes only
+`native-sync` defaults to dry-run; `--dry-run` is accepted as the explicit
+non-writing form. With `--apply`, it writes only
 `contracts/opl-native-profile.json`. That file is a plugin sync declaration:
 it records the repo profile, Active Truth owner, canonical docs, taxonomy dirs,
 machine-truth surfaces, repo-owned paths, and verification commands. It is

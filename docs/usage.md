@@ -54,10 +54,12 @@ opl-doc-doctor doctor /path/to/one-person-lab
 ```bash
 opl-doc-doctor native-check /path/to/repo
 opl-doc-doctor native-sync /path/to/repo
+opl-doc-doctor native-sync /path/to/repo --dry-run
 opl-doc-doctor native-sync /path/to/repo --apply
 ```
 
-`native-sync` 默认只输出 dry-run 计划。带 `--apply` 时只写
+`native-sync` 默认只输出 dry-run 计划；`--dry-run` 是显式不写入形式。带
+`--apply` 时只写
 `contracts/opl-native-profile.json`，把目标 repo 的 `repo_profile`、
 `flow_profile`、`doc_profile`、Active Truth owner、canonical docs、taxonomy
 dirs、machine truth surfaces、repo-owned paths 和验证入口固定成可检查声明。

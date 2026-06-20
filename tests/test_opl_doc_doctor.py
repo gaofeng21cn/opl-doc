@@ -135,6 +135,50 @@ def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) ->
     assert not (contracts / "opl-native-profile.json").exists()
 
 
+def test_native_sync_cli_explicit_dry_run_does_not_write_profile(tmp_path: Path) -> None:
+    root = tmp_path / "opl-meta-agent"
+    docs = root / "docs" / "active"
+    contracts = root / "contracts"
+    docs.mkdir(parents=True)
+    contracts.mkdir()
+    (root / "README.md").write_text("# OMA\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (root / "package.json").write_text('{"name":"opl-meta-agent","scripts":{"test":"node --test"}}\n', encoding="utf-8")
+    (docs / "opl-meta-agent-ideal-state-gap-plan.md").write_text(
+        "# OMA Gap\n\n"
+        "Owner: `OMA`\nPurpose: `active_truth_plan`\nState: `active_plan`\n"
+        "Machine boundary: contracts\n\n"
+        "## Current Completion Progress\n\nok\n\n"
+        "## Current-State vs Ideal-State Gaps\n\nok\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope: docs\n\nNon-goals: runtime\n\nLive truth inputs: contracts\n\n"
+        "Verification commands: npm test\n\nCompletion gate: profile checked\n\nFoldback target: docs/status.md\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/opl_doc_doctor.py",
+            "native-sync",
+            str(root),
+            "--dry-run",
+        ],
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+    )
+
+    payload = json.loads(result.stdout)
+    assert payload["apply"] is False
+    assert payload["applied"] is False
+    assert payload["planned_changes"] == [
+        {"path": "contracts/opl-native-profile.json", "action": "create"}
+    ]
+    assert not (contracts / "opl-native-profile.json").exists()
+
+
 def test_native_sync_apply_writes_profile_and_then_check_passes(tmp_path: Path) -> None:
     root = tmp_path / "med-autoscience"
     (root / "docs" / "active").mkdir(parents=True)

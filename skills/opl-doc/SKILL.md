@@ -121,13 +121,15 @@ For plugin-native repo upgrades, use:
 ```bash
 opl-doc-doctor native-check <repo-root>
 opl-doc-doctor native-sync <repo-root>
+opl-doc-doctor native-sync <repo-root> --dry-run
 opl-doc-doctor native-sync <repo-root> --apply
 ```
 
-`native-sync` is dry-run unless `--apply` is passed. The apply mode only writes
-`contracts/opl-native-profile.json`; it must not rewrite domain docs, source,
-tests, runtime state, owner receipts, quality verdicts, artifact authority,
-repo truth, production readiness, or the Foundry Agent truth set.
+`native-sync` is dry-run unless `--apply` is passed; `--dry-run` is the explicit
+non-writing form. The apply mode only writes `contracts/opl-native-profile.json`;
+it must not rewrite domain docs, source, tests, runtime state, owner receipts,
+quality verdicts, artifact authority, repo truth, production readiness, or the
+Foundry Agent truth set.
 
 ## Live Truth Audit
 
