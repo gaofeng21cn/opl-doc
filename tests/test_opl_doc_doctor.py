@@ -34,6 +34,7 @@ def test_doctor_entrypoint_is_command_bootstrap_not_api_facade() -> None:
     assert "scripts.opl_doc_doctor_parts.cli import main" in source
     assert "from scripts.opl_doc_doctor_parts import (" not in source
     assert "__all__" not in source
+    assert "sys.dont_write_bytecode = True" in source
     assert payload["repo_profile"] == "codex_plugin"
 
 
@@ -234,6 +235,19 @@ def test_support_repo_profile_contract_is_materialized() -> None:
         "support_repos_role"
     ] == "extension_only_not_default_foundry_agent_truth_set"
     assert "repo_truth" in profile["managed_by_plugins"]["opl-doc"]["does_not_own"]
+
+
+def test_verify_entrypoint_keeps_python_cache_outside_checkout() -> None:
+    verify_script = Path("scripts/verify.sh").read_text(encoding="utf-8")
+    pyproject = Path("pyproject.toml").read_text(encoding="utf-8")
+
+    assert "OPL_DOC_REPO_TEMP_ROOT" in verify_script
+    assert "PYTHONDONTWRITEBYTECODE=1" in verify_script
+    assert "PYTHONPYCACHEPREFIX" in verify_script
+    assert "PYTEST_ADDOPTS" in verify_script
+    assert "cache_dir=$temp_root/pytest-cache" in verify_script
+    assert "sys.dont_write_bytecode = True" in Path("scripts/opl_doc_doctor.py").read_text(encoding="utf-8")
+    assert 'addopts = "-p no:cacheprovider"' in pyproject
 
 
 def test_native_sync_preserves_other_plugin_profile_entries(tmp_path: Path) -> None:

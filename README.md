@@ -182,11 +182,11 @@ When the change is complete, fold current facts back into canonical docs and mov
 ### Verification
 
 ```bash
-python3 -m pytest -q
+bash scripts/verify.sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor .
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
 python3 scripts/opl_doc_doctor.py native-check .
-bash scripts/verify.sh
 ```
 
 ### Boundaries

@@ -167,10 +167,10 @@ foldback.md
 ### 验证
 
 ```bash
-python3 -m pytest -q
+bash scripts/verify.sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor .
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
-bash scripts/verify.sh
 ```
 
 ### 边界

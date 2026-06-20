@@ -17,10 +17,12 @@ doctor、native profile 和 family-plan 都只是 workflow / lightweight risk ma
 
 ## 验证
 
-默认验证命令：
+默认验证命令使用仓内 wrapper，避免把 pytest cache、Python bytecode 或临时输出写入开发 checkout：
 
 ```bash
-python3 -m pytest -q
-python3 scripts/opl_doc_doctor.py doctor .
-python3 scripts/opl_doc_doctor.py family-plan --format markdown
+bash scripts/verify.sh
 ```
+
+若需要单独运行 pytest 或 doctor 命令，优先复用 `scripts/verify.sh` 中的
+`OPL_DOC_REPO_TEMP_ROOT`、`PYTHONDONTWRITEBYTECODE`、`PYTHONPYCACHEPREFIX` 和
+`PYTEST_ADDOPTS` 环境；不要把 `.pytest_cache`、`__pycache__` 或 `*.pyc` 留在仓库中。

@@ -27,6 +27,7 @@ Machine boundary: 本文是人读开发计划与当前真相折返面；机器�
 | Family governance workflow | done | `scripts/opl_doc_doctor_parts/family_plan.py`; `templates/goal-opl-family-doc-lifecycle.md`; `tests/test_opl_doc_doctor.py` | Seven core repos are the default OPL series, now including OPL BookForge; support repos are explicit extension. |
 | Native profile sync | done | `scripts/opl_doc_doctor_parts/plugin_sync.py`; `scripts/opl_doc_doctor_parts/profile_discovery.py`; `tests/test_opl_doc_doctor.py`; `docs/architecture.md` | `native-sync --apply` writes only `contracts/opl-native-profile.json` in a target repo; it does not create repo truth. |
 | Support repo active truth owner | done | `opl-doc-doctor doctor . --format json`; this document | The support repo now has a detected Active Truth owner for current progress, gaps and next-round prompt. |
+| Repo-temp verification hygiene | done | `scripts/verify.sh`; `scripts/opl_doc_doctor.py`; `pyproject.toml`; `tests/test_opl_doc_doctor.py` | Default verification routes Python bytecode and pytest cache outside the checkout; the doctor CLI disables bytecode writes before importing implementation modules; pytest cache provider is disabled for direct test runs. |
 
 ## Current-State vs Ideal-State Gaps
 
@@ -36,6 +37,7 @@ Machine boundary: 本文是人读开发计划与当前真相折返面；机器�
 | --- | --- | --- | --- | --- | --- |
 | support-repo-profile-contract | Support repo participates in OPL native profile drift checks without becoming a Foundry Agent truth owner. | `contracts/opl-native-profile.json` is committed for this support repo and declares `opl-doc` as a `codex_plugin` profile with extension-only authority. | Keep `native-check .` in default verification so profile drift fails closed; do not treat the profile as repo truth or Foundry Agent truth. | `contracts/opl-native-profile.json`; `scripts/opl_doc_doctor_parts/plugin_sync.py`; `scripts/verify.sh`; `docs/decisions.md` | `python3 scripts/opl_doc_doctor.py native-check .`; `bash scripts/verify.sh`. |
 | active-support-coverage-ledger | OPL series tranches keep repo-by-repo coverage / next-scope evidence, including explicit support repos touched by the task. | Core skill requires coverage ledger, but `opl-doc` support repo previously had no active owner to carry current support-repo coverage state. | Keep this document updated when support repo governance changes; mirror cross-repo tranche coverage into the relevant governed repo ledger. | `docs/active/opl-doc-active-truth-plan.md`; OPL family ledger in `one-person-lab` | Current objective explicitly includes support repos touched this round. |
+| repo-temp-verification-hygiene | Default verification should not create `.pytest_cache`, `__pycache__`, `*.pyc`, virtualenvs or install artifacts inside the development checkout. | `scripts/verify.sh` exports repo-temp Python/pytest cache environment; `scripts/opl_doc_doctor.py` disables bytecode writes before importing implementation modules; `pyproject.toml` disables pytest cache provider for direct pytest runs. | Keep cache/bytecode safeguards in `scripts/verify.sh` and the doctor CLI entrypoint, and guard them with tests. | `scripts/verify.sh`; `scripts/opl_doc_doctor.py`; `pyproject.toml`; `tests/test_opl_doc_doctor.py` | `bash scripts/verify.sh`; `PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q`; `git status --short`; cache-dir scan. |
 
 ### Test / Evidence Gaps
 
@@ -80,12 +82,13 @@ Required actions:
 Verification commands:
 
 ```bash
-python3 -m pytest -q
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q
 python3 scripts/opl_doc_doctor.py doctor . --format json
 python3 scripts/opl_doc_doctor.py family-plan --format markdown
 python3 scripts/opl_doc_doctor.py native-check .
 bash scripts/verify.sh
 git diff --check
+find . -path './.git' -prune -o \( -name '.pytest_cache' -o -name '__pycache__' -o -name '*.pyc' \) -print
 ```
 
 Completion / foldback gate:

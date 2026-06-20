@@ -22,6 +22,7 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - `scripts/opl_doc_doctor.py native-check|native-sync`：目标 repo 的 plugin-native profile 检查/同步入口；`native-sync --apply` 只写 `contracts/opl-native-profile.json`，用于声明 repo profile、OPL Flow / OPL Doc profile、Active Truth owner、canonical docs、taxonomy dirs、machine truth surfaces、repo-owned paths 和验证入口。
 - `contracts/opl-native-profile.json`：本 support repo 已提交自己的 OPL-native profile declaration，默认验证使用 `native-check .` 防止 drift；该 profile 只声明插件同步和 support-repo 边界，不成为 repo truth、Foundry Agent truth、runtime truth 或 production readiness。
 - `doctor` / `native profile` / `family-plan` 现在共同投影 no-authority boundary：它们只做 lightweight risk map、profile sync / drift check 和 workflow plan，不持有 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt、production readiness 或 Foundry Agent truth set。
+- `scripts/verify.sh`：默认验证现在把 Python bytecode、pytest cache 和临时产物导向仓库外部 `OPL_DOC_REPO_TEMP_ROOT`；`scripts/opl_doc_doctor.py` 在导入实现模块前禁用 bytecode 写入，`pyproject.toml` 禁用 pytest cache provider。单独运行 pytest 时仍应显式使用 `PYTHONDONTWRITEBYTECODE=1`，不能把裸 `python3 -m pytest` 当作不污染 checkout 的入口。
 - `scripts/install_local_plugin.py --verify-only`：新机器安装后的本地插件、marketplace、`opl-doc` 短入口和 `opl-doc-doctor` 命令验证入口。
 - `family-plan` 默认把 7 个 repo 的 ideal-state reference 与 single Active Truth plan 作为 14 个主参考文档；旧的 6 仓/12 文档范围只在用户显式排除 BookForge repo 时使用。
 - `family-plan` 的完成门槛包含每个治理 repo 都要从 live repo truth 重写当前完成进度、现状与理想态差距、下一轮 Agent prompt。
