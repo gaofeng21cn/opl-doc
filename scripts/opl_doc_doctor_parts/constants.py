@@ -41,6 +41,7 @@ CANONICAL_DOC_DIRS = [
 ]
 
 NATIVE_PROFILE_REL_PATH = "contracts/opl-native-profile.json"
+SUPPORT_REPO_POLICY_REL_PATH = "contracts/support-repo-policy.json"
 
 HEADER_FIELDS = ("Owner:", "Purpose:", "State:", "Machine boundary:")
 
@@ -97,6 +98,12 @@ DEFAULT_SUPPORT_REPO_NAMES = {
     "shell": "opl-aion-shell",
 }
 
+SUPPORT_REPO_INCLUDE_ONLY_WHEN = [
+    "user_explicitly_requests_support_repo_governance",
+    "current_task_touches_support_repo_docs_or_scripts",
+    "support_repo_is_needed_to_explain_workflow_or_shell_carrier_boundary",
+]
+
 OPL_DOC_AUTHORITY_BOUNDARY = {
     "doctor_role": "lightweight_risk_map_only",
     "native_profile_role": "profile_sync_and_drift_check_only",
@@ -113,6 +120,32 @@ OPL_DOC_AUTHORITY_BOUNDARY = {
         "foundry_agent_truth_set",
     ],
 }
+
+
+def build_support_repo_policy() -> dict[str, object]:
+    return {
+        "schema": "opl_doc_support_repo_policy.v1",
+        "policy_id": "opl-doc.support-repo-policy.v1",
+        "state": "extension_only_not_default_foundry_agent_truth_set",
+        "default_included_in_governed_repo_set": False,
+        "extension_only": True,
+        "not_foundry_agent_truth_set": True,
+        "support_repos": dict(DEFAULT_SUPPORT_REPO_NAMES),
+        "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
+        "include_only_when": list(SUPPORT_REPO_INCLUDE_ONLY_WHEN),
+        "contract_ref": SUPPORT_REPO_POLICY_REL_PATH,
+        "no_resurrection_guard": {
+            "support_repos_must_not_enter_default_series_repo_set": True,
+            "family_plan_must_derive_support_policy_from_this_source": True,
+            "native_profile_must_keep_support_repo_role_extension_only": True,
+            "default_series_repo_ids_must_exclude_support_repo_ids": sorted(
+                DEFAULT_SUPPORT_REPO_NAMES
+            ),
+            "default_series_repo_names_must_exclude_support_repo_names": sorted(
+                DEFAULT_SUPPORT_REPO_NAMES.values()
+            ),
+        },
+    }
 
 DATED_HEADING_RISK_THRESHOLD = 5
 CHECKBOX_LIST_RISK_THRESHOLD = 10

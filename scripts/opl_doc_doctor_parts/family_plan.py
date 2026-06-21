@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .constants import DEFAULT_SERIES_REPO_NAMES, DEFAULT_SUPPORT_REPO_NAMES, OPL_DOC_AUTHORITY_BOUNDARY
+from .constants import DEFAULT_SERIES_REPO_NAMES, build_support_repo_policy
 
 
 def build_primary_reference_docs(repo_paths: dict[str, str]) -> list[str]:
@@ -53,19 +53,7 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
 def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     paths = repo_paths or default_series_repos()
     primary_reference_docs = build_primary_reference_docs(paths)
-    support_repos = dict(DEFAULT_SUPPORT_REPO_NAMES)
-    support_repo_policy = {
-        "default_included_in_governed_repo_set": False,
-        "extension_only": True,
-        "not_foundry_agent_truth_set": True,
-        "support_repos": support_repos,
-        "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
-        "include_only_when": [
-            "user_explicitly_requests_support_repo_governance",
-            "current_task_touches_support_repo_docs_or_scripts",
-            "support_repo_is_needed_to_explain_workflow_or_shell_carrier_boundary",
-        ],
-    }
+    support_repo_policy = build_support_repo_policy()
     governance_prompt_elements = [
         "series_primary_reference_docs",
         "support_repo_extension_boundary",

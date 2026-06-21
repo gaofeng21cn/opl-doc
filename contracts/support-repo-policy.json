@@ -1,0 +1,47 @@
+{
+  "authority_boundary": {
+    "doctor_role": "lightweight_risk_map_only",
+    "does_not_own": [
+      "repo_truth",
+      "runtime_truth",
+      "domain_truth",
+      "artifact_authority",
+      "quality_verdicts",
+      "owner_receipts",
+      "production_readiness",
+      "foundry_agent_truth_set"
+    ],
+    "family_plan_role": "workflow_plan_only",
+    "native_profile_role": "profile_sync_and_drift_check_only",
+    "support_repos_role": "extension_only_not_default_foundry_agent_truth_set"
+  },
+  "contract_ref": "contracts/support-repo-policy.json",
+  "default_included_in_governed_repo_set": false,
+  "extension_only": true,
+  "include_only_when": [
+    "user_explicitly_requests_support_repo_governance",
+    "current_task_touches_support_repo_docs_or_scripts",
+    "support_repo_is_needed_to_explain_workflow_or_shell_carrier_boundary"
+  ],
+  "no_resurrection_guard": {
+    "default_series_repo_ids_must_exclude_support_repo_ids": [
+      "opl_doc",
+      "shell"
+    ],
+    "default_series_repo_names_must_exclude_support_repo_names": [
+      "opl-aion-shell",
+      "opl-doc"
+    ],
+    "family_plan_must_derive_support_policy_from_this_source": true,
+    "native_profile_must_keep_support_repo_role_extension_only": true,
+    "support_repos_must_not_enter_default_series_repo_set": true
+  },
+  "not_foundry_agent_truth_set": true,
+  "policy_id": "opl-doc.support-repo-policy.v1",
+  "schema": "opl_doc_support_repo_policy.v1",
+  "state": "extension_only_not_default_foundry_agent_truth_set",
+  "support_repos": {
+    "opl_doc": "opl-doc",
+    "shell": "opl-aion-shell"
+  }
+}

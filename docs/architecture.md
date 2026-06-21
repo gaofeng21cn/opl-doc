@@ -22,6 +22,7 @@ Machine boundary: 本文是人读架构；可执行命令行为以 `scripts/opl_
    - 通过 repo-native 测试、diff check、doctor 输出和最终 main checkout 验证闭环。
 7. Support extension 层
    - `family-plan` 默认只治理 7 个核心 OPL series repo。`opl-doc`、`opl-aion-shell` 等 support repo 只在用户显式要求或当前任务触及 workflow / shell carrier / support docs 时作为 extension 纳入；它们不是默认 Foundry Agent truth set。
+   - `contracts/support-repo-policy.json` 物化这条 support-extension policy；`family-plan` 从同一 source 派生 `support_repo_policy`，native profile 把该合同列为插件管理面。该合同是 no-resurrection / no-second-truth guard，不是目标 repo truth 或 Foundry Agent truth owner 集合。
 
 ## 自动开发文档回路
 
@@ -43,4 +44,4 @@ CLI 不承担 Active Truth 语义治理。doctor 只提示明显结构风险；`
 
 ## 边界
 
-doctor 只读，不执行清理、不修改目标仓、不生成 owner receipt。`native-sync --apply` 只允许写目标仓的 `contracts/opl-native-profile.json`，用于插件原生升级和 drift 检查。`family-plan` 不生成 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt 或 Foundry Agent truth owner set。skill 可以指导 Codex 修改目标仓文档，但必须先读取目标 repo 约束并运行对应验证。
+doctor 只读，不执行清理、不修改目标仓、不生成 owner receipt。`native-sync --apply` 只允许写目标仓的 `contracts/opl-native-profile.json`，用于插件原生升级和 drift 检查。本仓的 `contracts/support-repo-policy.json` 只约束 OPL Doc 自身如何把 support repos 保持为 explicit extension。`family-plan` 不生成 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt 或 Foundry Agent truth owner set。skill 可以指导 Codex 修改目标仓文档，但必须先读取目标 repo 约束并运行对应验证。

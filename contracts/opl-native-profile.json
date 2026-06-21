@@ -69,7 +69,8 @@
         "production_readiness"
       ],
       "managed_surfaces": [
-        "contracts/opl-native-profile.json"
+        "contracts/opl-native-profile.json",
+        "contracts/support-repo-policy.json"
       ],
       "management": "profile_check_and_sync"
     }

@@ -12,6 +12,7 @@ from scripts.opl_doc_doctor_parts.family_plan import (
     family_plan,
     parse_repo_overrides,
 )
+from scripts.opl_doc_doctor_parts.constants import build_support_repo_policy
 from scripts.opl_doc_doctor_parts.invariant_checks import doctor
 from scripts.opl_doc_doctor_parts.plugin_sync import native_check, native_sync
 from scripts.opl_doc_doctor_parts.profile_discovery import detect_profile
@@ -263,8 +264,10 @@ def test_native_sync_apply_recomputes_profile_after_creating_contracts_dir(tmp_p
 def test_support_repo_profile_contract_is_materialized() -> None:
     root = Path(__file__).resolve().parents[1]
     profile_path = root / "contracts" / "opl-native-profile.json"
+    support_policy_path = root / "contracts" / "support-repo-policy.json"
 
     assert profile_path.exists()
+    assert support_policy_path.exists()
     payload = native_check(root)
     assert payload["ok"] is True
     assert payload["missing"] == []
@@ -278,7 +281,18 @@ def test_support_repo_profile_contract_is_materialized() -> None:
     assert profile["managed_by_plugins"]["opl-doc"]["authority_boundary"][
         "support_repos_role"
     ] == "extension_only_not_default_foundry_agent_truth_set"
+    assert profile["managed_by_plugins"]["opl-doc"]["managed_surfaces"] == [
+        "contracts/opl-native-profile.json",
+        "contracts/support-repo-policy.json",
+    ]
     assert "repo_truth" in profile["managed_by_plugins"]["opl-doc"]["does_not_own"]
+
+    support_policy = json.loads(support_policy_path.read_text(encoding="utf-8"))
+    assert support_policy == build_support_repo_policy()
+    assert support_policy["contract_ref"] == "contracts/support-repo-policy.json"
+    assert support_policy["no_resurrection_guard"][
+        "support_repos_must_not_enter_default_series_repo_set"
+    ] is True
 
 
 def test_verify_entrypoint_keeps_python_cache_outside_checkout() -> None:
@@ -770,13 +784,26 @@ def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
 
 def test_family_plan_support_repos_are_extension_only() -> None:
     payload = family_plan()
+    contract_policy = json.loads(
+        Path("contracts/support-repo-policy.json").read_text(encoding="utf-8")
+    )
 
     assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app"}
     assert "opl_doc" not in payload["repos"]
     assert "shell" not in payload["repos"]
     policy = payload["support_repo_policy"]
+    assert policy == contract_policy == build_support_repo_policy()
     assert policy["authority_boundary"]["family_plan_role"] == "workflow_plan_only"
     assert policy["authority_boundary"]["support_repos_role"] == "extension_only_not_default_foundry_agent_truth_set"
     assert "foundry_agent_truth_set" in policy["authority_boundary"]["does_not_own"]
     assert "owner_receipts" in policy["authority_boundary"]["does_not_own"]
     assert "user_explicitly_requests_support_repo_governance" in policy["include_only_when"]
+    guard = policy["no_resurrection_guard"]
+    assert guard["default_series_repo_ids_must_exclude_support_repo_ids"] == [
+        "opl_doc",
+        "shell",
+    ]
+    assert guard["default_series_repo_names_must_exclude_support_repo_names"] == [
+        "opl-aion-shell",
+        "opl-doc",
+    ]

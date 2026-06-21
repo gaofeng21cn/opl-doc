@@ -7,7 +7,11 @@ from pathlib import Path
 from typing import Any
 
 from .common import read_text
-from .constants import NATIVE_PROFILE_REL_PATH, OPL_DOC_AUTHORITY_BOUNDARY
+from .constants import (
+    NATIVE_PROFILE_REL_PATH,
+    OPL_DOC_AUTHORITY_BOUNDARY,
+    SUPPORT_REPO_POLICY_REL_PATH,
+)
 from .invariant_checks import doctor
 from .profile_discovery import repo_identity
 
@@ -51,7 +55,7 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
     managed_by_plugins = dict((current or {}).get("managed_by_plugins") or {})
     managed_by_plugins["opl-doc"] = {
         "management": "profile_check_and_sync",
-        "managed_surfaces": [NATIVE_PROFILE_REL_PATH],
+        "managed_surfaces": [NATIVE_PROFILE_REL_PATH, SUPPORT_REPO_POLICY_REL_PATH],
         "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
         "does_not_own": [
             "repo_truth",
