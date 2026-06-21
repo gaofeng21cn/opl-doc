@@ -7,6 +7,8 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 
 当前已落地：
 
+- Live Evidence 后置 / 功能结构优先是 `opl-doc` 治理工作读法。普通治理先关闭文档结构、SSOT owner、Active Truth owner、taxonomy、tombstone/no-resurrection、native profile drift、doctor risk-map、family-plan workflow 和 verification hygiene 这类功能/结构缺口。目标 repo 的 runtime evidence、owner receipts、production readiness、release readiness、domain readiness、App release、Brand L5、真实项目运行或 support repo live install evidence 仍归后置 evidence / owner lane；它们不能反向阻塞可独立完成的文档结构治理，也不能由 doctor clean、native-check pass、family-plan 输出、Markdown 完整或 profile synced 替代。
+
 - `skills/opl-doc/SKILL.md`：canonical Codex 使用入口。
 - `docs/active/opl-doc-active-truth-plan.md`：support repo Active Truth owner，持有当前完成进度、现状与理想态差距、下一轮 Agent prompt，以及 support repo coverage / next-scope foldback。
 - `docs/history/opl-doc-governance-tombstone.md`：已退役 `opl-doc-governance` 入口的 provenance；旧名不再作为 active skill、UI entry 或 workflow 暴露；`tests/test_install_local_plugin.py` 还会扫描 active plugin / skill / script / template surfaces，防止旧入口在非 tombstone 或 negative guard 语境中复活。
