@@ -17,4 +17,4 @@ Machine boundary: 本文是人读索引；可执行真相以 skill、CLI doctor 
 - [active/opl-doc-active-truth-plan.md](./active/opl-doc-active-truth-plan.md)：support repo 当前完成进度、当前差距、下一轮 Agent prompt 与 coverage / next-scope foldback owner。
 - [design.md](./design.md)：实现设计参考。
 - [usage.md](./usage.md)：使用说明。
-- [history/opl-doc-governance-tombstone.md](./history/opl-doc-governance-tombstone.md)：已退役旧入口 provenance。
+- [history/](./history/)：已退役旧入口 provenance。

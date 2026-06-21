@@ -11,7 +11,7 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 
 - `skills/opl-doc/SKILL.md`：canonical Codex 使用入口。
 - `docs/active/opl-doc-active-truth-plan.md`：support repo Active Truth owner，持有当前完成进度、现状与理想态差距、下一轮 Agent prompt，以及 support repo coverage / next-scope foldback。
-- `docs/history/opl-doc-governance-tombstone.md`：已退役 `opl-doc-governance` 入口的 provenance；旧名不再作为 active skill、UI entry 或 workflow 暴露；`tests/test_install_local_plugin.py` 还会扫描 active plugin / skill / script / template surfaces，防止旧入口在非 tombstone 或 negative guard 语境中复活。
+- `docs/history/` 中的 retired previous skill-name tombstone：已退役旧入口的 provenance；旧名不再作为 active skill、UI entry 或 workflow 暴露；`tests/test_install_local_plugin.py` 还会扫描 active plugin / skill / script / template surfaces，防止旧入口在非 history tombstone 或 negative guard 语境中复活。
 - `scripts/opl_doc_doctor.py doctor`：单仓文档生命周期只读诊断，并报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
 - `scripts/opl_doc_doctor.py`：现在只是仓内命令 bootstrap；doctor 实现和 import API 归 `scripts/opl_doc_doctor_parts/` 中的 profile discovery、invariant checks、plugin-native profile sync、family-plan generation、CLI parsing 和 report rendering 分层维护。
 - `scripts/opl_doc_doctor.py doctor`：保持轻量，只报告 missing canonical docs、lifecycle header、legacy active wording、长清单风险和 repo-native verification surface；Active Truth 语义判断由 Codex 按 skill 读取 live repo truth 后执行。

@@ -23,9 +23,9 @@ Live Evidence 后置是本文执行原则。`opl-doc` 的日常治理优先关�
 
 | Area | Current status | Live evidence | Notes |
 | --- | --- | --- | --- |
-| Canonical skill surface | done | `skills/opl-doc/SKILL.md`; `skills/opl-doc/agents/openai.yaml`; `tests/test_install_local_plugin.py` | Active skill name is `opl-doc`; `opl-doc-governance` is tombstone-only, with a no-resurrection test scanning active plugin / skill / script / template surfaces. |
+| Canonical skill surface | done | `skills/opl-doc/SKILL.md`; `skills/opl-doc/agents/openai.yaml`; `tests/test_install_local_plugin.py` | Active skill name is `opl-doc`; the retired previous skill name is history-only, with a no-resurrection test scanning active plugin / skill / script / template surfaces. |
 | Doctor CLI split | done | `scripts/opl_doc_doctor.py`; `scripts/opl_doc_doctor_parts/`; `tests/test_opl_doc_doctor.py`; `docs/history/opl-doc-doctor-entrypoint-facade-retirement.md`; `docs/history/opl-doc-doctor-parts-package-facade-retirement.md` | Command bootstrap and implementation modules are separated; old broad import facades are retired. |
-| Local installer surface | done | `scripts/install_local_plugin.py`; `tests/test_install_local_plugin.py`; `docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md` | Installer installs only `opl-doc`, updates marketplace entry for `opl-doc`, and creates `opl-doc-doctor`; old-name cleanup tail is retired. |
+| Local installer surface | done | `scripts/install_local_plugin.py`; `tests/test_install_local_plugin.py`; retired installer cleanup-tail tombstone in `docs/history/` | Installer installs only `opl-doc`, updates marketplace entry for `opl-doc`, and creates `opl-doc-doctor`; old-name cleanup tail is retired. |
 | Family governance workflow | done | `scripts/opl_doc_doctor_parts/family_plan.py`; `templates/goal-opl-family-doc-lifecycle.md`; `tests/test_opl_doc_doctor.py` | Seven core repos are the default OPL series, now including OPL BookForge; support repos are explicit extension. |
 | Native profile sync | done | `scripts/opl_doc_doctor_parts/plugin_sync.py`; `scripts/opl_doc_doctor_parts/profile_discovery.py`; `tests/test_opl_doc_doctor.py`; `docs/architecture.md` | `native-sync --apply` writes only `contracts/opl-native-profile.json` in a target repo; it does not create repo truth. |
 | Support repo active truth owner | done | `opl-doc-doctor doctor . --format json`; this document | The support repo now has a detected Active Truth owner for current progress, gaps and next-round prompt. |
@@ -52,7 +52,7 @@ Live Evidence 后置是本文执行原则。`opl-doc` 的日常治理优先关�
 
 Objective:
 
-- Use OPL Doc to continue support-repo governance for `opl-doc` while preserving its extension-only boundary: maintain the committed `contracts/opl-native-profile.json` with `native-check`, update docs only from live source/tests/CLI evidence, and keep old `opl-doc-governance` surfaces tombstone-only without restoring compatibility hooks.
+- Use OPL Doc to continue support-repo governance for `opl-doc` while preserving its extension-only boundary: maintain the committed `contracts/opl-native-profile.json` with `native-check`, update docs only from live source/tests/CLI evidence, and keep the retired previous skill-name surfaces history-only without restoring compatibility hooks.
 
 Write scope:
 
@@ -63,7 +63,7 @@ Write scope:
 Non-goals:
 
 - Do not make `opl-doc` part of the default Foundry Agent truth owner set.
-- Do not restore `opl-doc-governance` skill, marketplace entry, installer cleanup hook, alias, facade, wrapper, or active README quick-start wording.
+- Do not restore the retired previous skill-name skill, marketplace entry, installer cleanup hook, alias, facade, wrapper, or active README quick-start wording.
 - Do not write target repo truth, runtime truth, artifact authority, quality verdict, owner receipt, or production readiness into doctor/native-profile/family-plan output.
 
 Live truth inputs:
@@ -106,5 +106,5 @@ Completion / foldback gate:
 ## History / Tombstone Foldback
 
 - Process material to archive: none in this tranche.
-- Retired surfaces to tombstone: `docs/history/opl-doc-governance-tombstone.md`, `docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md`, `docs/history/opl-doc-doctor-entrypoint-facade-retirement.md`, and `docs/history/opl-doc-doctor-parts-package-facade-retirement.md` remain the current no-resurrection records.
-- No-resurrection guard: `tests/test_install_local_plugin.py` blocks active `opl-doc-governance` resurfacing outside tombstone / negative guard paths; the same test file also blocks old-name skill files. `tests/test_opl_doc_doctor.py` blocks the broad doctor entrypoint re-export and package-root API facade. Do not restore the installer cleanup tail.
+- Retired surfaces to tombstone: the retired previous skill-name tombstone and installer cleanup-tail tombstone in `docs/history/`, plus the doctor entrypoint/package-facade retirement records, remain the current no-resurrection records.
+- No-resurrection guard: `tests/test_install_local_plugin.py` blocks the retired previous skill-name literal from resurfacing outside history tombstones and the negative guard itself; the same test file also blocks old-name skill files. `tests/test_opl_doc_doctor.py` blocks the broad doctor entrypoint re-export and package-root API facade. Do not restore the installer cleanup tail.

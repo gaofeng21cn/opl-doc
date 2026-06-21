@@ -10,11 +10,6 @@ RETIRED_SKILL_NAME = "opl-doc-governance"
 RETIRED_NAME_ALLOWED_PATHS = {
     Path("docs/history/opl-doc-governance-tombstone.md"),
     Path("docs/history/opl-doc-governance-installer-cleanup-tail-retirement.md"),
-    Path("docs/active/opl-doc-active-truth-plan.md"),
-    Path("docs/status.md"),
-    Path("docs/README.md"),
-    Path("README.md"),
-    Path("README.zh-CN.md"),
     Path("tests/test_install_local_plugin.py"),
 }
 

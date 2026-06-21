@@ -160,7 +160,7 @@ foldback.md
 - `scripts/opl_doc_doctor.py`：`doctor`、`family-plan`、`native-check` 和 `native-sync` 的仓内命令 bootstrap。
 - `scripts/opl_doc_doctor_parts/`：按 profile discovery、invariant checks、plugin-native profile sync、family-plan 生成、CLI parsing 和 report rendering 拆分的 doctor 实现与 import API。
 - `scripts/install_local_plugin.py`：本地 plugin 安装脚本。
-- `docs/history/opl-doc-governance-tombstone.md`：已退役 `opl-doc-governance` 入口的 provenance。
+- `docs/history/`：已退役旧 skill 名入口的 provenance。
 - `templates/`：Active Truth plan、goal 和 change-packet 模板。
 - `tests/`：doctor、goal mode 和安装流程测试。
 
