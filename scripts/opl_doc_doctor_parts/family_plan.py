@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
 from .constants import (
     DEFAULT_SERIES_REPO_NAMES,
+    DEFAULT_SUPPORT_REPO_NAMES,
+    LEGACY_SUPPORT_REPO_POLICY_REL_PATHS,
+    NATIVE_PROFILE_REL_PATH,
+    SUPPORT_REPO_POLICY_REL_PATH,
     build_support_profile_guard,
     build_support_repo_policy,
 )
@@ -54,11 +59,132 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
     )
 
 
+def _read_json_object(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    parsed = json.loads(path.read_text(encoding="utf-8"))
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def _check(check_id: str, passed: bool, evidence_refs: list[str]) -> dict[str, Any]:
+    return {
+        "check_id": check_id,
+        "status": "passed" if passed else "failed",
+        "evidence_refs": evidence_refs,
+    }
+
+
+def build_support_profile_guard_audit(
+    repo_paths: dict[str, str],
+    repo_root: Path | None = None,
+) -> dict[str, Any]:
+    root = repo_root or Path(__file__).resolve().parents[2]
+    support_policy = _read_json_object(root / SUPPORT_REPO_POLICY_REL_PATH)
+    native_profile = _read_json_object(root / NATIVE_PROFILE_REL_PATH)
+    expected_policy = build_support_repo_policy()
+    guard = build_support_profile_guard()
+    support_ids = set(DEFAULT_SUPPORT_REPO_NAMES)
+    support_names = set(DEFAULT_SUPPORT_REPO_NAMES.values())
+    governed_ids = set(repo_paths)
+    governed_names = set(repo_paths.values())
+    forbidden_legacy_paths = [
+        rel_path
+        for rel_path in LEGACY_SUPPORT_REPO_POLICY_REL_PATHS
+        if (root / rel_path).exists()
+    ]
+    opl_doc_plugin = native_profile.get("managed_by_plugins", {})
+    if isinstance(opl_doc_plugin, dict):
+        opl_doc_plugin = opl_doc_plugin.get("opl-doc", {})
+    if not isinstance(opl_doc_plugin, dict):
+        opl_doc_plugin = {}
+    profile_authority = opl_doc_plugin.get("authority_boundary", {})
+    if not isinstance(profile_authority, dict):
+        profile_authority = {}
+
+    checks = [
+        _check(
+            "support_policy_contract_matches_generated_policy",
+            support_policy == expected_policy,
+            [SUPPORT_REPO_POLICY_REL_PATH, "build_support_repo_policy()"],
+        ),
+        _check(
+            "native_profile_declares_support_extension_only",
+            profile_authority.get("support_repos_role")
+            == "extension_only_not_default_foundry_agent_truth_set",
+            [NATIVE_PROFILE_REL_PATH],
+        ),
+        _check(
+            "default_governed_repo_ids_exclude_support_repo_ids",
+            governed_ids.isdisjoint(support_ids),
+            ["family_plan().repos", "DEFAULT_SUPPORT_REPO_NAMES"],
+        ),
+        _check(
+            "default_governed_repo_names_exclude_support_repo_names",
+            governed_names.isdisjoint(support_names),
+            ["family_plan().repos", "DEFAULT_SUPPORT_REPO_NAMES"],
+        ),
+        _check(
+            "legacy_support_repo_policy_ref_absent",
+            not forbidden_legacy_paths,
+            LEGACY_SUPPORT_REPO_POLICY_REL_PATHS,
+        ),
+        _check(
+            "support_guard_derived_from_canonical_policy",
+            guard.get("no_resurrection_guard") == support_policy.get("no_resurrection_guard"),
+            ["support_profile_guard.no_resurrection_guard", SUPPORT_REPO_POLICY_REL_PATH],
+        ),
+        _check(
+            "support_guard_false_ready_flags_fail_closed",
+            all(value is False for value in guard.get("false_ready_guard", {}).values()),
+            ["support_profile_guard.false_ready_guard"],
+        ),
+    ]
+    failed_checks = [check for check in checks if check["status"] != "passed"]
+    return {
+        "schema": "opl_doc_support_profile_guard_audit.v1",
+        "audit_id": "opl-doc.support-profile.no-resurrection.audit.v1",
+        "state": "passed_no_resurrection_guard" if not failed_checks else "failed",
+        "source_contract_refs": [
+            NATIVE_PROFILE_REL_PATH,
+            SUPPORT_REPO_POLICY_REL_PATH,
+        ],
+        "source_readback_refs": [
+            "scripts/opl_doc_doctor.py family-plan --format json",
+            "scripts/opl_doc_doctor.py native-check .",
+        ],
+        "default_governed_repo_ids": sorted(repo_paths),
+        "support_repo_ids": sorted(support_ids),
+        "support_repo_names": sorted(support_names),
+        "forbidden_legacy_contract_refs": list(LEGACY_SUPPORT_REPO_POLICY_REL_PATHS),
+        "forbidden_legacy_contract_refs_present": forbidden_legacy_paths,
+        "check_summary": {
+            "total": len(checks),
+            "passed": len(checks) - len(failed_checks),
+            "failed": len(failed_checks),
+        },
+        "checks": checks,
+        "authority_boundary": {
+            "audit_can_replace_repo_truth": False,
+            "audit_can_join_default_foundry_agent_truth_set": False,
+            "audit_can_claim_owner_receipt": False,
+            "audit_can_claim_quality_verdict": False,
+            "audit_can_claim_production_readiness": False,
+            "audit_can_claim_goal_complete": False,
+        },
+        "false_ready_guard": {
+            "audit_pass_can_claim_foundry_agent_truth": False,
+            "audit_pass_can_claim_production_ready": False,
+            "audit_pass_can_claim_full_goal_complete": False,
+        },
+    }
+
+
 def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     paths = repo_paths or default_series_repos()
     primary_reference_docs = build_primary_reference_docs(paths)
     support_repo_policy = build_support_repo_policy()
     support_profile_guard = build_support_profile_guard()
+    support_profile_guard_audit = build_support_profile_guard_audit(paths)
     governance_prompt_elements = [
         "series_primary_reference_docs",
         "support_repo_extension_boundary",
@@ -117,6 +243,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "repos": paths,
         "support_repo_policy": support_repo_policy,
         "support_profile_guard": support_profile_guard,
+        "support_profile_guard_audit": support_profile_guard_audit,
         "goal_mode": {
             "recommended": True,
             "agent_action": "create_goal_or_resume_goal_before_multi_repo_or_long_horizon_governance",

@@ -67,6 +67,16 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
     )
     print("support profile remains profile sync / workflow plan / no-resurrection only.")
     print(f"canonical support policy ref: `{support_guard['canonical_support_policy_ref']}`")
+    support_audit = payload["support_profile_guard_audit"]
+    print(
+        "support profile audit: "
+        f"`{support_audit['audit_id']}` / `{support_audit['state']}`"
+    )
+    print(
+        "audit checks: "
+        f"`{support_audit['check_summary']['passed']}` passed / "
+        f"`{support_audit['check_summary']['failed']}` failed"
+    )
     print()
     print("## Primary References")
     print(f"{payload['primary_reference_doc_count']} primary reference docs")

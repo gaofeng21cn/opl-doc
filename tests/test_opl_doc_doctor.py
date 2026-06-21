@@ -8,6 +8,7 @@ from pathlib import Path
 from contextlib import redirect_stdout
 
 from scripts.opl_doc_doctor_parts.family_plan import (
+    build_support_profile_guard_audit,
     default_series_repos,
     family_plan,
     parse_repo_overrides,
@@ -830,8 +831,50 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     assert "shell" not in payload["repos"]
     policy = payload["support_repo_policy"]
     profile_guard = payload["support_profile_guard"]
+    profile_guard_audit = payload["support_profile_guard_audit"]
     assert policy == contract_policy == build_support_repo_policy()
     assert profile_guard == build_support_profile_guard()
+    assert profile_guard_audit["schema"] == "opl_doc_support_profile_guard_audit.v1"
+    assert profile_guard_audit["state"] == "passed_no_resurrection_guard"
+    assert profile_guard_audit["check_summary"] == {
+        "total": 7,
+        "passed": 7,
+        "failed": 0,
+    }
+    assert profile_guard_audit["source_contract_refs"] == [
+        "contracts/opl-native-profile.json",
+        "contracts/support-repo-policy.json",
+    ]
+    assert profile_guard_audit["source_readback_refs"] == [
+        "scripts/opl_doc_doctor.py family-plan --format json",
+        "scripts/opl_doc_doctor.py native-check .",
+    ]
+    assert profile_guard_audit["default_governed_repo_ids"] == [
+        "app",
+        "bookforge",
+        "mag",
+        "mas",
+        "oma",
+        "opl",
+        "rca",
+    ]
+    assert profile_guard_audit["support_repo_ids"] == ["opl_doc", "shell"]
+    assert profile_guard_audit["support_repo_names"] == ["opl-aion-shell", "opl-doc"]
+    assert profile_guard_audit["forbidden_legacy_contract_refs_present"] == []
+    assert {
+        check["check_id"]: check["status"]
+        for check in profile_guard_audit["checks"]
+    } == {
+        "support_policy_contract_matches_generated_policy": "passed",
+        "native_profile_declares_support_extension_only": "passed",
+        "default_governed_repo_ids_exclude_support_repo_ids": "passed",
+        "default_governed_repo_names_exclude_support_repo_names": "passed",
+        "legacy_support_repo_policy_ref_absent": "passed",
+        "support_guard_derived_from_canonical_policy": "passed",
+        "support_guard_false_ready_flags_fail_closed": "passed",
+    }
+    assert profile_guard_audit["authority_boundary"]["audit_can_join_default_foundry_agent_truth_set"] is False
+    assert profile_guard_audit["false_ready_guard"]["audit_pass_can_claim_full_goal_complete"] is False
     assert profile_guard["source_contract_refs"] == [
         "contracts/opl-native-profile.json",
         "contracts/support-repo-policy.json",
@@ -881,3 +924,46 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     ]
     assert guard["legacy_underscore_support_policy_ref_must_not_resurrect"] is True
     assert guard["legacy_contract_ref_alias_allowed"] is False
+
+
+def test_support_profile_guard_audit_fails_when_support_repo_or_legacy_ref_resurrects(tmp_path: Path) -> None:
+    root = tmp_path / "opl-doc"
+    (root / "contracts").mkdir(parents=True)
+    (root / "contracts" / "opl-native-profile.json").write_text(
+        json.dumps(
+            {
+                "managed_by_plugins": {
+                    "opl-doc": {
+                        "authority_boundary": {
+                            "support_repos_role": "extension_only_not_default_foundry_agent_truth_set"
+                        }
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "contracts" / "support-repo-policy.json").write_text(
+        json.dumps(build_support_repo_policy()),
+        encoding="utf-8",
+    )
+    (root / "contracts" / "support_repo_policy.json").write_text("{}", encoding="utf-8")
+
+    audit = build_support_profile_guard_audit(
+        {"opl_doc": "opl-doc", "opl": "one-person-lab"},
+        repo_root=root,
+    )
+
+    checks = {
+        check["check_id"]: check["status"]
+        for check in audit["checks"]
+    }
+    assert audit["state"] == "failed"
+    assert checks["default_governed_repo_ids_exclude_support_repo_ids"] == "failed"
+    assert checks["default_governed_repo_names_exclude_support_repo_names"] == "failed"
+    assert checks["legacy_support_repo_policy_ref_absent"] == "failed"
+    assert audit["forbidden_legacy_contract_refs_present"] == [
+        "contracts/support_repo_policy.json"
+    ]
+    assert audit["authority_boundary"]["audit_can_claim_production_readiness"] is False
+    assert audit["false_ready_guard"]["audit_pass_can_claim_foundry_agent_truth"] is False
