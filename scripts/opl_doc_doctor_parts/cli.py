@@ -6,7 +6,12 @@ import argparse
 import json
 from pathlib import Path
 
-from .family_plan import default_series_repos, family_plan, parse_repo_overrides
+from .family_plan import (
+    build_support_profile_guard_audit,
+    default_series_repos,
+    family_plan,
+    parse_repo_overrides,
+)
 from .invariant_checks import doctor
 from .plugin_sync import native_check, native_sync
 from .rendering import print_family_markdown, print_markdown
@@ -30,6 +35,21 @@ def parse_args() -> argparse.Namespace:
         help="Add or override an OPL series repo, for example oma=/path/to/opl-meta-agent.",
     )
     family_parser.add_argument(
+        "--workspace-root",
+        help="Optional local workspace root used to expand default public repo names into local paths.",
+    )
+
+    support_profile_parser = subparsers.add_parser("support-profile-check")
+    support_profile_parser.add_argument("repo_root", nargs="?", default=".")
+    support_profile_parser.add_argument("--format", choices=["json"], default="json")
+    support_profile_parser.add_argument(
+        "--repo",
+        action="append",
+        default=[],
+        metavar="ID=PATH",
+        help="Add or override an OPL series repo before running the support profile guard.",
+    )
+    support_profile_parser.add_argument(
         "--workspace-root",
         help="Optional local workspace root used to expand default public repo names into local paths.",
     )
@@ -69,6 +89,17 @@ def main() -> int:
         else:
             print_family_markdown(payload)
         return 0
+    if args.command == "support-profile-check":
+        repos = default_series_repos(args.workspace_root) if args.workspace_root else None
+        if args.repo:
+            repos = repos or default_series_repos()
+            repos = parse_repo_overrides(args.repo, repos)
+        payload = build_support_profile_guard_audit(
+            repos or default_series_repos(),
+            repo_root=Path(args.repo_root),
+        )
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if payload["state"] == "passed_no_resurrection_guard" else 1
     if args.command == "native-check":
         payload = native_check(Path(args.repo_root))
         print(json.dumps(payload, indent=2, sort_keys=True))

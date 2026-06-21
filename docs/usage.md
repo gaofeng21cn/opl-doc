@@ -43,6 +43,18 @@ opl-doc-doctor family-plan --format markdown
 opl-doc-doctor family-plan --format json
 ```
 
+直接检查 support repo profile / no-resurrection guard：
+
+```bash
+opl-doc-doctor support-profile-check . --format json
+bash scripts/verify.sh support-profile:strict
+```
+
+该入口只检查 `opl-doc` / `opl-aion-shell` 等 support repo 仍是 explicit extension、旧
+`contracts/support_repo_policy.json` 没有复活、false-ready flags 仍 fail closed。
+它不声明目标 repo truth、owner receipt、quality verdict、production readiness 或全局
+goal complete。
+
 审计仓库：
 
 ```bash

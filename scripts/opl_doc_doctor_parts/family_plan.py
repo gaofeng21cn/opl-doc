@@ -149,6 +149,7 @@ def build_support_profile_guard_audit(
             SUPPORT_REPO_POLICY_REL_PATH,
         ],
         "source_readback_refs": [
+            "scripts/opl_doc_doctor.py support-profile-check . --format json",
             "scripts/opl_doc_doctor.py family-plan --format json",
             "scripts/opl_doc_doctor.py native-check .",
         ],

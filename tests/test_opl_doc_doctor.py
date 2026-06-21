@@ -846,6 +846,7 @@ def test_family_plan_support_repos_are_extension_only() -> None:
         "contracts/support-repo-policy.json",
     ]
     assert profile_guard_audit["source_readback_refs"] == [
+        "scripts/opl_doc_doctor.py support-profile-check . --format json",
         "scripts/opl_doc_doctor.py family-plan --format json",
         "scripts/opl_doc_doctor.py native-check .",
     ]
@@ -926,6 +927,35 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     assert guard["legacy_contract_ref_alias_allowed"] is False
 
 
+def test_support_profile_check_cli_is_direct_strict_readback() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/opl_doc_doctor.py",
+            "support-profile-check",
+            ".",
+            "--format",
+            "json",
+        ],
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+    )
+
+    payload = json.loads(result.stdout)
+    assert payload["schema"] == "opl_doc_support_profile_guard_audit.v1"
+    assert payload["state"] == "passed_no_resurrection_guard"
+    assert payload["check_summary"] == {
+        "total": 7,
+        "passed": 7,
+        "failed": 0,
+    }
+    assert payload["authority_boundary"]["audit_can_replace_repo_truth"] is False
+    assert payload["authority_boundary"]["audit_can_claim_owner_receipt"] is False
+    assert payload["false_ready_guard"]["audit_pass_can_claim_production_ready"] is False
+
+
 def test_support_profile_guard_audit_fails_when_support_repo_or_legacy_ref_resurrects(tmp_path: Path) -> None:
     root = tmp_path / "opl-doc"
     (root / "contracts").mkdir(parents=True)
@@ -967,3 +997,57 @@ def test_support_profile_guard_audit_fails_when_support_repo_or_legacy_ref_resur
     ]
     assert audit["authority_boundary"]["audit_can_claim_production_readiness"] is False
     assert audit["false_ready_guard"]["audit_pass_can_claim_foundry_agent_truth"] is False
+
+
+def test_support_profile_check_cli_fails_closed_for_legacy_policy_ref(tmp_path: Path) -> None:
+    root = tmp_path / "opl-doc"
+    (root / "contracts").mkdir(parents=True)
+    (root / "contracts" / "opl-native-profile.json").write_text(
+        json.dumps(
+            {
+                "managed_by_plugins": {
+                    "opl-doc": {
+                        "authority_boundary": {
+                            "support_repos_role": "extension_only_not_default_foundry_agent_truth_set"
+                        }
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "contracts" / "support-repo-policy.json").write_text(
+        json.dumps(build_support_repo_policy()),
+        encoding="utf-8",
+    )
+    (root / "contracts" / "support_repo_policy.json").write_text("{}", encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/opl_doc_doctor.py",
+            "support-profile-check",
+            str(root),
+            "--format",
+            "json",
+        ],
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+    )
+    payload = json.loads(result.stdout)
+
+    assert result.returncode == 1
+    assert payload["state"] == "failed"
+    assert payload["check_summary"]["failed"] >= 1
+    assert payload["forbidden_legacy_contract_refs_present"] == [
+        "contracts/support_repo_policy.json"
+    ]
+
+
+def test_verify_script_exposes_support_profile_strict_lane() -> None:
+    verify_script = Path("scripts/verify.sh").read_text(encoding="utf-8")
+
+    assert "support-profile|support-profile-strict|support-profile:strict" in verify_script
+    assert "support-profile-check . --format json" in verify_script
+    assert "opl-doc-support-profile-check.json" in verify_script
