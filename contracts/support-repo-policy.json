@@ -15,14 +15,19 @@
     "native_profile_role": "profile_sync_and_drift_check_only",
     "support_repos_role": "extension_only_not_default_foundry_agent_truth_set"
   },
+  "canonical_contract_ref": "contracts/support-repo-policy.json",
   "contract_ref": "contracts/support-repo-policy.json",
   "default_included_in_governed_repo_set": false,
   "extension_only": true,
+  "forbidden_legacy_contract_refs": [
+    "contracts/support_repo_policy.json"
+  ],
   "include_only_when": [
     "user_explicitly_requests_support_repo_governance",
     "current_task_touches_support_repo_docs_or_scripts",
     "support_repo_is_needed_to_explain_workflow_or_shell_carrier_boundary"
   ],
+  "legacy_contract_ref_alias_allowed": false,
   "no_resurrection_guard": {
     "default_series_repo_ids_must_exclude_support_repo_ids": [
       "opl_doc",
@@ -33,6 +38,8 @@
       "opl-doc"
     ],
     "family_plan_must_derive_support_policy_from_this_source": true,
+    "legacy_contract_ref_alias_allowed": false,
+    "legacy_underscore_support_policy_ref_must_not_resurrect": true,
     "native_profile_must_keep_support_repo_role_extension_only": true,
     "support_repos_must_not_enter_default_series_repo_set": true
   },

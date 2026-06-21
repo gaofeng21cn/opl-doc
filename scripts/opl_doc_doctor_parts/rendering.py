@@ -55,6 +55,7 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
     print("## Support Repos")
     support_policy = payload["support_repo_policy"]
     print("support repos are explicit extensions, not the default Foundry Agent truth set.")
+    print(f"canonical policy: `{support_policy['canonical_contract_ref']}`")
     for name, path in support_policy["support_repos"].items():
         print(f"- `{name}`: `{path}`")
     print()
@@ -65,6 +66,7 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
         f"`{support_guard['guard_id']}` / `{support_guard['state']}`"
     )
     print("support profile remains profile sync / workflow plan / no-resurrection only.")
+    print(f"canonical support policy ref: `{support_guard['canonical_support_policy_ref']}`")
     print()
     print("## Primary References")
     print(f"{payload['primary_reference_doc_count']} primary reference docs")

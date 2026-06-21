@@ -42,6 +42,9 @@ CANONICAL_DOC_DIRS = [
 
 NATIVE_PROFILE_REL_PATH = "contracts/opl-native-profile.json"
 SUPPORT_REPO_POLICY_REL_PATH = "contracts/support-repo-policy.json"
+LEGACY_SUPPORT_REPO_POLICY_REL_PATHS = [
+    "contracts/support_repo_policy.json",
+]
 
 HEADER_FIELDS = ("Owner:", "Purpose:", "State:", "Machine boundary:")
 
@@ -134,10 +137,15 @@ def build_support_repo_policy() -> dict[str, object]:
         "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
         "include_only_when": list(SUPPORT_REPO_INCLUDE_ONLY_WHEN),
         "contract_ref": SUPPORT_REPO_POLICY_REL_PATH,
+        "canonical_contract_ref": SUPPORT_REPO_POLICY_REL_PATH,
+        "legacy_contract_ref_alias_allowed": False,
+        "forbidden_legacy_contract_refs": list(LEGACY_SUPPORT_REPO_POLICY_REL_PATHS),
         "no_resurrection_guard": {
             "support_repos_must_not_enter_default_series_repo_set": True,
             "family_plan_must_derive_support_policy_from_this_source": True,
             "native_profile_must_keep_support_repo_role_extension_only": True,
+            "legacy_underscore_support_policy_ref_must_not_resurrect": True,
+            "legacy_contract_ref_alias_allowed": False,
             "default_series_repo_ids_must_exclude_support_repo_ids": sorted(
                 DEFAULT_SUPPORT_REPO_NAMES
             ),
@@ -161,6 +169,9 @@ def build_support_profile_guard() -> dict[str, object]:
             NATIVE_PROFILE_REL_PATH,
             SUPPORT_REPO_POLICY_REL_PATH,
         ],
+        "canonical_support_policy_ref": SUPPORT_REPO_POLICY_REL_PATH,
+        "forbidden_legacy_contract_refs": list(LEGACY_SUPPORT_REPO_POLICY_REL_PATHS),
+        "legacy_contract_ref_alias_allowed": False,
         "derived_from_support_repo_policy": True,
         "native_profile_must_declare_extension_only": True,
         "family_plan_must_emit_this_guard": True,
@@ -173,6 +184,8 @@ def build_support_profile_guard() -> dict[str, object]:
             "default_series_repo_names_must_exclude_support_repo_names",
             "native_profile_must_keep_support_repo_role_extension_only",
             "family_plan_must_derive_support_policy_from_this_source",
+            "legacy_underscore_support_policy_ref_must_not_resurrect",
+            "legacy_contract_ref_alias_allowed_false",
         ],
         "authority_boundary": {
             **OPL_DOC_AUTHORITY_BOUNDARY,

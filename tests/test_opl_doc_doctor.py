@@ -293,9 +293,18 @@ def test_support_repo_profile_contract_is_materialized() -> None:
     support_policy = json.loads(support_policy_path.read_text(encoding="utf-8"))
     assert support_policy == build_support_repo_policy()
     assert support_policy["contract_ref"] == "contracts/support-repo-policy.json"
+    assert support_policy["canonical_contract_ref"] == "contracts/support-repo-policy.json"
+    assert support_policy["legacy_contract_ref_alias_allowed"] is False
+    assert support_policy["forbidden_legacy_contract_refs"] == [
+        "contracts/support_repo_policy.json"
+    ]
     assert support_policy["no_resurrection_guard"][
         "support_repos_must_not_enter_default_series_repo_set"
     ] is True
+    assert support_policy["no_resurrection_guard"][
+        "legacy_underscore_support_policy_ref_must_not_resurrect"
+    ] is True
+    assert not (root / "contracts" / "support_repo_policy.json").exists()
 
 
 def test_verify_entrypoint_keeps_python_cache_outside_checkout() -> None:
@@ -637,6 +646,13 @@ def test_family_plan_contains_opl_series_workflow() -> None:
     assert payload["support_repo_policy"]["extension_only"] is True
     assert payload["support_repo_policy"]["not_foundry_agent_truth_set"] is True
     assert payload["support_profile_guard"] == build_support_profile_guard()
+    assert payload["support_repo_policy"]["canonical_contract_ref"] == (
+        "contracts/support-repo-policy.json"
+    )
+    assert payload["support_repo_policy"]["legacy_contract_ref_alias_allowed"] is False
+    assert payload["support_repo_policy"]["forbidden_legacy_contract_refs"] == [
+        "contracts/support_repo_policy.json"
+    ]
     assert (
         payload["support_profile_guard"]["state"]
         == "materialized_extension_only_support_profile_guard"
@@ -651,6 +667,10 @@ def test_family_plan_contains_opl_series_workflow() -> None:
         "opl_doc": "opl-doc",
         "shell": "opl-aion-shell",
     }
+    assert payload["support_profile_guard"]["canonical_support_policy_ref"] == (
+        "contracts/support-repo-policy.json"
+    )
+    assert payload["support_profile_guard"]["legacy_contract_ref_alias_allowed"] is False
     assert payload["primary_reference_doc_count"] == 14
     assert "OPL single Active Truth plan" in payload["primary_reference_docs_per_repo"]
     assert "BOOKFORGE single Active Truth plan" in payload["primary_reference_docs_per_repo"]
@@ -816,6 +836,11 @@ def test_family_plan_support_repos_are_extension_only() -> None:
         "contracts/opl-native-profile.json",
         "contracts/support-repo-policy.json",
     ]
+    assert profile_guard["canonical_support_policy_ref"] == "contracts/support-repo-policy.json"
+    assert profile_guard["legacy_contract_ref_alias_allowed"] is False
+    assert profile_guard["forbidden_legacy_contract_refs"] == [
+        "contracts/support_repo_policy.json"
+    ]
     assert profile_guard["derived_from_support_repo_policy"] is True
     assert profile_guard["native_profile_must_declare_extension_only"] is True
     assert profile_guard["family_plan_must_emit_this_guard"] is True
@@ -854,3 +879,5 @@ def test_family_plan_support_repos_are_extension_only() -> None:
         "opl-aion-shell",
         "opl-doc",
     ]
+    assert guard["legacy_underscore_support_policy_ref_must_not_resurrect"] is True
+    assert guard["legacy_contract_ref_alias_allowed"] is False
