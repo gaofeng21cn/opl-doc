@@ -5,7 +5,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .constants import DEFAULT_SERIES_REPO_NAMES, build_support_repo_policy
+from .constants import (
+    DEFAULT_SERIES_REPO_NAMES,
+    build_support_profile_guard,
+    build_support_repo_policy,
+)
 
 
 def build_primary_reference_docs(repo_paths: dict[str, str]) -> list[str]:
@@ -54,6 +58,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     paths = repo_paths or default_series_repos()
     primary_reference_docs = build_primary_reference_docs(paths)
     support_repo_policy = build_support_repo_policy()
+    support_profile_guard = build_support_profile_guard()
     governance_prompt_elements = [
         "series_primary_reference_docs",
         "support_repo_extension_boundary",
@@ -111,6 +116,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "objective": "OPL series document lifecycle governance and software-engineering closeout",
         "repos": paths,
         "support_repo_policy": support_repo_policy,
+        "support_profile_guard": support_profile_guard,
         "goal_mode": {
             "recommended": True,
             "agent_action": "create_goal_or_resume_goal_before_multi_repo_or_long_horizon_governance",

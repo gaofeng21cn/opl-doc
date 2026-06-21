@@ -58,6 +58,14 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
     for name, path in support_policy["support_repos"].items():
         print(f"- `{name}`: `{path}`")
     print()
+    print("## Support Profile Guard")
+    support_guard = payload["support_profile_guard"]
+    print(
+        "materialized support profile guard: "
+        f"`{support_guard['guard_id']}` / `{support_guard['state']}`"
+    )
+    print("support profile remains profile sync / workflow plan / no-resurrection only.")
+    print()
     print("## Primary References")
     print(f"{payload['primary_reference_doc_count']} primary reference docs")
     for reference in payload["primary_reference_docs_per_repo"]:

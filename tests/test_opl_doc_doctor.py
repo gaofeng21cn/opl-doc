@@ -12,7 +12,10 @@ from scripts.opl_doc_doctor_parts.family_plan import (
     family_plan,
     parse_repo_overrides,
 )
-from scripts.opl_doc_doctor_parts.constants import build_support_repo_policy
+from scripts.opl_doc_doctor_parts.constants import (
+    build_support_profile_guard,
+    build_support_repo_policy,
+)
 from scripts.opl_doc_doctor_parts.invariant_checks import doctor
 from scripts.opl_doc_doctor_parts.plugin_sync import native_check, native_sync
 from scripts.opl_doc_doctor_parts.profile_discovery import detect_profile
@@ -633,6 +636,17 @@ def test_family_plan_contains_opl_series_workflow() -> None:
     assert payload["support_repo_policy"]["default_included_in_governed_repo_set"] is False
     assert payload["support_repo_policy"]["extension_only"] is True
     assert payload["support_repo_policy"]["not_foundry_agent_truth_set"] is True
+    assert payload["support_profile_guard"] == build_support_profile_guard()
+    assert (
+        payload["support_profile_guard"]["state"]
+        == "materialized_extension_only_support_profile_guard"
+    )
+    assert (
+        payload["support_profile_guard"]["authority_boundary"][
+            "can_join_default_foundry_agent_truth_set"
+        ]
+        is False
+    )
     assert payload["support_repo_policy"]["support_repos"] == {
         "opl_doc": "opl-doc",
         "shell": "opl-aion-shell",
@@ -710,6 +724,9 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "create or resume a /goal" in markdown
     assert "14 primary reference docs" in markdown
     assert "Support Repos" in markdown
+    assert "Support Profile Guard" in markdown
+    assert "opl-doc.support-profile.no-resurrection.v1" in markdown
+    assert "profile sync / workflow plan / no-resurrection only" in markdown
     assert "explicit extensions" in markdown
     assert "not the default Foundry Agent truth set" in markdown
     assert "opl-doc" in markdown
@@ -792,7 +809,37 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     assert "opl_doc" not in payload["repos"]
     assert "shell" not in payload["repos"]
     policy = payload["support_repo_policy"]
+    profile_guard = payload["support_profile_guard"]
     assert policy == contract_policy == build_support_repo_policy()
+    assert profile_guard == build_support_profile_guard()
+    assert profile_guard["source_contract_refs"] == [
+        "contracts/opl-native-profile.json",
+        "contracts/support-repo-policy.json",
+    ]
+    assert profile_guard["derived_from_support_repo_policy"] is True
+    assert profile_guard["native_profile_must_declare_extension_only"] is True
+    assert profile_guard["family_plan_must_emit_this_guard"] is True
+    assert profile_guard["support_repo_names"] == ["opl-aion-shell", "opl-doc"]
+    assert (
+        profile_guard["false_ready_guard"][
+            "support_profile_materialized_can_claim_foundry_agent_truth"
+        ]
+        is False
+    )
+    assert (
+        profile_guard["false_ready_guard"][
+            "support_profile_materialized_can_claim_production_ready"
+        ]
+        is False
+    )
+    assert (
+        profile_guard["authority_boundary"]["can_create_second_active_backlog"]
+        is False
+    )
+    assert (
+        profile_guard["no_resurrection_guard"]
+        == policy["no_resurrection_guard"]
+    )
     assert policy["authority_boundary"]["family_plan_role"] == "workflow_plan_only"
     assert policy["authority_boundary"]["support_repos_role"] == "extension_only_not_default_foundry_agent_truth_set"
     assert "foundry_agent_truth_set" in policy["authority_boundary"]["does_not_own"]

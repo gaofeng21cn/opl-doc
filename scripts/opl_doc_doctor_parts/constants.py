@@ -147,6 +147,54 @@ def build_support_repo_policy() -> dict[str, object]:
         },
     }
 
+
+def build_support_profile_guard() -> dict[str, object]:
+    support_policy = build_support_repo_policy()
+    return {
+        "schema": "opl_doc_support_profile_guard.v1",
+        "guard_id": "opl-doc.support-profile.no-resurrection.v1",
+        "state": "materialized_extension_only_support_profile_guard",
+        "support_profile_role": (
+            "profile_sync_workflow_plan_and_no_resurrection_guard_only"
+        ),
+        "source_contract_refs": [
+            NATIVE_PROFILE_REL_PATH,
+            SUPPORT_REPO_POLICY_REL_PATH,
+        ],
+        "derived_from_support_repo_policy": True,
+        "native_profile_must_declare_extension_only": True,
+        "family_plan_must_emit_this_guard": True,
+        "support_repo_ids": sorted(DEFAULT_SUPPORT_REPO_NAMES),
+        "support_repo_names": sorted(DEFAULT_SUPPORT_REPO_NAMES.values()),
+        "include_only_when": list(SUPPORT_REPO_INCLUDE_ONLY_WHEN),
+        "required_no_resurrection_checks": [
+            "support_repos_must_not_enter_default_series_repo_set",
+            "default_series_repo_ids_must_exclude_support_repo_ids",
+            "default_series_repo_names_must_exclude_support_repo_names",
+            "native_profile_must_keep_support_repo_role_extension_only",
+            "family_plan_must_derive_support_policy_from_this_source",
+        ],
+        "authority_boundary": {
+            **OPL_DOC_AUTHORITY_BOUNDARY,
+            "can_replace_repo_truth": False,
+            "can_replace_domain_truth": False,
+            "can_replace_runtime_truth": False,
+            "can_join_default_foundry_agent_truth_set": False,
+            "can_claim_owner_receipt": False,
+            "can_claim_quality_verdict": False,
+            "can_claim_production_readiness": False,
+            "can_create_second_active_backlog": False,
+        },
+        "false_ready_guard": {
+            "doctor_clean_can_claim_repo_ready": False,
+            "native_profile_check_can_claim_truth_synced": False,
+            "family_plan_can_claim_goal_complete": False,
+            "support_profile_materialized_can_claim_foundry_agent_truth": False,
+            "support_profile_materialized_can_claim_production_ready": False,
+        },
+        "no_resurrection_guard": support_policy["no_resurrection_guard"],
+    }
+
 DATED_HEADING_RISK_THRESHOLD = 5
 CHECKBOX_LIST_RISK_THRESHOLD = 10
 
