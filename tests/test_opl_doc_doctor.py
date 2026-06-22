@@ -956,6 +956,33 @@ def test_support_profile_check_cli_is_direct_strict_readback() -> None:
     assert payload["false_ready_guard"]["audit_pass_can_claim_production_ready"] is False
 
 
+def test_support_profile_check_accepts_json_alias_without_new_contract_path() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/opl_doc_doctor.py",
+            "support-profile-check",
+            ".",
+            "--json",
+        ],
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+    )
+
+    payload = json.loads(result.stdout)
+    assert payload["schema"] == "opl_doc_support_profile_guard_audit.v1"
+    assert payload["state"] == "passed_no_resurrection_guard"
+    assert payload["source_readback_refs"] == [
+        "scripts/opl_doc_doctor.py support-profile-check . --format json",
+        "scripts/opl_doc_doctor.py family-plan --format json",
+        "scripts/opl_doc_doctor.py native-check .",
+    ]
+    assert payload["authority_boundary"]["audit_can_join_default_foundry_agent_truth_set"] is False
+    assert payload["false_ready_guard"]["audit_pass_can_claim_full_goal_complete"] is False
+
+
 def test_support_profile_guard_audit_fails_when_support_repo_or_legacy_ref_resurrects(tmp_path: Path) -> None:
     root = tmp_path / "opl-doc"
     (root / "contracts").mkdir(parents=True)

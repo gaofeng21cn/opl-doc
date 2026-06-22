@@ -24,9 +24,23 @@ def parse_args() -> argparse.Namespace:
     doctor_parser = subparsers.add_parser("doctor")
     doctor_parser.add_argument("repo_root", nargs="?", default=".")
     doctor_parser.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    doctor_parser.add_argument(
+        "--json",
+        action="store_const",
+        const="json",
+        dest="format",
+        help="Alias for --format json; kept as a CLI readback convenience, not a new contract path.",
+    )
 
     family_parser = subparsers.add_parser("family-plan")
     family_parser.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    family_parser.add_argument(
+        "--json",
+        action="store_const",
+        const="json",
+        dest="format",
+        help="Alias for --format json; kept as a CLI readback convenience, not a new contract path.",
+    )
     family_parser.add_argument(
         "--repo",
         action="append",
@@ -43,6 +57,13 @@ def parse_args() -> argparse.Namespace:
     support_profile_parser.add_argument("repo_root", nargs="?", default=".")
     support_profile_parser.add_argument("--format", choices=["json"], default="json")
     support_profile_parser.add_argument(
+        "--json",
+        action="store_const",
+        const="json",
+        dest="format",
+        help="Alias for --format json; kept as a CLI readback convenience, not a new contract path.",
+    )
+    support_profile_parser.add_argument(
         "--repo",
         action="append",
         default=[],
@@ -57,6 +78,13 @@ def parse_args() -> argparse.Namespace:
     native_check_parser = subparsers.add_parser("native-check")
     native_check_parser.add_argument("repo_root", nargs="?", default=".")
     native_check_parser.add_argument("--format", choices=["json"], default="json")
+    native_check_parser.add_argument(
+        "--json",
+        action="store_const",
+        const="json",
+        dest="format",
+        help="Alias for --format json; kept as a CLI readback convenience, not a new contract path.",
+    )
 
     native_sync_parser = subparsers.add_parser("native-sync")
     native_sync_parser.add_argument("repo_root", nargs="?", default=".")
@@ -65,6 +93,13 @@ def parse_args() -> argparse.Namespace:
     native_sync_apply.add_argument("--dry-run", action="store_false", dest="apply")
     native_sync_parser.set_defaults(apply=False)
     native_sync_parser.add_argument("--format", choices=["json"], default="json")
+    native_sync_parser.add_argument(
+        "--json",
+        action="store_const",
+        const="json",
+        dest="format",
+        help="Alias for --format json; kept as a CLI readback convenience, not a new contract path.",
+    )
 
     return parser.parse_args()
 
