@@ -137,6 +137,12 @@ def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) ->
         == "profile_sync_and_drift_check_only"
     )
     assert "repo_truth" in payload["expected_profile"]["managed_by_plugins"]["opl-doc"]["does_not_own"]
+    assert payload["support_repo_policy"] == build_support_repo_policy()
+    assert payload["support_profile_guard"] == build_support_profile_guard()
+    assert payload["support_profile_guard_audit"]["schema"] == "opl_doc_support_profile_guard_audit.v1"
+    assert payload["support_profile_guard_audit"]["state"] == "passed_no_resurrection_guard"
+    assert payload["authority_boundary"]["native_check_can_join_default_foundry_agent_truth_set"] is False
+    assert payload["false_ready_guard"]["native_check_pass_can_claim_full_goal_complete"] is False
     assert not (contracts / "opl-native-profile.json").exists()
 
 
@@ -306,6 +312,42 @@ def test_support_repo_profile_contract_is_materialized() -> None:
         "legacy_underscore_support_policy_ref_must_not_resurrect"
     ] is True
     assert not (root / "contracts" / "support_repo_policy.json").exists()
+
+
+def test_native_check_cli_materializes_support_profile_guard_readback() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/opl_doc_doctor.py",
+            "native-check",
+            ".",
+            "--format",
+            "json",
+        ],
+        check=True,
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+    )
+
+    payload = json.loads(result.stdout)
+    assert payload["ok"] is True
+    assert payload["support_repo_policy"] == build_support_repo_policy()
+    assert payload["support_profile_guard"] == build_support_profile_guard()
+    assert payload["support_profile_guard_audit"]["state"] == "passed_no_resurrection_guard"
+    assert payload["support_profile_guard_audit"]["check_summary"] == {
+        "total": 7,
+        "passed": 7,
+        "failed": 0,
+    }
+    assert payload["support_profile_guard_audit"]["source_readback_refs"] == [
+        "scripts/opl_doc_doctor.py support-profile-check . --format json",
+        "scripts/opl_doc_doctor.py family-plan --format json",
+        "scripts/opl_doc_doctor.py native-check .",
+    ]
+    assert payload["authority_boundary"]["native_check_can_replace_repo_truth"] is False
+    assert payload["authority_boundary"]["native_check_can_claim_owner_receipt"] is False
+    assert payload["false_ready_guard"]["native_check_pass_can_claim_foundry_agent_truth"] is False
 
 
 def test_verify_entrypoint_keeps_python_cache_outside_checkout() -> None:

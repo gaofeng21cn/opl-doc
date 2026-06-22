@@ -11,9 +11,14 @@ from .constants import (
     NATIVE_PROFILE_REL_PATH,
     OPL_DOC_AUTHORITY_BOUNDARY,
     SUPPORT_REPO_POLICY_REL_PATH,
+    build_support_profile_guard,
+    build_support_repo_policy,
 )
+from .family_plan import build_support_profile_guard_audit, default_series_repos
 from .invariant_checks import doctor
 from .profile_discovery import repo_identity
+
+OPL_DOC_REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _profile_doc_role(path: str) -> str:
@@ -113,6 +118,11 @@ def native_check(root: Path) -> dict[str, Any]:
             if current.get(key) != expected_value:
                 drift.append(key)
     ok = not missing and not errors and not drift
+    support_profile_guard = build_support_profile_guard()
+    support_profile_guard_audit = build_support_profile_guard_audit(
+        default_series_repos(),
+        repo_root=OPL_DOC_REPO_ROOT,
+    )
     return {
         "ok": ok,
         "mode": "native-check",
@@ -123,6 +133,22 @@ def native_check(root: Path) -> dict[str, Any]:
         "errors": errors,
         "drift": drift,
         "expected_profile": expected,
+        "support_repo_policy": build_support_repo_policy(),
+        "support_profile_guard": support_profile_guard,
+        "support_profile_guard_audit": support_profile_guard_audit,
+        "authority_boundary": {
+            "native_check_can_replace_repo_truth": False,
+            "native_check_can_join_default_foundry_agent_truth_set": False,
+            "native_check_can_claim_owner_receipt": False,
+            "native_check_can_claim_quality_verdict": False,
+            "native_check_can_claim_production_readiness": False,
+            "native_check_can_claim_goal_complete": False,
+        },
+        "false_ready_guard": {
+            "native_check_pass_can_claim_foundry_agent_truth": False,
+            "native_check_pass_can_claim_production_ready": False,
+            "native_check_pass_can_claim_full_goal_complete": False,
+        },
     }
 
 
