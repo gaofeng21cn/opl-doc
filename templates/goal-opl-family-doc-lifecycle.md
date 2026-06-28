@@ -25,6 +25,11 @@
 - doctor 只作为预检风险地图；不能把 doctor findings 当成治理任务清单，不能只修 doctor 报的问题。
 - 读 canonical docs：`README*`、`docs/README*`、`docs/project.md`、`docs/status.md`、`docs/architecture.md`、`docs/invariants.md`、`docs/decisions.md`。
 - 读 single Active Truth plan 和 ideal-state reference，并用 live source/contracts/tests/read-model 验证重要断言。
+- 修改前先生成 `governance_worklist` 和 authority-aware matrix；每个候选标明 repo、语义主题、truth owner、owner surface、route、doc lifecycle、authority blocker、allowed/forbidden write set、risk class、验证命令、parallel group、状态和选/跳过原因。
+- 默认选择 3-7 个安全 SSOT/docs 候选作为一轮治理 batch；如果只剩一个低价值小切片，输出 `no_safe_batch_matrix` 并结转到下一轮，除非它是 P0 stale-lane cleanup、阻断性 SSOT 冲突或用户明确指定的单点修复。
+- 纯结构候选（长文件、重复 helper、过宽 export、循环依赖、测试拆分）标 `refactor_patrol`，不抢文档治理主线；文档治理只处理造成 truth drift、第二真相源或 retired public surface 泄漏的结构项。
+- 上游 fork 主体和 support repo extension 只做 owner/fork-boundary 盘点：`opl-hermes-shell/**`、`opl-aion-shell/**`、`one-person-lab-app/shells/aionui/**`、`one-person-lab-app/_external/hermes-agent/**` 不进入 cleanup、retirement、line-budget 或完成度指标。
+- dirty worktree 只阻塞同一写集；先定位 owner/write set，能验证吸收则吸收，不能则 handoff 或跳过，不重置、不覆盖、不清理别人的 lane。
 - 对每个 active plan 和 canonical doc 的实质 claim 做 live truth 语义审计：读取 source、contracts、tests、package scripts、CLI/read-model 输出、runtime ledger、receipt 和 blocker，判断文档内容是当前事实、差距、证据尾项、历史 provenance 还是 stale pollution。
 - 先发现 active truth owner：优先 repo 明示入口和 `docs/active/current-state-vs-ideal-gap.md`；多份 active plan 抢同一职责时保留 canonical owner，重写或退役重复文档。
 - 如果某个 repo 缺少稳定 active truth owner，使用 OPL Doc 的 `templates/active-truth-plan.md` 作为章节形状；若已有 canonical active plan，则把同样章节映射进去，不新增第二套计划。
@@ -37,6 +42,7 @@
 - 可以用 subagent 并行开多个 worktree 推进，但每条线必须有清晰 write scope。
 - 每条线完成后跑新鲜验证，提交，吸收回 `main`，删除对应 worktree/branch。
 - 每个 repo 维护 coverage ledger：已审文档/章节、已改文档、归档/tombstone/删除文档、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围。
+- 每轮结束的 matrix 必须保留 selected/skipped/no-safe 状态；`no_safe_change`、`blocked_owner_gated`、`not_safe` 不得被包装成已完成。
 - 未覆盖文档清单、剩余 stale/retire 候选或未完成 gap 非空时，只能做 tranche closeout，并把剩余项折进下一轮 Agent prompt；不得把全局 `/goal` 标记 complete。
 - 最终在 `main` 上再次验证，并更新 canonical docs、history/tombstone 和必要的 contracts/read-model references。
 

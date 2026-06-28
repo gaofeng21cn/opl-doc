@@ -261,6 +261,22 @@ Hard rules:
 - Every multi-repo tranche must leave a coverage ledger that names reviewed docs, unreviewed docs, unresolved stale/retire candidates, and the next write scope. If that ledger is missing, the tranche is not complete.
 - History exists to prevent semantic pollution of Active Truth, not to preserve every intermediate decision in active paths.
 
+## Governance Worklist And Batch Gate
+
+Before mutating multi-repo or long-running OPL docs governance, build the worklist first. Do not start from one attractive file, one doctor warning, or one stale phrase.
+
+Required pre-mutation shape:
+
+1. Freeze the repo/worktree snapshot: branch, head, origin relation, dirty files, active worktrees, support-repo extensions, upstream-fork exclusions, and owner/write-set conflicts.
+2. Produce a `governance_worklist` and authority-aware matrix before edits. Target 8-12 candidates when the task is multi-repo or broad; if fewer exist, state the search surfaces and why the pool is smaller.
+3. Each candidate names `repo`, `theme`, `truth_owner`, `owner_surface`, `route`, `doc_lifecycle`, `authority_blocker`, `allowed_write_set`, `forbidden_write_set`, `risk_class`, `verification_command`, `parallel_group`, `status`, and `selected_or_skipped_reason`.
+4. Use executable routes: `governance_ssot`, `refactor_patrol`, or `owner_lane`. Pure structure candidates such as long files, duplicate helpers, over-wide exports, cycles, or test splits route to `refactor_patrol` unless they directly create docs truth drift or retired public-surface leakage.
+5. Use executable status values: `candidate`, `selected`, `done`, `deleted`, `shrunk`, `done_gate_no_delete`, `no_safe_change`, `blocked_owner_gated`, or `not_safe`.
+6. Default to a meaningful batch, not a micro-slice: select 3-7 safe governance items for SSOT/docs work, or 2-5 safe structure items when running a refactor patrol. Group small candidates that share the same repo and semantic boundary into one lane.
+7. If only one low-value prose cleanup or tiny structure slice is safe, do not mutate by default. Output `no_safe_batch_matrix` and carry it into the next tranche unless it is a P0 stale-lane cleanup, a blocking SSOT conflict, or a user-requested single-point fix.
+8. Dirty worktrees block only the same write set. Identify the owner and either absorb, hand off, or skip that write set; do not reset, overwrite, or silently clean another lane.
+9. Upstream fork bodies and support-repo extensions are not cleanup pressure. `opl-hermes-shell/**`, `opl-aion-shell/**`, `one-person-lab-app/shells/aionui/**`, and `one-person-lab-app/_external/hermes-agent/**` are read-only owner/fork-boundary surfaces by default. Mark unsafe candidates `not_safe` or `blocked_owner_gated` with reason `upstream_fork_excluded`.
+
 ## OPL Series Lifecycle Workflow
 
 Use this when the user asks to refresh OPL series docs from ideal state and gap plans.
@@ -269,17 +285,18 @@ Use this when the user asks to refresh OPL series docs from ideal state and gap 
 2. Treat each governed repo's ideal-state reference and single Active Truth plan as primary references; the default seven-repo run has 14 primary reference documents.
 3. Keep support repos such as `opl-doc` and `opl-aion-shell` as explicit extensions, not default Foundry Agent truth owners.
 4. Run doctor only as preflight, then set it aside; use `active_truth_health` only to notice shape risks, not as semantic proof.
-5. Read current code/contracts/tests/read-model surfaces before editing docs.
-6. For each active plan, canonical doc, support doc, history/tombstone candidate, and stale/retired candidate, compare substantive claims against live repo truth section by section.
-7. Rewrite the active plan so it states current completion progress, current-state-vs-ideal gaps, and a next-round agent prompt.
-8. Review other `README*` and `docs/**/*.md` content by semantic theme and section, not by file path alone.
-9. For each theme, determine the SSOT and classify peer sections as covered duplicate, specific support detail, conflict, stale/superseded text, history/provenance, or out of scope.
-10. Fold historical incremental lists into compact current-state tables plus history/tombstone pointers.
-11. Retire stale modules/interfaces/tests/docs directly once active callers have moved; do not preserve compatibility aliases, facades, wrappers, or compatibility wording.
-12. Update canonical docs and archive/tombstone supporting docs so each document has one job.
-13. Maintain a repo-by-repo coverage ledger for reviewed docs, edited docs, retired docs, unreviewed docs, unresolved stale/retire candidates, and next tranche write scope.
-14. Run repo-native verification, absorb completed worktree lanes back to `main`, and clean only the current tranche's temporary worktrees/branches.
-15. Close the tranche, not the global goal, unless the coverage ledger proves no unreviewed docs, unresolved stale/retire candidates, or unfinished gaps remain across all governed repos.
+5. Build the `governance_worklist` and authority-aware matrix before editing; apply the batch gate above.
+6. Read current code/contracts/tests/read-model surfaces before editing docs.
+7. For each active plan, canonical doc, support doc, history/tombstone candidate, and stale/retired candidate, compare substantive claims against live repo truth section by section.
+8. Rewrite the active plan so it states current completion progress, current-state-vs-ideal gaps, and a next-round agent prompt.
+9. Review other `README*` and `docs/**/*.md` content by semantic theme and section, not by file path alone.
+10. For each theme, determine the SSOT and classify peer sections as covered duplicate, specific support detail, conflict, stale/superseded text, history/provenance, or out of scope.
+11. Fold historical incremental lists into compact current-state tables plus history/tombstone pointers.
+12. Retire stale modules/interfaces/tests/docs directly once active callers have moved; do not preserve compatibility aliases, facades, wrappers, or compatibility wording.
+13. Update canonical docs and archive/tombstone supporting docs so each document has one job.
+14. Maintain a repo-by-repo coverage ledger for reviewed docs, edited docs, retired docs, unreviewed docs, unresolved stale/retire candidates, and next tranche write scope.
+15. Run repo-native verification, absorb completed worktree lanes back to `main`, and clean only the current tranche's temporary worktrees/branches.
+16. Close the tranche, not the global goal, unless the coverage ledger proves no unreviewed docs, unresolved stale/retire candidates, or unfinished gaps remain across all governed repos.
 
 ## Change Packet
 
@@ -306,3 +323,4 @@ Templates live under `templates/change-packet/`.
 - Do not keep compatibility aliases or facade docs after retirement gates are met.
 - Do not create a second changelog/memory system when the repo already has history/process and receipt ledgers.
 - Do not convert a verified tranche into global completion while any governed repo still has unreviewed docs, unresolved stale/retire candidates, or carry-forward gaps.
+- Do not mutate a broad governance task before building the worklist/matrix and passing the minimum batch gate.
