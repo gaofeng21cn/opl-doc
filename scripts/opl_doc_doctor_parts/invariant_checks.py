@@ -8,7 +8,7 @@ from typing import Any
 from .common import Finding, read_text, rel_exists
 from .constants import (
     ACTIVE_GAP_MARKERS,
-    ACTIVE_PROGRESS_MARKERS,
+    ACTIVE_STATE_SUMMARY_MARKERS,
     ACTIVE_TRUTH_DOC_NAME_RE,
     CANONICAL_DOC_DIRS,
     CHECKBOX_ITEM_RE,
@@ -131,7 +131,7 @@ def inspect_active_truth_health(root: Path, active_gap_docs: list[str]) -> dict[
     for rel in owner_docs:
         path = root / rel
         text = read_text(path) if path.exists() else ""
-        has_progress = contains_marker(text, ACTIVE_PROGRESS_MARKERS)
+        has_state_summary = contains_marker(text, ACTIVE_STATE_SUMMARY_MARKERS)
         has_gaps = contains_marker(text, ACTIVE_GAP_MARKERS)
         has_next_prompt = contains_marker(text, NEXT_AGENT_PROMPT_MARKERS)
         missing_prompt_groups = (
@@ -139,8 +139,8 @@ def inspect_active_truth_health(root: Path, active_gap_docs: list[str]) -> dict[
         )
         headings = process_log_headings(text)
         missing_items = []
-        if not has_progress:
-            missing_items.append("current_completion_progress")
+        if not has_state_summary:
+            missing_items.append("current_state_summary")
         if not has_gaps:
             missing_items.append("current_state_vs_ideal_gaps")
         if not has_next_prompt:
@@ -156,7 +156,7 @@ def inspect_active_truth_health(root: Path, active_gap_docs: list[str]) -> dict[
         documents.append(
             {
                 "path": rel,
-                "has_current_completion_progress": has_progress,
+                "has_current_state_summary": has_state_summary,
                 "has_current_state_vs_ideal_gaps": has_gaps,
                 "has_next_round_agent_prompt": has_next_prompt,
                 "next_round_agent_prompt_ready": has_next_prompt and not missing_prompt_groups,
@@ -260,7 +260,7 @@ def doctor(root: Path) -> dict[str, Any]:
                 "warning",
                 "active_truth_owner_missing",
                 "docs/active",
-                "repo has no detected single Active Truth owner for current progress, gaps, and next-round prompt",
+                "repo has no detected single Active Truth owner for current state summary, gaps, and next-round prompt",
                 "map or create one active truth owner before autonomous long-horizon development",
             )
         )
@@ -270,7 +270,7 @@ def doctor(root: Path) -> dict[str, Any]:
         if any(
             item in missing_items
             for item in (
-                "current_completion_progress",
+                "current_state_summary",
                 "current_state_vs_ideal_gaps",
                 "next_round_agent_prompt",
             )
@@ -281,7 +281,7 @@ def doctor(root: Path) -> dict[str, Any]:
                     "active_truth_plan_incomplete",
                     path,
                     f"active truth owner is missing: {', '.join(missing_items)}",
-                    "rewrite the active owner to current progress, current gaps, and an executable next-round Agent prompt",
+                    "rewrite the active owner to current state summary, current gaps, and an executable next-round Agent prompt",
                 )
             )
         elif "next_round_agent_prompt_executable_fields" in missing_items:

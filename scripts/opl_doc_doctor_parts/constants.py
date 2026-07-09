@@ -256,11 +256,11 @@ PROCESS_LOG_HEADING_RE = re.compile(
     re.IGNORECASE,
 )
 
-ACTIVE_PROGRESS_MARKERS = (
-    "Current Completion Progress",
-    "Current progress",
-    "当前完成进度",
-    "完成进度",
+ACTIVE_STATE_SUMMARY_MARKERS = (
+    "Current State Summary",
+    "Current status summary",
+    "当前状态摘要",
+    "当前状态",
 )
 
 ACTIVE_GAP_MARKERS = (

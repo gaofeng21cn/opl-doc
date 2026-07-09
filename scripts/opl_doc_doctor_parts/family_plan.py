@@ -45,7 +45,7 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
         f"{repo_count} 个 repo（{repo_list}）的开发文档生命周期；以各 repo 的 ideal-state "
         f"reference 和 single Active Truth plan 合计 {reference_count} 个主参考文档为主要参考，根据 live code、"
         "contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前"
-        "完成进度、现状与理想态差距、下一轮 Agent prompt；逐条评估 "
+        "状态摘要、现状与理想态差距、下一轮 Agent prompt；逐条评估 "
         "README* 与 docs/**/*.md 下其他所有文档和章节，先按语义主题确定 Single Source of Truth，"
         "再做内容层面的合并、收薄、归档、删除和细节纳入，清理归档过时内容，避免二次污染；"
         "保证每个长期文档只有唯一任务和定位，active docs 不保存执行流水或历史"
@@ -223,7 +223,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "Perform a live truth semantic audit: read source, contracts, tests, package scripts, CLI/read-model outputs, runtime ledgers, receipts, and blockers that prove or disprove active-plan and canonical-doc claims.",
         "Treat ideal-state as the user-maintained target and rewrite the active plan to the best current truth from live code, contracts, tests, CLI/read-model, and docs.",
         "If a repo lacks a stable active truth owner, use templates/active-truth-plan.md as the section shape; if one already exists, map the same sections into that canonical active plan instead of creating a second plan.",
-        "Active docs must keep current completion progress, current-state-vs-ideal gaps, and the next-round Agent prompt; do not append execution diaries, dated closeout logs, or historical checklists.",
+        "Active docs must keep current state summary, current-state-vs-ideal gaps, and the next-round Agent prompt; do not append execution diaries, dated closeout logs, or historical checklists.",
         "Route sections by role: current truth to canonical docs, active gaps to the Active Truth plan, support material to references/specs/support layers, process history to docs/history, retired surfaces to tombstone/provenance, and stale pollution to rewrite/delete.",
         "Review every README* and docs/**/*.md semantic section against live repo truth and the theme SSOT; update content because the code/contracts/tests/read-model or owner doc changed or disproved prose, not because a structural scanner emitted a warning.",
         "For every merge, archive, tombstone, or delete decision, record the SSOT owner, content role, destination owner, and evidence that the old text is covered duplicate, specific support material, process history, retired provenance, or stale pollution.",
@@ -258,7 +258,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "completion_gate": [
             "canonical docs reflect current truth",
             "active docs were rewritten to the single best Active Truth",
-            "active truth includes current completion progress, current-state gaps, and next-round Agent prompt",
+            "active truth includes current state summary, current-state gaps, and next-round Agent prompt",
             "stale process material is archived or tombstoned",
             "each governed semantic theme has one documented SSOT owner",
             "peer docs keep only entry summaries, pointers, unique support detail, machine-boundary notes, or history/provenance",
