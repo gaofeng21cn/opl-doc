@@ -8,12 +8,12 @@ Machine boundary: 本文是人读硬约束；守门以测试和 review 执行。
 1. 本仓只治理开发相关文档生命周期和工程闭环。
 2. 不替代任何 domain repo 的 truth、quality verdict、artifact authority 或 owner receipt。
 3. OPL series 文件治理不迁移到 OpenArc/OpenSpec/Spec Kit 默认路径。
-4. active docs 是当前唯一 Active Truth 的重写面，表达当前完成进度、当前差距和下一轮 Agent prompt；过程材料进入 history；退役内容进入 tombstone/provenance。
+4. active docs 是当前唯一 Active Truth 的重写面，表达当前状态摘要、当前差距和下一轮 Agent prompt；过程材料进入 history；退役内容进入 tombstone/provenance。
 5. 已退役模块、接口、测试和文档入口不保留兼容 alias。
 6. Markdown 完整性不能替代 contracts、tests、CLI/read-model 或 runtime ledger。
 7. doctor 默认只读，不能写目标 repo。
 8. repo-native 指读取目标 repo 自己已有的开发入口，不指向目标 repo 安装本仓 CLI 或生成治理工具目录。
-9. OPL family 自动开发治理必须把 ideal-state reference 当输入，把当前完成进度、现状与理想态差距、下一轮 Agent prompt 当派生输出；不能让用户手工维护这些派生状态。
+9. OPL family 自动开发治理必须把 ideal-state reference 当输入，把当前状态摘要、现状与理想态差距、下一轮 Agent prompt 当派生输出；不能让用户手工维护这些派生状态。
 10. active docs 不能保存执行日志、时间线、完成流水或长历史清单；这些内容只能压缩进入 history/tombstone，以免污染 Active Truth。
 11. 正式治理必须覆盖 `README*` 与 `docs/**/*.md` 的实质内容审计；不能只整理 active gap 文档或只修 doctor findings。
 12. 文档治理必须先按语义主题确定 Single Source of Truth，再按内容段落合并、删除、归档、收薄或纳入细节；不得按文件名、目录相邻、篇幅、重复次数或最近编辑时间决定真相 owner。

@@ -7,7 +7,7 @@ Machine boundary: 本文说明设计；命令行为以 `skills/opl-doc/SKILL.md`
 
 ## 目标
 
-本仓目标是让 AI 在长时间软件开发中维护当前唯一 Active Truth：理想目标、当前完成进度、现状与理想态差距、下一轮 Agent prompt、文档分层、退役策略和验证闭环。它治理开发相关文档，不治理 domain runtime 或交付物权威。
+本仓目标是让 AI 在长时间软件开发中维护当前唯一 Active Truth：理想目标、当前状态摘要、现状与理想态差距、下一轮 Agent prompt、文档分层、退役策略和验证闭环。它治理开发相关文档，不治理 domain runtime 或交付物权威。
 
 ## 外部参考吸收
 
@@ -24,7 +24,7 @@ Machine boundary: 本文说明设计；命令行为以 `skills/opl-doc/SKILL.md`
 - `skill`: 给 Codex 读取的工作流与硬规则。
 - `doctor`: 只读扫描器，输出 profile、repo-native surfaces、canonical doc 状态和 lifecycle findings。
 - `family-plan`: 固化 OPL series 文档治理提示，变成可重复执行的工作流；输出 support repo extension policy，但不定义 repo truth、runtime truth、domain truth、artifact authority、quality verdict、owner receipt 或 Foundry Agent truth set。
-- `autonomous development loop`: 用户维护 ideal-state reference；治理流程根据 live repo truth 重写当前完成进度、当前差距和下一轮 Agent prompt。
+- `autonomous development loop`: 用户维护 ideal-state reference；治理流程根据 live repo truth 重写当前状态摘要、当前差距和下一轮 Agent prompt。
 - `active truth plan template`: 当目标 repo 缺少稳定 active owner 时，提供最小文档形状；语义判断仍由 Codex 按 live repo truth 完成。
 - `doctor guard`: 轻量结构红旗；不替代 Codex 对 Active Truth 语义的判断。
 - `change packet`: 非平凡开发的短期 active 包，完成后 fold back。
@@ -34,8 +34,8 @@ Machine boundary: 本文说明设计；命令行为以 `skills/opl-doc/SKILL.md`
 一个治理 tranche closeout 时，必须满足：
 
 - canonical docs 只表达当前事实。
-- active docs 只保留当前完成进度、当前差距和下一轮 Agent prompt。
-- active truth plan 已重写当前完成进度、现状与理想态差距和下一轮 Agent prompt。
+- active docs 只保留当前状态摘要、当前差距和下一轮 Agent prompt。
+- active truth plan 已重写当前状态摘要、现状与理想态差距和下一轮 Agent prompt。
 - active docs 没有执行日志、时间线或长历史清单污染。
 - history/tombstone 承接过程和退役语义。
 - contracts/tests/read-model 不被 prose 文档矛盾。

@@ -14,7 +14,7 @@ Machine boundary: 本文是人读索引；可执行真相以 skill、CLI doctor 
 - [architecture.md](./architecture.md)：skill / CLI / docs lifecycle 设计。
 - [invariants.md](./invariants.md)：不可破坏约束。
 - [decisions.md](./decisions.md)：当前关键决策。
-- [active/opl-doc-active-truth-plan.md](./active/opl-doc-active-truth-plan.md)：support repo 当前完成进度、当前差距、下一轮 Agent prompt 与 coverage / next-scope foldback owner。
+- [active/opl-doc-active-truth-plan.md](./active/opl-doc-active-truth-plan.md)：support repo 当前状态摘要、当前差距、下一轮 Agent prompt 与 coverage / next-scope foldback owner。
 - [design.md](./design.md)：实现设计参考。
 - [usage.md](./usage.md)：使用说明。
 - [history/](./history/)：已退役旧入口 provenance。

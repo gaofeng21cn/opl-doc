@@ -10,7 +10,7 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - Live Evidence 后置 / 功能结构优先是 `opl-doc` 治理工作读法。普通治理先关闭文档结构、SSOT owner、Active Truth owner、taxonomy、tombstone/no-resurrection、native profile drift、doctor risk-map、family-plan workflow 和 verification hygiene 这类功能/结构缺口。目标 repo 的 runtime evidence、owner receipts、production readiness、release readiness、domain readiness、App release、Brand L5、真实项目运行或 support repo live install evidence 仍归后置 evidence / owner lane；它们不能反向阻塞可独立完成的文档结构治理，也不能由 doctor clean、native-check pass、family-plan 输出、Markdown 完整或 profile synced 替代。
 
 - `skills/opl-doc/SKILL.md`：canonical Codex 使用入口。
-- `docs/active/opl-doc-active-truth-plan.md`：support repo Active Truth owner，持有当前完成进度、现状与理想态差距、下一轮 Agent prompt，以及 support repo coverage / next-scope foldback。
+- `docs/active/opl-doc-active-truth-plan.md`：support repo Active Truth owner，持有当前状态摘要、现状与理想态差距、下一轮 Agent prompt，以及 support repo coverage / next-scope foldback。
 - `docs/history/` 中的 retired previous skill-name tombstone：已退役旧入口的 provenance；旧名不再作为 active skill、UI entry 或 workflow 暴露；`tests/test_install_local_plugin.py` 还会扫描 active plugin / skill / script / template surfaces，防止旧入口在非 history tombstone 或 negative guard 语境中复活。
 - `scripts/opl_doc_doctor.py doctor`：单仓文档生命周期只读诊断，并报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
 - `scripts/opl_doc_doctor.py`：现在只是仓内命令 bootstrap；doctor 实现和 import API 归 `scripts/opl_doc_doctor_parts/` 中的 profile discovery、invariant checks、plugin-native profile sync、family-plan generation、CLI parsing 和 report rendering 分层维护。
@@ -32,7 +32,7 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - `scripts/verify.sh`：默认验证现在把 Python bytecode、pytest cache 和临时产物导向仓库外部 `OPL_DOC_REPO_TEMP_ROOT`；`scripts/opl_doc_doctor.py` 在导入实现模块前禁用 bytecode 写入，`pyproject.toml` 禁用 pytest cache provider。单独运行 pytest 时仍应显式使用 `PYTHONDONTWRITEBYTECODE=1`，不能把裸 `python3 -m pytest` 当作不污染 checkout 的入口。
 - `scripts/install_local_plugin.py --verify-only`：新机器安装后的本地插件、marketplace、`opl-doc` 短入口和 `opl-doc-doctor` 命令验证入口。
 - `family-plan` 默认把 11 个可维护 repo 的 ideal-state reference 与 single Active Truth plan 作为 22 个主参考文档；旧的 7 仓/14 文档范围只在用户显式缩小到核心 agent set 时使用。
-- `family-plan` 的完成门槛包含每个治理 repo 都要从 live repo truth 重写当前完成进度、现状与理想态差距、下一轮 Agent prompt。
+- `family-plan` 的完成门槛包含每个治理 repo 都要从 live repo truth 重写当前状态摘要、现状与理想态差距、下一轮 Agent prompt。
 - `family-plan` 现在输出 SSOT-first semantic consolidation workflow：治理前必须确定语义主题、SSOT owner、peer docs 和 section 分类，完成门槛包含每个语义主题只有一个 documented SSOT owner。
 - `family-plan` 明确区分 tranche closeout 和全局 `/goal` 完成：单轮 verified / absorbed 不能关闭全局目标，除非 coverage ledger 已覆盖所有 `README*` 与 `docs/**/*.md` 且剩余项已清空或折进下一轮 prompt。
 - `templates/active-truth-plan.md`：single Active Truth plan 推荐形状；用于缺少稳定 active owner 的 repo，不替代已有 canonical active plan，并要求下一轮 prompt 可直接作为 `/goal` 或长线 Codex prompt 使用。

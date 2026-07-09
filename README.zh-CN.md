@@ -73,7 +73,7 @@ python3 scripts/install_local_plugin.py --verify-only
 
 - 代理先读取仓库协作规则和当前文档，再开始编辑；现有文案只是待验证的说法，必须用代码、合同、测试、命令输出和运行证据校准。
 - doctor 先给出风险地图，但它不是治理输入，也不是任务清单。
-- skill 把 ideal-state reference 当作用户维护的目标输入，从当前仓库事实派生完成进度、当前差距和下一轮 Agent prompt；canonical docs 要折回当前事实，而不是单独当作证明。
+- skill 把 ideal-state reference 当作用户维护的目标输入，从当前仓库事实派生当前状态摘要、当前差距和下一轮 Agent prompt；canonical docs 要折回当前事实，而不是单独当作证明。
 - 代理必须把实质文档说法与当前仓库事实逐段对照，再更新文档内容、合并重复职责、路由 stale material。
 - 代理必须审计整个文档组合，而不只改 gap 文档；每份长期文档都应保留一个 owner、一个 purpose、一个 state 和一个 machine boundary。
 - 如果目标 repo 缺少稳定 active owner，代理可以用 `templates/active-truth-plan.md` 作为 single Active Truth plan 的形状。

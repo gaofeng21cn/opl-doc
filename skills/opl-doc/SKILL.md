@@ -5,7 +5,7 @@ description: "Use when governing OPL-family developer documentation lifecycle th
 
 # OPL Doc
 
-Use this skill for developer-document governance: helping AI maintain the current single Active Truth from ideal state and live repo truth, derive current completion progress, maintain current-state gaps and next-round agent prompts, retire stale docs, and close the software-engineering loop. Do not use it for repo truth, domain truth, runtime provider ownership, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
+Use this skill for developer-document governance: helping AI maintain the current single Active Truth from ideal state and live repo truth, derive the current state summary, maintain current-state gaps and next-round agent prompts, retire stale docs, and close the software-engineering loop. Do not use it for repo truth, domain truth, runtime provider ownership, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.
 
 ## Core Governance Principles
 
@@ -63,12 +63,12 @@ When the user asks for OPL series governance, multi-repo cleanup, long-running a
 
 The default OPL series scope is 11 maintainable repos: `one-person-lab`, `one-person-lab-app`, `opl-native-workbench`, `opl-flow`, `opl-doc`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, and `mas-scholar-skills`. Their ideal-state references plus single Active Truth plans form 22 primary reference documents. Do not shrink this to an older core-agent-only set unless the user explicitly narrows scope.
 
-Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions. Include them only when the user asks for support repo governance or the current task touches workflow / shell-carrier / support docs. They are not part of the default Foundry Agent truth set.
+`opl-doc` is part of the default 11-repo documentation-governance scope as a support/workflow repo, but it is not part of the default Foundry Agent truth set. Other support or shell-carrier repos such as `opl-aion-shell`, `opl-hermes-shell`, and embedded upstream shell bodies remain explicit extensions or read-only fork-boundary surfaces unless the user asks for that owner/fork inventory.
 
 Use this objective shape:
 
 ```text
-使用 OPL Doc，自动创建或延续 /goal，治理 OPL series 11 个可维护 repo 的开发文档生命周期；以各 repo 的 ideal-state reference 和 single Active Truth plan 合计 22 个主参考文档为主要参考，根据 live code、contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前完成进度、现状与理想态差距、下一轮 Agent prompt；逐条评估 README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；保证每个文档只有唯一任务和定位，active docs 不保存执行流水或历史增量日志，过时模块/接口/测试/文档/workflow/入口按理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，不得把全局 /goal 标记 complete，除非 11 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围；最终 main checkout 必须重新验证。
+使用 OPL Doc，自动创建或延续 /goal，治理 OPL series 11 个可维护 repo 的开发文档生命周期；以各 repo 的 ideal-state reference 和 single Active Truth plan 合计 22 个主参考文档为主要参考，根据 live code、contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前状态摘要、现状与理想态差距、下一轮 Agent prompt；逐条评估 README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；保证每个文档只有唯一任务和定位，active docs 不保存执行流水或历史增量日志，过时模块/接口/测试/文档/workflow/入口按理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，不得把全局 /goal 标记 complete，除非 11 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围；最终 main checkout 必须重新验证。
 ```
 
 For a short single-repo read-only audit, run doctor first and do not force `/goal` unless the user asks for cleanup or long-running execution.
@@ -107,7 +107,7 @@ Find the target repo's active truth owner before creating or rewriting any plan:
 
 1. Read repo guidance for an explicit active plan or docs portfolio pointer.
 2. Prefer `docs/active/current-state-vs-ideal-gap.md` when it exists and is current.
-3. Otherwise search `docs/active/` for a document that owns current progress, current gaps, and next-round agent prompt together.
+3. Otherwise search `docs/active/` for a document that owns the current state summary, current gaps, and next-round agent prompt together.
 4. If multiple active docs claim the same role, choose the one closest to the repo's canonical docs and rewrite/retire the duplicates.
 5. If none exists, create or map the bundled `templates/active-truth-plan.md` shape into the repo's normal active docs location.
 
@@ -290,7 +290,7 @@ Use this when the user asks to refresh OPL series docs from ideal state and gap 
 5. Build the `governance_worklist` and authority-aware matrix before editing; apply the batch gate above.
 6. Read current code/contracts/tests/read-model surfaces before editing docs.
 7. For each active plan, canonical doc, support doc, history/tombstone candidate, and stale/retired candidate, compare substantive claims against live repo truth section by section.
-8. Rewrite the active plan so it states current completion progress, current-state-vs-ideal gaps, and a next-round agent prompt.
+8. Rewrite the active plan so it states the current state summary, current-state-vs-ideal gaps, and a next-round agent prompt.
 9. Review other `README*` and `docs/**/*.md` content by semantic theme and section, not by file path alone.
 10. For each theme, determine the SSOT and classify peer sections as covered duplicate, specific support detail, conflict, stale/superseded text, history/provenance, or out of scope.
 11. Fold historical incremental lists into compact current-state tables plus history/tombstone pointers.

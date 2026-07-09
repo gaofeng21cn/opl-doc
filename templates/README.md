@@ -7,7 +7,7 @@ Machine boundary: 本文是人读模板索引；模板是 prompt / change-packet
 
 ## 当前模板
 
-- [active-truth-plan.md](./active-truth-plan.md)：single Active Truth plan 推荐形状，用于从 ideal-state 和 live repo truth 派生当前完成进度、当前差距和下一轮 Agent prompt。
+- [active-truth-plan.md](./active-truth-plan.md)：single Active Truth plan 推荐形状，用于从 ideal-state 和 live repo truth 派生当前状态摘要、当前差距和下一轮 Agent prompt。
 - [goal-opl-family-doc-lifecycle.md](./goal-opl-family-doc-lifecycle.md)：OPL series 文档生命周期治理 `/goal` 模板。
 - [change-packet/intent.md](./change-packet/intent.md)：目标、非目标、owner boundary。
 - [change-packet/design.md](./change-packet/design.md)：设计、文档 taxonomy 与 machine-boundary 影响。
