@@ -67,7 +67,7 @@ Restart Codex, then use one sentence:
 - "Use OPL Doc to govern the OPL series developer documentation lifecycle."
 - "Use OPL Doc to clean stale active docs and fold completed plans into history."
 
-For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The default OPL series is seven repos and 14 primary reference documents. Short single-repo read-only audits start with the doctor and do not force goal mode.
+For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The default OPL series coverage is 11 maintainable repos and 22 primary reference documents. Short single-repo read-only audits start with the doctor and do not force goal mode.
 
 ## How It Works
 
@@ -86,7 +86,7 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 
 OPL Doc is OPL-native by design. OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
 
-The default OPL series workflow covers the seven governed repo set: OPL, MAS, MAG, RCA, OMA, BookForge, and the App. Support repos such as `opl-doc` and `opl-aion-shell` are explicit extensions for workflow or shell-carrier tasks; they are not default Foundry Agent truth owners.
+The default OPL series workflow covers OPL, the App, Native Workbench, OPL Flow, OPL Doc, MAS, MAG, RCA, OMA, BookForge, and MAS Scholar Skills. Upstream shell repos such as `opl-aion-shell` are explicit shell-carrier extensions; they are not default Foundry Agent truth owners.
 
 ## CLI
 

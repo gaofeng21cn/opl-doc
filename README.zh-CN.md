@@ -67,7 +67,7 @@ python3 scripts/install_local_plugin.py --verify-only
 - “使用 OPL Doc 治理 OPL series 的开发文档生命周期。”
 - “使用 OPL Doc 清理 stale active docs，并把已完成计划折回 history。”
 
-对于 OPL series、多仓清理、长周期自治、或提到 worktree/subagent/吸收回 `main` 的任务，skill 会主动进入或延续 `/goal`。默认 OPL series 是 7 个 repo、14 个主参考文档；短单仓只读审计先跑 doctor，不强制 goal。
+对于 OPL series、多仓清理、长周期自治、或提到 worktree/subagent/吸收回 `main` 的任务，skill 会主动进入或延续 `/goal`。默认 OPL series coverage 是 11 个可维护 repo、22 个主参考文档；短单仓只读审计先跑 doctor，不强制 goal。
 
 ## 它如何工作
 
@@ -86,7 +86,7 @@ python3 scripts/install_local_plugin.py --verify-only
 
 OPL Doc 是 OPL-native 的治理工具。OpenArc、OpenSpec、Spec Kit、Agent OS 等项目是有用参考，但本仓不会把 OPL 系列项目迁移到外部固定文件布局。
 
-默认 OPL series workflow 覆盖 OPL、MAS、MAG、RCA、OMA、BookForge 和 App 七个治理 repo。`opl-doc`、`opl-aion-shell` 等 support repo 只是 workflow 或 shell-carrier 任务的 explicit extension，不是默认 Foundry Agent truth owner。
+默认 OPL series workflow 覆盖 OPL、App、Native Workbench、OPL Flow、OPL Doc、MAS、MAG、RCA、OMA、BookForge 和 MAS Scholar Skills。`opl-aion-shell` 等 upstream shell repo 只是 shell-carrier 任务的 explicit extension，不是默认 Foundry Agent truth owner。
 
 ## CLI
 

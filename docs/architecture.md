@@ -21,7 +21,7 @@ Machine boundary: 本文是人读架构；可执行命令行为以 `scripts/opl_
 6. Verification 层
    - 通过 repo-native 测试、diff check、doctor 输出和最终 main checkout 验证闭环。
 7. Support extension 层
-   - `family-plan` 默认只治理 7 个核心 OPL series repo。`opl-doc`、`opl-aion-shell` 等 support repo 只在用户显式要求或当前任务触及 workflow / shell carrier / support docs 时作为 extension 纳入；它们不是默认 Foundry Agent truth set。
+   - `family-plan` 默认治理 11 个 OPL series 可维护 repo。`opl-aion-shell` 等 upstream shell repo 只在用户显式要求或当前任务触及 shell carrier / support docs 时作为 extension 纳入；它们不是默认 Foundry Agent truth set。
    - `contracts/support-repo-policy.json` 物化这条 support-extension policy；`family-plan` 从同一 source 派生 `support_repo_policy`，native profile 把该合同列为插件管理面。该合同是 no-resurrection / no-second-truth guard，不是目标 repo truth 或 Foundry Agent truth owner 集合。
 
 ## 自动开发文档回路

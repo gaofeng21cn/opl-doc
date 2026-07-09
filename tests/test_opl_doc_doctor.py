@@ -681,10 +681,26 @@ def test_doctor_flags_process_log_headings_in_active_truth_owner(tmp_path: Path)
 def test_family_plan_contains_opl_series_workflow() -> None:
     payload = family_plan()
 
-    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app"}
+    assert set(payload["repos"]) == {
+        "opl",
+        "app",
+        "native_workbench",
+        "flow",
+        "opl_doc",
+        "mas",
+        "mag",
+        "rca",
+        "oma",
+        "bookforge",
+        "scholarskills",
+    }
     assert payload["repos"]["oma"] == "opl-meta-agent"
     assert payload["repos"]["bookforge"] == "opl-bookforge"
     assert payload["repos"]["app"] == "one-person-lab-app"
+    assert payload["repos"]["native_workbench"] == "opl-native-workbench"
+    assert payload["repos"]["flow"] == "opl-flow"
+    assert payload["repos"]["opl_doc"] == "opl-doc"
+    assert payload["repos"]["scholarskills"] == "mas-scholar-skills"
     assert payload["support_repo_policy"]["default_included_in_governed_repo_set"] is False
     assert payload["support_repo_policy"]["extension_only"] is True
     assert payload["support_repo_policy"]["not_foundry_agent_truth_set"] is True
@@ -706,15 +722,12 @@ def test_family_plan_contains_opl_series_workflow() -> None:
         ]
         is False
     )
-    assert payload["support_repo_policy"]["support_repos"] == {
-        "opl_doc": "opl-doc",
-        "shell": "opl-aion-shell",
-    }
+    assert payload["support_repo_policy"]["support_repos"] == {"shell": "opl-aion-shell"}
     assert payload["support_profile_guard"]["canonical_support_policy_ref"] == (
         "contracts/support-repo-policy.json"
     )
     assert payload["support_profile_guard"]["legacy_contract_ref_alias_allowed"] is False
-    assert payload["primary_reference_doc_count"] == 14
+    assert payload["primary_reference_doc_count"] == 22
     assert "OPL single Active Truth plan" in payload["primary_reference_docs_per_repo"]
     assert "BOOKFORGE single Active Truth plan" in payload["primary_reference_docs_per_repo"]
     assert "APP single Active Truth plan" in payload["primary_reference_docs_per_repo"]
@@ -728,7 +741,7 @@ def test_family_plan_contains_opl_series_workflow() -> None:
 def test_family_plan_json_contains_original_series_governance_prompt_elements() -> None:
     payload = family_plan()
 
-    assert len(payload["primary_reference_docs_per_repo"]) == 14
+    assert len(payload["primary_reference_docs_per_repo"]) == 22
     assert {
         "evaluate_all_docs_item_by_item",
         "support_repo_extension_boundary",
@@ -785,7 +798,7 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "OPL Series Docs Lifecycle Workflow" in markdown
     assert "Goal Mode" in markdown
     assert "create or resume a /goal" in markdown
-    assert "14 primary reference docs" in markdown
+    assert "22 primary reference docs" in markdown
     assert "Support Repos" in markdown
     assert "Support Profile Guard" in markdown
     assert "opl-doc.support-profile.no-resurrection.v1" in markdown
@@ -830,7 +843,20 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
 def test_parse_repo_overrides_keeps_default_series_and_adds_extra_repo() -> None:
     repos = parse_repo_overrides(["award=award-agent"])
 
-    assert set(repos) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app", "award"}
+    assert set(repos) == {
+        "opl",
+        "app",
+        "native_workbench",
+        "flow",
+        "opl_doc",
+        "mas",
+        "mag",
+        "rca",
+        "oma",
+        "bookforge",
+        "scholarskills",
+        "award",
+    }
     assert repos["award"] == "award-agent"
 
 
@@ -841,6 +867,10 @@ def test_default_series_repos_can_expand_from_workspace_root() -> None:
     assert repos["oma"] == "/workspace/opl-meta-agent"
     assert repos["bookforge"] == "/workspace/opl-bookforge"
     assert repos["app"] == "/workspace/one-person-lab-app"
+    assert repos["native_workbench"] == "/workspace/opl-native-workbench"
+    assert repos["flow"] == "/workspace/opl-flow"
+    assert repos["opl_doc"] == "/workspace/opl-doc"
+    assert repos["scholarskills"] == "/workspace/mas-scholar-skills"
 
 
 def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
@@ -853,8 +883,8 @@ def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
     assert "下一轮 Agent prompt" in goal_prompt
     assert "逐条评估" in goal_prompt
     assert "其他所有文档和章节" in goal_prompt
-    assert "7 个 repo" in goal_prompt
-    assert "14 个主参考文档" in goal_prompt
+    assert "11 个 repo" in goal_prompt
+    assert "22 个主参考文档" in goal_prompt
     assert "本轮 tranche" in goal_prompt
     assert "未覆盖文档" in goal_prompt
     assert "alias、facade 或 wrapper" in goal_prompt
@@ -868,8 +898,19 @@ def test_family_plan_support_repos_are_extension_only() -> None:
         Path("contracts/support-repo-policy.json").read_text(encoding="utf-8")
     )
 
-    assert set(payload["repos"]) == {"opl", "mas", "mag", "rca", "oma", "bookforge", "app"}
-    assert "opl_doc" not in payload["repos"]
+    assert set(payload["repos"]) == {
+        "opl",
+        "app",
+        "native_workbench",
+        "flow",
+        "opl_doc",
+        "mas",
+        "mag",
+        "rca",
+        "oma",
+        "bookforge",
+        "scholarskills",
+    }
     assert "shell" not in payload["repos"]
     policy = payload["support_repo_policy"]
     profile_guard = payload["support_profile_guard"]
@@ -895,14 +936,18 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     assert profile_guard_audit["default_governed_repo_ids"] == [
         "app",
         "bookforge",
+        "flow",
         "mag",
         "mas",
+        "native_workbench",
         "oma",
         "opl",
+        "opl_doc",
         "rca",
+        "scholarskills",
     ]
-    assert profile_guard_audit["support_repo_ids"] == ["opl_doc", "shell"]
-    assert profile_guard_audit["support_repo_names"] == ["opl-aion-shell", "opl-doc"]
+    assert profile_guard_audit["support_repo_ids"] == ["shell"]
+    assert profile_guard_audit["support_repo_names"] == ["opl-aion-shell"]
     assert profile_guard_audit["forbidden_legacy_contract_refs_present"] == []
     assert {
         check["check_id"]: check["status"]
@@ -930,7 +975,7 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     assert profile_guard["derived_from_support_repo_policy"] is True
     assert profile_guard["native_profile_must_declare_extension_only"] is True
     assert profile_guard["family_plan_must_emit_this_guard"] is True
-    assert profile_guard["support_repo_names"] == ["opl-aion-shell", "opl-doc"]
+    assert profile_guard["support_repo_names"] == ["opl-aion-shell"]
     assert (
         profile_guard["false_ready_guard"][
             "support_profile_materialized_can_claim_foundry_agent_truth"
@@ -957,13 +1002,9 @@ def test_family_plan_support_repos_are_extension_only() -> None:
     assert "owner_receipts" in policy["authority_boundary"]["does_not_own"]
     assert "user_explicitly_requests_support_repo_governance" in policy["include_only_when"]
     guard = policy["no_resurrection_guard"]
-    assert guard["default_series_repo_ids_must_exclude_support_repo_ids"] == [
-        "opl_doc",
-        "shell",
-    ]
+    assert guard["default_series_repo_ids_must_exclude_support_repo_ids"] == ["shell"]
     assert guard["default_series_repo_names_must_exclude_support_repo_names"] == [
         "opl-aion-shell",
-        "opl-doc",
     ]
     assert guard["legacy_underscore_support_policy_ref_must_not_resurrect"] is True
     assert guard["legacy_contract_ref_alias_allowed"] is False
@@ -1049,7 +1090,7 @@ def test_support_profile_guard_audit_fails_when_support_repo_or_legacy_ref_resur
     (root / "contracts" / "support_repo_policy.json").write_text("{}", encoding="utf-8")
 
     audit = build_support_profile_guard_audit(
-        {"opl_doc": "opl-doc", "opl": "one-person-lab"},
+        {"shell": "opl-aion-shell", "opl": "one-person-lab"},
         repo_root=root,
     )
 

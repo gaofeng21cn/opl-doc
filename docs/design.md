@@ -41,4 +41,4 @@ Machine boundary: 本文说明设计；命令行为以 `skills/opl-doc/SKILL.md`
 - contracts/tests/read-model 不被 prose 文档矛盾。
 - 最终 main checkout 上有新鲜验证。
 
-全局 OPL series `/goal` 完成还必须满足默认 7 个 repo 的 14 个主参考文档已用于校准，且 coverage ledger 证明所有 `README*` 与 `docs/**/*.md` 已逐段覆盖，没有未覆盖文档、未折回 stale/retire 候选或未进入下一轮 Agent prompt 的剩余 gap。否则只能报告本轮 tranche 完成，并继续保留全局 goal。
+全局 OPL series `/goal` 完成还必须满足默认 11 个可维护 repo 的 22 个主参考文档已用于校准，且 coverage ledger 证明所有 `README*` 与 `docs/**/*.md` 已逐段覆盖，没有未覆盖文档、未折回 stale/retire 候选或未进入下一轮 Agent prompt 的剩余 gap。否则只能报告本轮 tranche 完成，并继续保留全局 goal。

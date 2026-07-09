@@ -88,16 +88,19 @@ RETIREMENT_NEGATION_MARKERS = (
 
 DEFAULT_SERIES_REPO_NAMES = {
     "opl": "one-person-lab",
+    "app": "one-person-lab-app",
+    "native_workbench": "opl-native-workbench",
+    "flow": "opl-flow",
+    "opl_doc": "opl-doc",
     "mas": "med-autoscience",
     "mag": "med-autogrant",
     "rca": "redcube-ai",
     "oma": "opl-meta-agent",
     "bookforge": "opl-bookforge",
-    "app": "one-person-lab-app",
+    "scholarskills": "mas-scholar-skills",
 }
 
 DEFAULT_SUPPORT_REPO_NAMES = {
-    "opl_doc": "opl-doc",
     "shell": "opl-aion-shell",
 }
 
