@@ -61,14 +61,14 @@ For edit work, do not start by fixing doctor findings or by selecting a file to 
 
 When the user asks for OPL series governance, multi-repo cleanup, long-running autonomous development, stale-doc cleanup with edits, or anything that mentions worktrees/subagents/absorbing back to `main`, create or resume a `/goal` before execution. The user should not have to remember to ask for `/goal`.
 
-The default OPL series scope is 11 maintainable repos: `one-person-lab`, `one-person-lab-app`, `opl-native-workbench`, `opl-flow`, `opl-doc`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, and `mas-scholar-skills`. Their ideal-state references plus single Active Truth plans form 22 primary reference documents. Do not shrink this to an older core-agent-only set unless the user explicitly narrows scope.
+The shipped `family-plan` baseline names 11 repos: `one-person-lab`, `one-person-lab-app`, `opl-native-workbench`, `opl-flow`, `opl-doc`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, and `mas-scholar-skills`. Its 22 conceptual primary references are a workflow profile, not the live OPL family inventory. Before every run, discover the OPL-owned repos that actually exist from the workspace and repo-local ownership, then add current product or distribution repos with `--repo`. Retired or absent repos are not missing work.
 
-`opl-doc` is part of the default 11-repo documentation-governance scope as a support/workflow repo, but it is not part of the default Foundry Agent truth set. Other support or shell-carrier repos such as `opl-aion-shell`, `opl-hermes-shell`, and embedded upstream shell bodies remain explicit extensions or read-only fork-boundary surfaces unless the user asks for that owner/fork inventory.
+`opl-doc` is part of the baseline documentation-governance profile as a support/workflow repo, but it is not part of the default Foundry Agent truth set. Other support or shell-carrier repos such as `opl-aion-shell`, `opl-hermes-shell`, and embedded upstream shell bodies remain explicit extensions or read-only fork-boundary surfaces unless the user asks for that owner/fork inventory.
 
 Use this objective shape:
 
 ```text
-使用 OPL Doc，自动创建或延续 /goal，治理 OPL series 11 个可维护 repo 的开发文档生命周期；以各 repo 的 ideal-state reference 和 single Active Truth plan 合计 22 个主参考文档为主要参考，根据 live code、contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前状态摘要、现状与理想态差距、下一轮 Agent prompt；逐条评估 README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；保证每个文档只有唯一任务和定位，active docs 不保存执行流水或历史增量日志，过时模块/接口/测试/文档/workflow/入口按理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，不得把全局 /goal 标记 complete，除非 11 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围；最终 main checkout 必须重新验证。
+使用 OPL Doc，自动创建或延续 /goal；先从当前 workspace、repo-local AGENTS/contracts 和 owner 标识盘点实际存在的 OPL-owned repo，再治理本轮范围内的开发文档生命周期；以各 repo 声明的 ideal-state reference、single Active Truth plan 或等价 owner 文档为主要参考，根据 live code、contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前状态摘要、现状与理想态差距、下一轮 Agent prompt；逐条评估 README* 与 docs/**/*.md 下其他所有文档和章节，清理归档过时内容，避免二次污染；保证每个文档只有唯一任务和定位，active docs 不保存执行流水或历史增量日志，过时模块/接口/测试/文档/workflow/入口按理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，不得把全局 /goal 标记 complete，除非实际纳入 repo 的 README* 与 docs/**/*.md 已逐段覆盖、未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；已退役或不存在 repo 不形成 backlog；每轮结束必须留下覆盖清单、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围；最终 main checkout 必须重新验证。
 ```
 
 For a short single-repo read-only audit, run doctor first and do not force `/goal` unless the user asks for cleanup or long-running execution.
@@ -283,8 +283,8 @@ Required pre-mutation shape:
 
 Use this when the user asks to refresh OPL series docs from ideal state and gap plans.
 
-1. Treat the default 11 maintainable repos as the governed OPL series unless the user narrows scope: `one-person-lab`, `one-person-lab-app`, `opl-native-workbench`, `opl-flow`, `opl-doc`, `med-autoscience`, `med-autogrant`, `redcube-ai`, `opl-meta-agent`, `opl-bookforge`, and `mas-scholar-skills`.
-2. Treat each governed repo's ideal-state reference and single Active Truth plan as primary references; the default 11-repo run has 22 primary reference documents.
+1. Start from the 11-repo baseline profile, then fresh-discover the OPL-owned repos that actually exist and add in-scope product or distribution repos. Do not treat retired or absent repos as missing, and do not write upstream fork bodies.
+2. Treat each governed repo's declared ideal-state reference, single Active Truth plan, or equivalent repo-native owner document as primary references. Do not manufacture two documents merely to satisfy the baseline profile count.
 3. Keep upstream shell repos such as `opl-aion-shell` as explicit extensions, not default Foundry Agent truth owners.
 4. Run doctor only as preflight, then set it aside; use `active_truth_health` only to notice shape risks, not as semantic proof.
 5. Build the `governance_worklist` and authority-aware matrix before editing; apply the batch gate above.

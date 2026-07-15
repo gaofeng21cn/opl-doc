@@ -4,7 +4,7 @@
 
 执行代理应自动创建或延续 `/goal`，用户只需要说“使用 OPL Doc 治理 OPL series 的开发文档生命周期”。
 
-默认 OPL series 范围是 11 个可维护 repo；以各 repo 的 ideal-state reference 和 single Active Truth plan 合计 22 个主参考文档为主要参考，根据现在各个 repo 代码、contracts、tests、CLI/read-model 和 docs 的实际情况，重写刷新各 repo 的当前状态摘要、现状与理想态差距、下一轮 Agent prompt，并逐条评估各个 repo `README*` 与 `docs/**/*.md` 下其他所有文档。
+开始前从当前 workspace、repo-local `AGENTS.md`、contracts 和 owner 标识盘点实际存在的 OPL-owned repo；内置 11 仓 baseline 只是发现起点，用 `--repo` 纳入当前产品或分发仓，已退役或不存在的 repo 不形成缺失项。以每个实际纳入 repo 声明的 ideal-state reference、single Active Truth plan 或等价 owner 文档为主要参考，根据代码、contracts、tests、CLI/read-model 和 docs 的实际情况，重写刷新当前状态摘要、现状与理想态差距、下一轮 Agent prompt，并逐条评估 `README*` 与 `docs/**/*.md` 下其他所有文档。
 
 目标：
 
@@ -55,4 +55,4 @@
 - prose 文档不与 contracts、tests、CLI/read-model 矛盾。
 - 没有新增兼容污染面或旧路线复活文案。
 - 最终 main checkout 验证通过，且临时 worktree/branch 已清理。
-- 全局完成还要求 11 个可维护 repo 的 `README*` 与 `docs/**/*.md` 已逐段覆盖，coverage ledger 没有未覆盖文档或未折回的 stale/retire 候选。
+- 全局完成要求本轮 fresh inventory 中所有实际纳入 repo 的 `README*` 与 `docs/**/*.md` 已逐段覆盖，coverage ledger 没有未覆盖文档或未折回的 stale/retire 候选；不存在或已退役 repo 不计入。
