@@ -7,6 +7,10 @@
 <p align="center"><strong>面向 AI 长时间工程开发的 OPL-native 文档管家</strong></p>
 <p align="center">当 Codex 或其他代理需要理解目标并持续开发时，让仓库文档保持当前、分层清楚、可验证。</p>
 
+<p align="center">
+  <img src="assets/branding/opl-doc-user-journey-v2.png" alt="OPL Doc 从旧文档到清晰交接的用户旅程" width="100%" />
+</p>
+
 <table>
   <tr>
     <td width="33%" valign="top">

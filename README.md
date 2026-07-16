@@ -7,6 +7,10 @@
 <p align="center"><strong>An OPL-native documentation steward for long-running AI engineering</strong></p>
 <p align="center">Keep repo docs current, layered, and useful when Codex or another agent needs to understand the goal and keep developing over time.</p>
 
+<p align="center">
+  <img src="assets/branding/opl-doc-user-journey-v2.png" alt="OPL Doc journey from stale pages to a clean handoff" width="100%" />
+</p>
+
 <table>
   <tr>
     <td width="33%" valign="top">
