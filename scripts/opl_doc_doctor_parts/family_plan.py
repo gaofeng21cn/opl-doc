@@ -41,21 +41,29 @@ def build_goal_objective(repo_paths: dict[str, str]) -> str:
     repo_count = len(repo_paths)
     reference_count = repo_count * 2
     return (
-        "使用 OPL Doc，自动创建或延续 /goal，治理 OPL series "
-        f"{repo_count} 个 repo（{repo_list}）的开发文档生命周期；以各 repo 的 ideal-state "
-        f"reference 和 single Active Truth plan 合计 {reference_count} 个主参考文档为主要参考，根据 live code、"
+        "使用 OPL Doc，自动创建或延续 /goal，治理 OPL series；先把以下 "
+        f"{repo_count} 个 repo（{repo_list}）和 {reference_count} 个概念主参考仅作为 workflow baseline / "
+        "显式候选输入，再从当前 workspace、repo-local AGENTS/docs/contracts 和 owner 标识 fresh 发现实际存在且"
+        "在用户范围内的 OPL-owned repo，冻结 actual governed scope；已退役或不存在的 repo 不形成 backlog，"
+        "upstream fork 及其主体代码只读排除。以实际纳入 repo 的 ideal-state reference、single Active Truth plan "
+        "或等价 owner 文档为主要参考，根据 live code、"
         "contracts、tests、CLI/read-model 与 docs 的当前事实，重写维护当前"
         "状态摘要、现状与理想态差距、下一轮 Agent prompt；逐条评估 "
         "README* 与 docs/**/*.md 下其他所有文档和章节，先按语义主题确定 Single Source of Truth，"
         "再做内容层面的合并、收薄、归档、删除和细节纳入，清理归档过时内容，避免二次污染；"
         "保证每个长期文档只有唯一任务和定位，active docs 不保存执行流水或历史"
         "增量日志，过时模块/接口/测试/文档/workflow/入口按"
-        "理想态直接退役且不保留兼容面、alias、facade 或 wrapper；可以并行使用 subagent/worktree，"
-        "每条线完成后验证、提交、吸收回 main 并清理；本轮 tranche 完成只表示本轮已验证并折回，"
-        f"不得把全局 /goal 标记 complete，除非 {repo_count} 个 repo 的 README* 与 docs/**/*.md 已逐段覆盖、"
+        "理想态直接退役且不保留兼容面、alias、facade 或 wrapper。修改前 fresh 检查 branch/head、dirty、"
+        "worktree、ahead/behind、remote 与并发 owner write set，先形成 governance_worklist 和 authority-aware "
+        "matrix，优先选择跨仓最高价值且写集安全的治理包；可以并行使用 subagent/worktree，每条线完成后"
+        "按仓验证、独立提交和 push、用远端 ref 回读、吸收回 main 并清理。本轮 tranche 完成只表示本轮已验证"
+        "并折回，不得把全局 /goal 标记 complete，除非 actual governed scope 中所有 repo 的 README* 与 "
+        "docs/**/*.md 已逐段覆盖、"
         "未覆盖文档清单为空、未完成 gap 已转入下一轮 Agent prompt；每轮结束必须留下覆盖清单、"
-        "未覆盖文档、剩余 stale/retire 候选和下一轮写入范围。最终 main checkout 必须重新验证，"
-        "且 canonical docs、history/tombstone 与必要的 contracts/read-model references 已同步。"
+        "未覆盖文档、剩余 stale/retire 候选和下一轮写入范围。遇到同写集冲突、owner gate、fork boundary 或"
+        "验证不足时，保留 blocker、owner、合法入口和停止条件，不做兜底式修改。最终 main checkout 必须重新"
+        "验证，且 canonical docs、history/tombstone 与必要的 contracts/read-model references 已同步；docs、"
+        "focused tests、queue clean 或 push 成功不能单独表述为 runtime/domain/release ready。"
     )
 
 
@@ -188,7 +196,13 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
     support_profile_guard_audit = build_support_profile_guard_audit(paths)
     governance_prompt_elements = [
         "series_primary_reference_docs",
+        "dynamic_owned_repo_discovery",
+        "retired_or_absent_repo_no_backlog",
+        "upstream_fork_body_read_only_exclusion",
         "support_repo_extension_boundary",
+        "fresh_repo_currentness_and_owner_write_set_gate",
+        "governance_worklist_and_authority_aware_matrix",
+        "highest_value_safe_governance_package_priority",
         "active_owner_discovery",
         "live_truth_semantic_audit",
         "doctor_is_preflight_only",
@@ -207,11 +221,18 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "directly_retire_outdated_modules_interfaces_tests",
         "allow_parallel_worktrees_and_subagents",
         "absorb_main_and_cleanup_when_complete",
+        "per_repo_verify_commit_push_and_remote_ref_readback",
+        "owner_blocker_legal_route_and_stop_condition",
+        "fresh_evidence_claim_boundary",
         "long_horizon_tranche_continuation",
         "coverage_ledger_for_unfinished_docs",
     ]
     steps = [
-        "Use the OPL series primary reference docs: each governed repo contributes its ideal-state reference plus its single Active Truth plan.",
+        "Treat the provided repo map and conceptual primary references as workflow baseline or explicit candidate input, never as the live family inventory or completion scope.",
+        "Fresh-discover the OPL-owned repos that actually exist and are in user scope from the workspace, repo-local AGENTS/docs/contracts, and owner markers. Retired or absent repos do not become backlog; upstream forks and fork bodies stay read-only excluded.",
+        "Freeze the actual governed scope and, before mutation, record branch/head, origin relation, dirty files, worktrees, ahead/behind, remote state, and concurrent owner/write-set conflicts for every included repo.",
+        "Build a governance_worklist and authority-aware matrix before editing; record truth owner, owner surface, lifecycle, allowed/forbidden write set, blocker, risk, verification, status, and selected/skipped reason, then prefer the highest-value coherent packages with safe write sets.",
+        "Use the actual governed scope primary references: each included repo contributes its declared ideal-state reference plus its single Active Truth plan or equivalent owner document; do not manufacture missing documents just to satisfy a conceptual count.",
         "Read each repo's AGENTS.md, TASTE.md when present, status, architecture, invariants, docs portfolio guidance, and the series primary reference docs before editing.",
         "Run doctor only as a preflight risk map; do not turn doctor findings into the governance task list.",
         "Treat doctor, native profile, and family-plan outputs as workflow aids only: they do not own repo truth, runtime truth, domain truth, artifact authority, quality verdicts, owner receipts, production readiness, or the Foundry Agent truth set.",
@@ -236,12 +257,28 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "过时模块/接口/测试/文档/workflow/入口全部按当前理想态直接退役清理，不保留兼容 alias、facade、wrapper 或 compatibility wording.",
         "可以并行开 worktree/subagent for independent repos or non-overlapping lanes; keep scopes explicit and merge evidence back to the owner lane.",
         "Run repo-native doc/contract/tests verification, absorb completed lanes back to main, and clean temporary branches/worktrees.",
+        "For every changed repo, commit and push independently, then read back the remote ref; if currentness, owner, write-set, fork, or verification gates fail, preserve the blocker and report its owner, legal entry, and stop condition instead of applying a fallback edit.",
+        "Report only fresh evidence at its proven layer: do not use docs, focused tests, queue cleanliness, or a successful push by themselves to establish runtime, domain, release, owner-acceptance, or production readiness.",
         "Treat each execution as a long-horizon tranche: a tranche can be verified and absorbed, but the global goal must remain open until all governed repos and all README*/docs/**/*.md sections have been covered or explicitly carried forward.",
         "Maintain a coverage ledger for every governed repo: reviewed docs/sections, edited docs, archived/tombstoned/deleted docs, unreviewed docs, unresolved stale/retire candidates, and the next tranche write scope.",
     ]
     return {
         "objective": "OPL series document lifecycle governance and software-engineering closeout",
         "repos": paths,
+        "scope_policy": {
+            "repo_map_role": "workflow_baseline_or_explicit_candidate_input",
+            "requires_fresh_owned_repo_discovery": True,
+            "actual_governed_scope_must_be_frozen_before_mutation": True,
+            "retired_or_absent_repo_creates_backlog": False,
+            "upstream_fork_body_write_allowed": False,
+            "discovery_inputs": [
+                "workspace_inventory",
+                "repo_local_agent_guidance",
+                "repo_local_docs_and_contracts",
+                "repo_owner_markers",
+                "user_scope",
+            ],
+        },
         "support_repo_policy": support_repo_policy,
         "support_profile_guard": support_profile_guard,
         "support_profile_guard_audit": support_profile_guard_audit,
@@ -252,10 +289,15 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
             "single_repo_exception": "For a short single-repo read-only audit, run doctor first and do not force /goal unless the user asks for cleanup or long-running execution.",
         },
         "primary_reference_doc_count": len(primary_reference_docs),
+        "primary_reference_doc_role": "conceptual_baseline_only_until_actual_scope_is_frozen",
         "primary_reference_docs_per_repo": primary_reference_docs,
         "governance_prompt_elements": governance_prompt_elements,
         "workflow": steps,
         "completion_gate": [
+            "actual governed scope was fresh-discovered and frozen before mutation",
+            "retired or absent repos did not become backlog and upstream fork bodies stayed read-only excluded",
+            "branch/head, dirty, worktree, ahead/behind, remote, and concurrent owner/write-set gates were checked for every governed repo",
+            "governance worklist and authority-aware matrix preserve selected, skipped, blocked, and no-safe outcomes",
             "canonical docs reflect current truth",
             "active docs were rewritten to the single best Active Truth",
             "active truth includes current state summary, current-state gaps, and next-round Agent prompt",
@@ -267,6 +309,8 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
             "outdated modules/interfaces/tests/docs/workflows/entrypoints are directly retired when their active callers have moved",
             "completed lanes were absorbed back to main and temporary worktrees/branches were cleaned",
             "verification was run on the final main checkout",
+            "each changed repo was committed and pushed independently and its remote ref was read back, or the exact blocker and legal owner route were preserved",
+            "docs, focused tests, queue cleanliness, and push success were not promoted into runtime, domain, release, owner-acceptance, or production-ready claims",
             "global goal was not marked complete merely because one tranche finished",
             "coverage ledger records reviewed, edited, archived, tombstoned, deleted, unreviewed, and carry-forward documents for every governed repo",
             "support repos remain explicit extensions and never become the default Foundry Agent truth set",

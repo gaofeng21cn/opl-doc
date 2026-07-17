@@ -21,7 +21,7 @@
 
 工作方式：
 
-- 每个 repo 先读根层 `AGENTS.md`，存在 `TASTE.md` 时先按当前 `TASTE.md` 校准。
+- 每个 repo 先读根层 `AGENTS.md`，存在 `TASTE.md` 时先按当前 `TASTE.md` 校准；fresh 检查 branch/head、dirty、worktree、ahead/behind、remote 与并发 owner write set。远端状态无法刷新时标 currentness blocker，不把 tracking ref 当作已确认最新。
 - doctor 只作为预检风险地图；不能把 doctor findings 当成治理任务清单，不能只修 doctor 报的问题。
 - 读 canonical docs：`README*`、`docs/README*`、`docs/project.md`、`docs/status.md`、`docs/architecture.md`、`docs/invariants.md`、`docs/decisions.md`。
 - 读 single Active Truth plan 和 ideal-state reference，并用 live source/contracts/tests/read-model 验证重要断言。
@@ -40,11 +40,13 @@
 - 开发完成后删除或重写已关闭 gap；执行流水、完成记录和弯路归入 `docs/history/` 或 tombstone/provenance。
 - closeout 前检查：closed gap 已删除或重写、当前事实已折回 canonical docs、active path 不保留完成过程包、下一轮 prompt 只保留仍未完成的工作。
 - 可以用 subagent 并行开多个 worktree 推进，但每条线必须有清晰 write scope。
-- 每条线完成后跑新鲜验证，提交，吸收回 `main`，删除对应 worktree/branch。
+- 每条线完成后跑新鲜验证，提交，吸收回 `main`，删除对应 worktree/branch；每个变更仓独立 push 并回读远端 ref。
+- 遇到同写集冲突、owner gate、fork boundary、currentness 或验证不足时，保留 blocker、owner、合法入口和停止条件，不做兜底式修改。
 - 每个 repo 维护 coverage ledger：已审文档/章节、已改文档、归档/tombstone/删除文档、未覆盖文档、剩余 stale/retire 候选和下一轮写入范围。
 - 每轮结束的 matrix 必须保留 selected/skipped/no-safe 状态；`no_safe_change`、`blocked_owner_gated`、`not_safe` 不得被包装成已完成。
 - 未覆盖文档清单、剩余 stale/retire 候选或未完成 gap 非空时，只能做 tranche closeout，并把剩余项折进下一轮 Agent prompt；不得把全局 `/goal` 标记 complete。
 - 最终在 `main` 上再次验证，并更新 canonical docs、history/tombstone 和必要的 contracts/read-model references。
+- docs、focused tests、queue clean、commit/push 或 tracking-ref clean 只能证明对应层，不能单独声明 runtime/domain/release/owner-acceptance/production ready。
 
 完成口径：
 

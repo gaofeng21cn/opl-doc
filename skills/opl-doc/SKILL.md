@@ -269,7 +269,7 @@ Before mutating multi-repo or long-running OPL docs governance, build the workli
 
 Required pre-mutation shape:
 
-1. Freeze the repo/worktree snapshot: branch, head, origin relation, dirty files, active worktrees, support-repo extensions, upstream-fork exclusions, and owner/write-set conflicts.
+1. Freeze the repo/worktree snapshot: branch, head, fresh remote relation and ahead/behind readback, dirty files, active worktrees, support-repo extensions, upstream-fork exclusions, and owner/write-set conflicts. If remote state cannot be refreshed, record that as a currentness blocker instead of assuming the tracking ref is current.
 2. Produce a `governance_worklist` and authority-aware matrix before edits. Target 8-12 candidates when the task is multi-repo or broad; if fewer exist, state the search surfaces and why the pool is smaller.
 3. Each candidate names `repo`, `theme`, `truth_owner`, `owner_surface`, `route`, `doc_lifecycle`, `authority_blocker`, `allowed_write_set`, `forbidden_write_set`, `risk_class`, `verification_command`, `parallel_group`, `status`, and `selected_or_skipped_reason`.
 4. Use executable routes: `governance_ssot`, `refactor_patrol`, or `owner_lane`. Pure structure candidates such as long files, duplicate helpers, over-wide exports, cycles, or test splits route to `refactor_patrol` unless they directly create docs truth drift or retired public-surface leakage.
@@ -278,6 +278,7 @@ Required pre-mutation shape:
 7. If only one low-value prose cleanup or tiny structure slice is safe, do not mutate by default. Output `no_safe_batch_matrix` and carry it into the next tranche unless it is a P0 stale-lane cleanup, a blocking SSOT conflict, or a user-requested single-point fix.
 8. Dirty worktrees block only the same write set. Identify the owner and either absorb, hand off, or skip that write set; do not reset, overwrite, or silently clean another lane.
 9. Upstream fork bodies and support-repo extensions are not cleanup pressure. `opl-hermes-shell/**`, `opl-aion-shell/**`, `one-person-lab-app/shells/aionui/**`, and `one-person-lab-app/_external/hermes-agent/**` are read-only owner/fork-boundary surfaces by default. Mark unsafe candidates `not_safe` or `blocked_owner_gated` with reason `upstream_fork_excluded`.
+10. When a candidate is blocked, record the blocker, owner, legal re-entry path, and stop condition. Do not replace an owner/currentness/fork/verification gate with a fallback edit.
 
 ## OPL Series Lifecycle Workflow
 
@@ -297,7 +298,7 @@ Use this when the user asks to refresh OPL series docs from ideal state and gap 
 12. Retire stale modules/interfaces/tests/docs directly once active callers have moved; do not preserve compatibility aliases, facades, wrappers, or compatibility wording.
 13. Update canonical docs and archive/tombstone supporting docs so each document has one job.
 14. Maintain a repo-by-repo coverage ledger for reviewed docs, edited docs, retired docs, unreviewed docs, unresolved stale/retire candidates, and next tranche write scope.
-15. Run repo-native verification, absorb completed worktree lanes back to `main`, and clean only the current tranche's temporary worktrees/branches.
+15. Run repo-native verification, absorb completed worktree lanes back to `main`, clean only the current tranche's temporary worktrees/branches, commit and push each changed repo independently, then read back the remote ref. A failed or unavailable remote readback remains an explicit blocker.
 16. Close the tranche, not the global goal, unless the coverage ledger proves no unreviewed docs, unresolved stale/retire candidates, or unfinished gaps remain across all governed repos.
 
 ## Change Packet
@@ -326,3 +327,4 @@ Templates live under `templates/change-packet/`.
 - Do not create a second changelog/memory system when the repo already has history/process and receipt ledgers.
 - Do not convert a verified tranche into global completion while any governed repo still has unreviewed docs, unresolved stale/retire candidates, or carry-forward gaps.
 - Do not mutate a broad governance task before building the worklist/matrix and passing the minimum batch gate.
+- Do not promote docs, focused tests, queue cleanliness, commit/push success, or a clean tracking ref into runtime, domain, release, owner-acceptance, or production readiness.

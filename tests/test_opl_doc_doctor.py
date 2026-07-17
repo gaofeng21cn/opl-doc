@@ -798,7 +798,10 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "OPL Series Docs Lifecycle Workflow" in markdown
     assert "Goal Mode" in markdown
     assert "create or resume a /goal" in markdown
-    assert "22 primary reference docs" in markdown
+    assert "Repo Map (Workflow Baseline / Candidate Input)" in markdown
+    assert "fresh owned-repo discovery required: `true`" in markdown
+    assert "22 conceptual primary reference slots" in markdown
+    assert "actual owners come from the frozen governed scope" in markdown
     assert "Support Repos" in markdown
     assert "Support Profile Guard" in markdown
     assert "opl-doc.support-profile.no-resurrection.v1" in markdown
@@ -830,6 +833,11 @@ def test_family_plan_markdown_contains_original_series_governance_prompt_element
     assert "过时模块/接口/测试/文档/workflow/入口" in markdown
     assert "worktree/subagent" in markdown
     assert "吸收回 main 并清理" in markdown
+    assert "governance_worklist / authority-aware matrix" in markdown
+    assert "fresh currentness / owner write-set gate" in markdown
+    assert "逐仓验证、提交、push 和远端 ref 回读" in markdown
+    assert "阻断项保留 owner、合法入口和停止条件" in markdown
+    assert "fresh evidence 不越级声明 readiness" in markdown
     assert "semantic input set" in markdown
     assert "preflight risk map" in markdown
     assert "every README* and docs/**/*.md" in markdown
@@ -884,12 +892,54 @@ def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:
     assert "逐条评估" in goal_prompt
     assert "其他所有文档和章节" in goal_prompt
     assert "11 个 repo" in goal_prompt
-    assert "22 个主参考文档" in goal_prompt
+    assert "22 个概念主参考" in goal_prompt
+    assert "workflow baseline" in goal_prompt
+    assert "actual governed scope" in goal_prompt
+    assert "已退役或不存在的 repo 不形成 backlog" in goal_prompt
+    assert "governance_worklist" in goal_prompt
+    assert "authority-aware matrix" in goal_prompt
+    assert "ahead/behind" in goal_prompt
+    assert "远端 ref 回读" in goal_prompt
     assert "本轮 tranche" in goal_prompt
     assert "未覆盖文档" in goal_prompt
     assert "alias、facade 或 wrapper" in goal_prompt
     assert "吸收回 main" in goal_prompt
     assert "最终 main checkout" in goal_prompt
+
+    assert payload["scope_policy"] == {
+        "repo_map_role": "workflow_baseline_or_explicit_candidate_input",
+        "requires_fresh_owned_repo_discovery": True,
+        "actual_governed_scope_must_be_frozen_before_mutation": True,
+        "retired_or_absent_repo_creates_backlog": False,
+        "upstream_fork_body_write_allowed": False,
+        "discovery_inputs": [
+            "workspace_inventory",
+            "repo_local_agent_guidance",
+            "repo_local_docs_and_contracts",
+            "repo_owner_markers",
+            "user_scope",
+        ],
+    }
+    assert payload["primary_reference_doc_role"] == (
+        "conceptual_baseline_only_until_actual_scope_is_frozen"
+    )
+    assert "dynamic_owned_repo_discovery" in payload["governance_prompt_elements"]
+    assert (
+        "governance_worklist_and_authority_aware_matrix"
+        in payload["governance_prompt_elements"]
+    )
+    assert (
+        "per_repo_verify_commit_push_and_remote_ref_readback"
+        in payload["governance_prompt_elements"]
+    )
+    assert any(
+        "actual governed scope was fresh-discovered" in item
+        for item in payload["completion_gate"]
+    )
+    assert any(
+        "successful push by themselves to establish" in item
+        for item in payload["workflow"]
+    )
 
 
 def test_family_plan_support_repos_are_extension_only() -> None:

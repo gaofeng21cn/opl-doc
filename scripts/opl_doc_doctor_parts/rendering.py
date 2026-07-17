@@ -48,7 +48,16 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
     print()
     print(payload["goal_mode"]["objective"])
     print()
-    print("## Repos")
+    print("## Repo Map (Workflow Baseline / Candidate Input)")
+    scope_policy = payload["scope_policy"]
+    print(
+        "fresh owned-repo discovery required: "
+        f"`{str(scope_policy['requires_fresh_owned_repo_discovery']).lower()}`"
+    )
+    print(
+        "actual governed scope must be frozen before mutation: "
+        f"`{str(scope_policy['actual_governed_scope_must_be_frozen_before_mutation']).lower()}`"
+    )
     for name, path in payload["repos"].items():
         print(f"- `{name}`: `{path}`")
     print()
@@ -78,14 +87,23 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
         f"`{support_audit['check_summary']['failed']}` failed"
     )
     print()
-    print("## Primary References")
-    print(f"{payload['primary_reference_doc_count']} primary reference docs")
+    print("## Conceptual Primary Reference Baseline")
+    print(
+        f"{payload['primary_reference_doc_count']} conceptual primary reference slots; "
+        "actual owners come from the frozen governed scope"
+    )
     for reference in payload["primary_reference_docs_per_repo"]:
         print(f"- {reference}")
     print()
     print("## Governance Prompt Elements")
     labels = {
         "series_primary_reference_docs": "OPL series primary reference docs",
+        "dynamic_owned_repo_discovery": "动态发现当前实际存在的 OPL-owned repo",
+        "retired_or_absent_repo_no_backlog": "已退役或不存在 repo 不形成 backlog",
+        "upstream_fork_body_read_only_exclusion": "upstream fork 主体只读排除",
+        "fresh_repo_currentness_and_owner_write_set_gate": "fresh currentness / owner write-set gate",
+        "governance_worklist_and_authority_aware_matrix": "governance_worklist / authority-aware matrix",
+        "highest_value_safe_governance_package_priority": "优先跨仓高价值且写集安全的治理包",
         "active_owner_discovery": "active truth owner 发现顺序",
         "live_truth_semantic_audit": "live repo truth 语义审计",
         "doctor_is_preflight_only": "doctor 只做预检 guard",
@@ -104,6 +122,9 @@ def print_family_markdown(payload: dict[str, Any]) -> None:
         "directly_retire_outdated_modules_interfaces_tests": "过时模块/接口/测试/文档/workflow/入口直接退役清理",
         "allow_parallel_worktrees_and_subagents": "允许并行 worktree/subagent",
         "absorb_main_and_cleanup_when_complete": "完成后吸收回 main 并清理",
+        "per_repo_verify_commit_push_and_remote_ref_readback": "逐仓验证、提交、push 和远端 ref 回读",
+        "owner_blocker_legal_route_and_stop_condition": "阻断项保留 owner、合法入口和停止条件",
+        "fresh_evidence_claim_boundary": "fresh evidence 不越级声明 readiness",
         "long_horizon_tranche_continuation": "长线 tranche 续跑，不把本轮完成当全局完成",
         "coverage_ledger_for_unfinished_docs": "覆盖清单记录已审/未审文档和下一轮范围",
     }
