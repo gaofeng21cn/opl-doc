@@ -10,6 +10,7 @@ from .constants import (
     ACTIVE_GAP_MARKERS,
     ACTIVE_STATE_SUMMARY_MARKERS,
     ACTIVE_TRUTH_DOC_NAME_RE,
+    ACTIVE_TRUTH_PURPOSE_RE,
     CANONICAL_DOC_DIRS,
     CHECKBOX_ITEM_RE,
     CHECKBOX_LIST_RISK_THRESHOLD,
@@ -79,6 +80,13 @@ def active_truth_reference_docs(root: Path) -> list[str]:
         for path in FAMILY_REFERENCE_DOCS
         if rel_exists(root, path)
     ]
+    for doc in list_markdown_docs(root):
+        rel = doc.relative_to(root).as_posix()
+        if rel in refs or is_history_path(doc):
+            continue
+        if has_active_truth_owner_purpose(doc):
+            refs.append(rel)
+
     active_root = root / "docs" / "active"
     if not active_root.exists():
         return refs
@@ -91,7 +99,21 @@ def active_truth_reference_docs(root: Path) -> list[str]:
     return refs
 
 
+def has_active_truth_owner_purpose(path: Path) -> bool:
+    if not path.exists() or not path.is_file():
+        return False
+    head = "\n".join(read_text(path).splitlines()[:12])
+    return bool(ACTIVE_TRUTH_PURPOSE_RE.search(head))
+
+
 def active_truth_owner_docs(root: Path, active_gap_docs: list[str]) -> list[str]:
+    explicit_owner_docs = [
+        rel
+        for rel in active_gap_docs
+        if has_active_truth_owner_purpose(root / rel)
+    ]
+    if explicit_owner_docs:
+        return explicit_owner_docs
     owner_docs = [
         rel
         for rel in active_gap_docs
@@ -169,13 +191,14 @@ def inspect_active_truth_health(root: Path, active_gap_docs: list[str]) -> dict[
     status = "pass"
     if not owner_docs:
         status = "missing_active_truth_owner"
-    elif missing_total or process_log_total:
+    elif len(owner_docs) > 1 or missing_total or process_log_total:
         status = "attention_required"
 
     return {
         "status": status,
         "owner_docs": owner_docs,
         "checked_doc_count": len(owner_docs),
+        "owner_conflict_count": max(0, len(owner_docs) - 1),
         "missing_item_count": missing_total,
         "process_log_heading_count": process_log_total,
         "next_round_agent_prompt_not_ready_count": prompt_not_ready_total,
@@ -262,6 +285,17 @@ def doctor(root: Path) -> dict[str, Any]:
                 "docs/active",
                 "repo has no detected single Active Truth owner for current state summary, gaps, and next-round prompt",
                 "map or create one active truth owner before autonomous long-horizon development",
+            )
+        )
+    if len(active_truth_health["owner_docs"]) > 1:
+        findings.append(
+            Finding(
+                "warning",
+                "multiple_active_truth_owners",
+                "docs",
+                "multiple documents explicitly claim the Active Truth owner role: "
+                + ", ".join(active_truth_health["owner_docs"]),
+                "choose one canonical owner and demote the others to support or history",
             )
         )
     for document in active_truth_health["documents"]:

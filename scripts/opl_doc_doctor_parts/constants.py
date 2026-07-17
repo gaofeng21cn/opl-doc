@@ -27,6 +27,11 @@ ACTIVE_TRUTH_DOC_NAME_RE = re.compile(
     re.IGNORECASE,
 )
 
+ACTIVE_TRUTH_PURPOSE_RE = re.compile(
+    r"^Purpose:\s*`?(?:active_truth_plan|single_active_truth_plan|ideal_state_gap_plan)`?\s*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+
 CANONICAL_DOC_DIRS = [
     "docs/active",
     "docs/public",
@@ -63,6 +68,8 @@ RETIREMENT_NEGATION_MARKERS = (
     "不得保留",
     "不新增",
     "不得新增",
+    "必须为零",
+    "禁止",
     "不恢复",
     "不得恢复",
     "不再",
@@ -265,9 +272,11 @@ ACTIVE_STATE_SUMMARY_MARKERS = (
 
 ACTIVE_GAP_MARKERS = (
     "Current-State vs Ideal-State Gaps",
+    "Current Gaps",
     "Functional / Structural Gaps",
     "Test / Evidence Gaps",
     "现状与理想",
+    "当前差距",
     "功能/结构差距",
     "测试/证据差距",
 )

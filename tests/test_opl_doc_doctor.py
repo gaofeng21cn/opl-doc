@@ -468,6 +468,22 @@ def test_negative_retirement_policy_is_not_legacy_pollution(tmp_path: Path) -> N
     assert all(finding["code"] != "legacy_vocabulary_active_path" for finding in payload["findings"])
 
 
+def test_zero_residue_policy_is_not_legacy_pollution(tmp_path: Path) -> None:
+    root = tmp_path / "redcube-ai"
+    docs = root / "docs"
+    docs.mkdir(parents=True)
+    (docs / "architecture.md").write_text(
+        "# Architecture\n\nOwner: `RCA`\nPurpose: `architecture`\nState: `current`\n"
+        "Machine boundary: contracts\n\n"
+        "这些能力及其 compatibility alias 在 active source 中必须为零。\n",
+        encoding="utf-8",
+    )
+
+    payload = doctor(root)
+
+    assert all(finding["code"] != "legacy_vocabulary_active_path" for finding in payload["findings"])
+
+
 def test_history_provenance_guard_line_is_not_legacy_pollution(tmp_path: Path) -> None:
     root = tmp_path / "one-person-lab"
     active = root / "docs" / "active"
@@ -544,6 +560,61 @@ def test_doctor_detects_repo_native_active_truth_plan_names(tmp_path: Path) -> N
 
     assert payload["active_gap_reference_docs"] == ["docs/active/rca-ideal-state-gap-plan.md"]
     assert payload["recommendation"] != "Add or map the active ideal-state gap document before long-horizon autonomous development."
+
+
+def test_doctor_prefers_explicit_active_truth_purpose_outside_active_dir(tmp_path: Path) -> None:
+    root = tmp_path / "opl-health-platform"
+    docs = root / "docs"
+    docs.mkdir(parents=True)
+    (root / "README.md").write_text("# OPL Health\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (docs / "roadmap.md").write_text(
+        "# Roadmap\n\n"
+        "Owner: `OPL Health`\nPurpose: `single_active_truth_plan`\nState: `active_planning`\n"
+        "Machine boundary: docs only\n\n"
+        "## Current State Summary\n\nDocs-only planning.\n\n"
+        "## 当前差距\n\nA specialty is not selected.\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope:\n- docs/scenarios/\n\n"
+        "Non-goals:\n- runtime\n\n"
+        "Live truth inputs:\n- owner brief\n\n"
+        "Verification commands:\n- git diff --check\n\n"
+        "Completion gate:\n- one scenario selected\n\n"
+        "Foldback target:\n- docs/roadmap.md\n",
+        encoding="utf-8",
+    )
+
+    payload = doctor(root)
+
+    assert payload["active_gap_reference_docs"] == ["docs/roadmap.md"]
+    assert payload["active_truth_health"]["owner_docs"] == ["docs/roadmap.md"]
+    assert payload["active_truth_health"]["status"] == "pass"
+
+
+def test_doctor_reports_multiple_explicit_active_truth_owners(tmp_path: Path) -> None:
+    root = tmp_path / "opl-health-platform"
+    docs = root / "docs"
+    docs.mkdir(parents=True)
+    (root / "README.md").write_text("# OPL Health\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    active_truth = (
+        "Owner: `OPL Health`\nPurpose: `single_active_truth_plan`\nState: `active_planning`\n"
+        "Machine boundary: docs only\n\n"
+        "## Current State Summary\n\nDocs-only planning.\n\n"
+        "## Current Gaps\n\nOne scenario remains.\n\n"
+        "## Next-Round Agent Prompt\n\n"
+        "Write scope: docs\n\nNon-goals: runtime\n\nLive truth inputs: owner brief\n\n"
+        "Verification commands: git diff --check\n\nCompletion gate: one owner\n\n"
+        "Foldback target: docs/roadmap.md\n"
+    )
+    (docs / "roadmap.md").write_text("# Roadmap\n\n" + active_truth, encoding="utf-8")
+    (docs / "status-plan.md").write_text("# Status Plan\n\n" + active_truth, encoding="utf-8")
+
+    payload = doctor(root)
+
+    assert payload["active_truth_health"]["status"] == "attention_required"
+    assert payload["active_truth_health"]["owner_conflict_count"] == 1
+    assert any(finding["code"] == "multiple_active_truth_owners" for finding in payload["findings"])
 
 
 def test_doctor_reports_active_truth_health_for_executable_plan(tmp_path: Path) -> None:

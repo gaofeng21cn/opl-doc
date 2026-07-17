@@ -15,6 +15,7 @@ Machine boundary: 本文是人读状态；当前行为以测试和 CLI 输出为
 - `scripts/opl_doc_doctor.py doctor`：单仓文档生命周期只读诊断，并报告目标 repo 自己已有的 agent guidance、canonical docs、machine truth surface 和验证入口。
 - `scripts/opl_doc_doctor.py`：现在只是仓内命令 bootstrap；doctor 实现和 import API 归 `scripts/opl_doc_doctor_parts/` 中的 profile discovery、invariant checks、plugin-native profile sync、family-plan generation、CLI parsing 和 report rendering 分层维护。
 - `scripts/opl_doc_doctor.py doctor`：保持轻量，只报告 missing canonical docs、lifecycle header、legacy active wording、长清单风险和 repo-native verification surface；Active Truth 语义判断由 Codex 按 skill 读取 live repo truth 后执行。
+- doctor 的 Active Truth owner 发现优先读取文档头部显式 `Purpose: active_truth_plan`、`single_active_truth_plan` 或 `ideal_state_gap_plan`；只有缺少显式声明时才回退到 `docs/active/` 文件名推断。repo 已有 `docs/roadmap.md` 等 canonical owner 时不要求为了目录形状再造第二份计划；多个显式 owner 会作为冲突报告，不会静默选取一个。
 - skill 现在明确禁止 doctor-driven 治理：doctor 只做预检风险地图；文档内容必须由 Codex 读取 source/contracts/tests/CLI-read-model/runtime ledger/receipt/blocker 和 docs 后逐段语义审计并重写。
 - skill 现在要求治理整个文档组合：逐个审计 `README*` 与 `docs/**/*.md`，根据 live repo truth 判断每个 section 是当前事实、active gap、支撑参考、过程历史、退役 tombstone 还是 stale pollution。
 - skill 现在把文档治理固定为 SSOT-first 内容级合并：每个语义主题先确定 Single Source of Truth，再让 peer docs 删除重复、收薄成指针、纳入细节、归档历史或清理 stale pollution；不能按文件名、目录或最近编辑时间机械合并。
