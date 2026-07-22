@@ -50,6 +50,8 @@ def test_install_copies_plugin_and_updates_marketplace(tmp_path: Path) -> None:
     (repo / "skills" / "dummy.txt").write_text("ok\n")
     (repo / ".git").mkdir()
     (repo / ".git" / "ignored").write_text("ignored\n")
+    (repo / ".codegraph").mkdir()
+    (repo / ".codegraph" / "index.db").write_text("local index\n")
 
     result = install(
         repo,
@@ -62,6 +64,7 @@ def test_install_copies_plugin_and_updates_marketplace(tmp_path: Path) -> None:
     command_path = Path(result["command_path"])
     assert (plugin_path / ".codex-plugin" / "plugin.json").exists()
     assert not (plugin_path / ".git").exists()
+    assert not (plugin_path / ".codegraph").exists()
     assert command_path.name == "opl-doc-doctor"
     assert command_path.is_symlink()
     assert command_path.resolve() == plugin_path / "scripts" / "opl_doc_doctor.py"

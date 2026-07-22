@@ -52,7 +52,13 @@ def install(
     target = plugins_dir / PLUGIN_NAME
     if target.exists():
         shutil.rmtree(target)
-    ignore = shutil.ignore_patterns(".git", ".worktrees", ".pytest_cache", "__pycache__")
+    ignore = shutil.ignore_patterns(
+        ".git",
+        ".worktrees",
+        ".codegraph",
+        ".pytest_cache",
+        "__pycache__",
+    )
     shutil.copytree(repo_root, target, ignore=ignore)
 
     marketplace = load_json(marketplace_path)
