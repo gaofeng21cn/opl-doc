@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -12,6 +13,13 @@ from typing import Any
 
 PLUGIN_NAME = "opl-doc"
 COMMAND_NAME = "opl-doc-doctor"
+INSTALL_IGNORED_NAMES = (
+    ".git",
+    ".worktrees",
+    ".codegraph",
+    ".pytest_cache",
+    "__pycache__",
+)
 REQUIRED_PLUGIN_FILES = (
     ".codex-plugin/plugin.json",
     "skills/opl-doc/SKILL.md",
@@ -43,6 +51,19 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def install_file_digests(root: Path) -> dict[str, str]:
+    if not root.exists():
+        return {}
+    digests: dict[str, str] = {}
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root)
+        if any(part in INSTALL_IGNORED_NAMES for part in relative.parts):
+            continue
+        if path.is_file():
+            digests[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return digests
+
+
 def install(
     repo_root: Path,
     plugins_dir: Path,
@@ -52,13 +73,7 @@ def install(
     target = plugins_dir / PLUGIN_NAME
     if target.exists():
         shutil.rmtree(target)
-    ignore = shutil.ignore_patterns(
-        ".git",
-        ".worktrees",
-        ".codegraph",
-        ".pytest_cache",
-        "__pycache__",
-    )
+    ignore = shutil.ignore_patterns(*INSTALL_IGNORED_NAMES)
     shutil.copytree(repo_root, target, ignore=ignore)
 
     marketplace = load_json(marketplace_path)
@@ -96,6 +111,7 @@ def install(
 
 
 def verify(
+    repo_root: Path,
     plugins_dir: Path,
     marketplace_path: Path,
     bin_dir: Path,
@@ -116,14 +132,31 @@ def verify(
     )
     command_path = bin_dir / COMMAND_NAME
     command_ok = command_path.is_symlink() and command_path.resolve() == plugin_path / "scripts" / "opl_doc_doctor.py"
-    ok = not missing and marketplace_ok and command_ok
+    source_digests = install_file_digests(repo_root)
+    installed_digests = install_file_digests(plugin_path)
+    missing_from_install = sorted(source_digests.keys() - installed_digests.keys())
+    unexpected_in_install = sorted(installed_digests.keys() - source_digests.keys())
+    content_mismatches = sorted(
+        relative
+        for relative in source_digests.keys() & installed_digests.keys()
+        if source_digests[relative] != installed_digests[relative]
+    )
+    content_ok = not missing_from_install and not unexpected_in_install and not content_mismatches
+    ok = not missing and marketplace_ok and command_ok and content_ok
     return {
         "ok": ok,
+        "repo_root": str(repo_root),
         "plugin_path": str(plugin_path),
         "marketplace_ok": marketplace_ok,
         "command_path": str(command_path),
         "command_ok": command_ok,
         "missing": missing,
+        "content_ok": content_ok,
+        "source_file_count": len(source_digests),
+        "installed_file_count": len(installed_digests),
+        "missing_from_install": missing_from_install,
+        "unexpected_in_install": unexpected_in_install,
+        "content_mismatches": content_mismatches,
     }
 
 
@@ -150,7 +183,7 @@ def main() -> int:
     marketplace_path = Path(args.marketplace_path).expanduser().resolve()
     bin_dir = Path(args.bin_dir).expanduser().resolve()
     if args.verify_only:
-        result = verify(plugins_dir, marketplace_path, bin_dir)
+        result = verify(Path(args.repo_root).resolve(), plugins_dir, marketplace_path, bin_dir)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["ok"] else 1
 

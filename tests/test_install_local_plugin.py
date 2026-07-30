@@ -111,9 +111,39 @@ def test_verify_only_checks_installed_short_skill_and_command(tmp_path: Path) ->
     bin_dir = tmp_path / "bin"
 
     install(repo_root, plugins_dir, marketplace_path, bin_dir)
-    result = verify(plugins_dir, marketplace_path, bin_dir)
+    result = verify(repo_root, plugins_dir, marketplace_path, bin_dir)
 
     assert result["ok"] is True
     assert result["marketplace_ok"] is True
     assert result["command_ok"] is True
     assert result["missing"] == []
+    assert result["content_ok"] is True
+    assert result["missing_from_install"] == []
+    assert result["unexpected_in_install"] == []
+    assert result["content_mismatches"] == []
+
+
+def test_verify_only_detects_installed_file_and_content_drift(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    plugins_dir = tmp_path / "plugins"
+    marketplace_path = tmp_path / "marketplace.json"
+    bin_dir = tmp_path / "bin"
+
+    install(repo_root, plugins_dir, marketplace_path, bin_dir)
+    plugin_path = plugins_dir / "opl-doc"
+    (plugin_path / "scripts" / "opl_doc_doctor_parts" / "family_plan.py").write_text(
+        "# stale installed bytes\n",
+        encoding="utf-8",
+    )
+    (plugin_path / "README.md").unlink()
+    (plugin_path / "stale-extra.txt").write_text("stale\n", encoding="utf-8")
+
+    result = verify(repo_root, plugins_dir, marketplace_path, bin_dir)
+
+    assert result["ok"] is False
+    assert result["content_ok"] is False
+    assert result["missing_from_install"] == ["README.md"]
+    assert result["unexpected_in_install"] == ["stale-extra.txt"]
+    assert result["content_mismatches"] == [
+        "scripts/opl_doc_doctor_parts/family_plan.py"
+    ]
