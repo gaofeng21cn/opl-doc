@@ -71,7 +71,7 @@ Restart Codex, then use one sentence:
 - "Use OPL Doc to govern the OPL series developer documentation lifecycle."
 - "Use OPL Doc to clean stale active docs and fold completed plans into history."
 
-For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The shipped `family-plan` baseline currently names 11 repos and 22 conceptual primary references, but it is a workflow profile, not the live OPL family inventory. Each run must discover the OPL-owned repos that actually exist, add in-scope product or distribution repos with `--repo`, and ignore retired or absent repos. Short single-repo read-only audits start with the doctor and do not force goal mode.
+For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that mention worktrees, subagents, or absorbing back to `main`, the skill should create or resume a `/goal` automatically. The shipped `family-plan` baseline currently names 11 repos and 22 conceptual primary references, but it is a workflow profile, not the live OPL family inventory. With `--workspace-root`, the command conservatively discovers existing OPL-owned Git roots from repo-local owner markers and the canonical GitHub owner, emits the resulting `live_workspace_inventory`, and excludes retired, absent, external, and shell-support repos from the governed set. `--repo` remains the explicit override for unusual layouts or newly admitted repos. Short single-repo read-only audits start with the doctor and do not force goal mode.
 
 ## How It Works
 
@@ -90,7 +90,7 @@ For OPL series, multi-repo cleanup, long-running autonomous work, or tasks that 
 
 OPL Doc is OPL-native by design. OpenArc, OpenSpec, Spec Kit, Agent OS, and similar projects are useful references, but this repository does not migrate OPL-family projects into an external file layout.
 
-The baseline workflow profile covers OPL, the App, Native Workbench, OPL Flow, OPL Doc, MAS, MAG, RCA, OMA, BookForge, and MAS Scholar Skills. A live run expands that profile from workspace inventory and repo-local ownership, for example to current Cloud, Health, or Homebrew distribution repos when they exist and are in scope. Upstream shell repos such as `opl-aion-shell` remain explicit shell-carrier extensions; they are not default Foundry Agent truth owners.
+The baseline workflow profile covers OPL, the App, Native Workbench, OPL Flow, OPL Doc, MAS, MAG, RCA, OMA, BookForge, and MAS Scholar Skills. A live run with `--workspace-root` expands that profile from existing Git roots, repo-local ownership, and the canonical remote owner, for example to current Cloud, Health, Homebrew, Persona, or Relay repos. Upstream shell repos such as `opl-aion-shell` remain explicit read-only support extensions in the inventory; they never enter the governed repo map or default Foundry Agent truth set.
 
 ## CLI
 
@@ -129,6 +129,11 @@ Use local workspace paths when needed:
 ```bash
 opl-doc-doctor family-plan --workspace-root /path/to/workspace --format json
 ```
+
+The JSON result keeps the governed repo map in `repos` and records discovery
+evidence, support extensions, and excluded-candidate counts in
+`live_workspace_inventory`. It is scope evidence only and cannot replace any
+repo's contracts, source, runtime readback, or owner authority.
 
 Override or add repositories:
 

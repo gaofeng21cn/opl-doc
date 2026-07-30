@@ -10,6 +10,7 @@ from contextlib import redirect_stdout
 from scripts.opl_doc_doctor_parts.family_plan import (
     build_support_profile_guard_audit,
     default_series_repos,
+    discover_workspace_repos,
     family_plan,
     parse_repo_overrides,
 )
@@ -950,6 +951,78 @@ def test_default_series_repos_can_expand_from_workspace_root() -> None:
     assert repos["flow"] == "/workspace/opl-flow"
     assert repos["opl_doc"] == "/workspace/opl-doc"
     assert repos["scholarskills"] == "/workspace/mas-scholar-skills"
+
+
+def test_discover_workspace_repos_emits_live_owned_scope_and_excludes_support_and_external(
+    tmp_path: Path,
+) -> None:
+    def make_repo(name: str, owner: str = "gaofeng21cn") -> Path:
+        repo = tmp_path / name
+        repo.mkdir()
+        subprocess.run(["git", "init", "-q", str(repo)], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repo),
+                "remote",
+                "add",
+                "origin",
+                f"https://github.com/{owner}/{name}.git",
+            ],
+            check=True,
+        )
+        (repo / "AGENTS.md").write_text(
+            f"# {name}\n\nThis repository is an OPL-owned product surface.\n",
+            encoding="utf-8",
+        )
+        return repo
+
+    make_repo("one-person-lab")
+    make_repo("opl-doc")
+    make_repo("one-person-lab-cloud")
+    make_repo("opl-health-platform")
+    make_repo("homebrew-one-person-lab")
+    make_repo("opl-persona")
+    make_repo("opl-relay")
+    make_repo("opl-aion-shell")
+    make_repo("opl-hermes-shell")
+    make_repo("opl-external", owner="upstream-owner")
+    make_repo("codex-skills-private")
+
+    repos, inventory = discover_workspace_repos(tmp_path)
+
+    assert set(repos) == {
+        "opl",
+        "opl_doc",
+        "cloud",
+        "health",
+        "homebrew",
+        "persona",
+        "relay",
+    }
+    assert inventory["schema"] == "opl_doc_live_workspace_inventory.v1"
+    assert inventory["state"] == "fresh_workspace_discovery"
+    assert inventory["repo_count"] == 7
+    assert inventory["baseline_repo_count"] == 2
+    assert inventory["owned_extension_repo_count"] == 5
+    assert inventory["support_extension_count"] == 2
+    assert {item["repo_name"] for item in inventory["support_extensions"]} == {
+        "opl-aion-shell",
+        "opl-hermes-shell",
+    }
+    assert inventory["excluded_candidate_count"] == 2
+    assert inventory["authority_boundary"]["inventory_can_replace_repo_truth"] is False
+    assert inventory["authority_boundary"]["support_repos_join_default_foundry_truth"] is False
+
+    payload = family_plan(repos, workspace_inventory=inventory)
+
+    assert payload["repos"] == repos
+    assert payload["live_workspace_inventory"] == inventory
+    assert payload["primary_reference_doc_count"] == 14
+    assert payload["support_profile_guard_audit"]["state"] == (
+        "passed_no_resurrection_guard"
+    )
 
 
 def test_family_plan_goal_prompt_is_self_contained_for_codex_goal() -> None:

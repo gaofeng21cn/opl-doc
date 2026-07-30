@@ -9,6 +9,7 @@ from pathlib import Path
 from .family_plan import (
     build_support_profile_guard_audit,
     default_series_repos,
+    discover_workspace_repos,
     family_plan,
     parse_repo_overrides,
 )
@@ -50,7 +51,10 @@ def parse_args() -> argparse.Namespace:
     )
     family_parser.add_argument(
         "--workspace-root",
-        help="Optional local workspace root used to expand default public repo names into local paths.",
+        help=(
+            "Optional local workspace root used to discover the live OPL-owned "
+            "repo scope and classify support extensions."
+        ),
     )
 
     support_profile_parser = subparsers.add_parser("support-profile-check")
@@ -114,18 +118,28 @@ def main() -> int:
             print_markdown(payload)
         return 0
     if args.command == "family-plan":
-        repos = default_series_repos(args.workspace_root) if args.workspace_root else None
+        workspace_inventory = None
+        if args.workspace_root:
+            repos, workspace_inventory = discover_workspace_repos(args.workspace_root)
+        else:
+            repos = None
         if args.repo:
             repos = repos or default_series_repos()
             repos = parse_repo_overrides(args.repo, repos)
-        payload = family_plan(repos)
+            if workspace_inventory is not None:
+                workspace_inventory["explicit_override_count"] = len(args.repo)
+                workspace_inventory["governed_repo_count"] = len(repos)
+        payload = family_plan(repos, workspace_inventory=workspace_inventory)
         if args.format == "json":
             print(json.dumps(payload, indent=2, sort_keys=True))
         else:
             print_family_markdown(payload)
         return 0
     if args.command == "support-profile-check":
-        repos = default_series_repos(args.workspace_root) if args.workspace_root else None
+        if args.workspace_root:
+            repos, _ = discover_workspace_repos(args.workspace_root)
+        else:
+            repos = None
         if args.repo:
             repos = repos or default_series_repos()
             repos = parse_repo_overrides(args.repo, repos)

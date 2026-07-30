@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +36,165 @@ def default_series_repos(workspace_root: str | None = None) -> dict[str, str]:
         repo_id: str(root / repo_name)
         for repo_id, repo_name in DEFAULT_SERIES_REPO_NAMES.items()
     }
+
+
+_DISCOVERABLE_REPO_NAME = re.compile(
+    r"^(?:one-person-lab(?:-.+)?|opl-.+|homebrew-one-person-lab|"
+    r"med-auto.+|mas-.+|redcube-.+)$"
+)
+_OPL_OWNER_MARKER = re.compile(
+    r"\b(?:OPL|One Person Lab|Med Auto(?:science|grant)?|"
+    r"MAS Scholar Skills|RedCube)\b",
+    re.IGNORECASE,
+)
+_GITHUB_OWNER = re.compile(
+    r"(?:github\.com|ssh\.github\.com(?::\d+)?)[/:]([^/]+)/[^/]+(?:\.git)?$",
+    re.IGNORECASE,
+)
+
+
+def _remote_owner(repo_root: Path) -> str | None:
+    result = subprocess.run(
+        ["git", "-C", str(repo_root), "config", "--get", "remote.origin.url"],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+    if result.returncode != 0:
+        return None
+    match = _GITHUB_OWNER.search(result.stdout.strip())
+    return match.group(1).lower() if match else None
+
+
+def _has_opl_owner_marker(repo_root: Path) -> bool:
+    agents = repo_root / "AGENTS.md"
+    if not agents.is_file():
+        return False
+    return _OPL_OWNER_MARKER.search(
+        agents.read_text(encoding="utf-8", errors="replace")[:16_384]
+    ) is not None
+
+
+def _is_support_repo_name(repo_name: str) -> bool:
+    return (
+        repo_name in DEFAULT_SUPPORT_REPO_NAMES.values()
+        or repo_name.startswith("opl-")
+        and repo_name.endswith("-shell")
+    )
+
+
+def _extension_repo_id(repo_name: str) -> str:
+    candidate = repo_name
+    if candidate.startswith("one-person-lab-"):
+        candidate = candidate.removeprefix("one-person-lab-")
+    elif candidate.startswith("opl-"):
+        candidate = candidate.removeprefix("opl-")
+    elif candidate.endswith("-one-person-lab"):
+        candidate = candidate.removesuffix("-one-person-lab")
+    if candidate.endswith("-platform"):
+        candidate = candidate.removesuffix("-platform")
+    return re.sub(r"[^a-z0-9]+", "_", candidate.lower()).strip("_")
+
+
+def discover_workspace_repos(
+    workspace_root: str | Path,
+) -> tuple[dict[str, str], dict[str, Any]]:
+    root = Path(workspace_root).expanduser().resolve()
+    baseline_paths = default_series_repos(str(root))
+    baseline_names = {
+        repo_name: repo_id
+        for repo_id, repo_name in DEFAULT_SERIES_REPO_NAMES.items()
+    }
+    repos: dict[str, str] = {}
+    inventory_repos: list[dict[str, Any]] = []
+    canonical_owners: set[str] = set()
+
+    for repo_name, repo_id in baseline_names.items():
+        repo_root = root / repo_name
+        if not (repo_root / ".git").exists():
+            continue
+        repos[repo_id] = baseline_paths[repo_id]
+        owner = _remote_owner(repo_root)
+        if owner:
+            canonical_owners.add(owner)
+        inventory_repos.append(
+            {
+                "repo_id": repo_id,
+                "repo_name": repo_name,
+                "path": str(repo_root),
+                "classification": "baseline_repo",
+                "owner_marker_refs": ["baseline_profile", "remote.origin.url"],
+            }
+        )
+
+    support_extensions: list[dict[str, str]] = []
+    excluded_candidate_count = 0
+    for candidate in sorted(root.iterdir()) if root.is_dir() else []:
+        repo_name = candidate.name
+        if repo_name in baseline_names or not (candidate / ".git").exists():
+            continue
+        owner = _remote_owner(candidate)
+        owner_matches = bool(owner and owner in canonical_owners)
+        if _is_support_repo_name(repo_name):
+            if owner_matches and _has_opl_owner_marker(candidate):
+                support_extensions.append(
+                    {
+                        "repo_name": repo_name,
+                        "path": str(candidate),
+                        "classification": "support_extension_read_only",
+                    }
+                )
+            else:
+                excluded_candidate_count += 1
+            continue
+        if (
+            not _DISCOVERABLE_REPO_NAME.fullmatch(repo_name)
+            or not _has_opl_owner_marker(candidate)
+            or not owner_matches
+        ):
+            excluded_candidate_count += 1
+            continue
+
+        repo_id = _extension_repo_id(repo_name)
+        if not repo_id or repo_id in repos:
+            repo_id = re.sub(r"[^a-z0-9]+", "_", repo_name.lower()).strip("_")
+        repos[repo_id] = str(candidate)
+        inventory_repos.append(
+            {
+                "repo_id": repo_id,
+                "repo_name": repo_name,
+                "path": str(candidate),
+                "classification": "owned_extension_repo",
+                "owner_marker_refs": ["AGENTS.md", "remote.origin.url"],
+            }
+        )
+
+    baseline_repo_count = sum(
+        item["classification"] == "baseline_repo" for item in inventory_repos
+    )
+    owned_extension_repo_count = sum(
+        item["classification"] == "owned_extension_repo"
+        for item in inventory_repos
+    )
+    inventory = {
+        "schema": "opl_doc_live_workspace_inventory.v1",
+        "state": "fresh_workspace_discovery",
+        "workspace_root": str(root),
+        "repo_count": len(repos),
+        "baseline_repo_count": baseline_repo_count,
+        "owned_extension_repo_count": owned_extension_repo_count,
+        "support_extension_count": len(support_extensions),
+        "repos": inventory_repos,
+        "support_extensions": support_extensions,
+        "excluded_candidate_count": excluded_candidate_count,
+        "authority_boundary": {
+            "inventory_can_replace_repo_truth": False,
+            "inventory_can_claim_runtime_or_release_ready": False,
+            "support_repos_join_default_foundry_truth": False,
+        },
+    }
+    return repos, inventory
 
 
 def build_goal_objective(repo_paths: dict[str, str]) -> str:
@@ -94,7 +255,7 @@ def build_support_profile_guard_audit(
     support_ids = set(DEFAULT_SUPPORT_REPO_NAMES)
     support_names = set(DEFAULT_SUPPORT_REPO_NAMES.values())
     governed_ids = set(repo_paths)
-    governed_names = set(repo_paths.values())
+    governed_names = {Path(path).name for path in repo_paths.values()}
     forbidden_legacy_paths = [
         rel_path
         for rel_path in LEGACY_SUPPORT_REPO_POLICY_REL_PATHS
@@ -188,7 +349,10 @@ def build_support_profile_guard_audit(
     }
 
 
-def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
+def family_plan(
+    repo_paths: dict[str, str] | None = None,
+    workspace_inventory: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     paths = repo_paths or default_series_repos()
     primary_reference_docs = build_primary_reference_docs(paths)
     support_repo_policy = build_support_repo_policy()
@@ -262,7 +426,7 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
         "Treat each execution as a long-horizon tranche: a tranche can be verified and absorbed, but the global goal must remain open until all governed repos and all README*/docs/**/*.md sections have been covered or explicitly carried forward.",
         "Maintain a coverage ledger for every governed repo: reviewed docs/sections, edited docs, archived/tombstoned/deleted docs, unreviewed docs, unresolved stale/retire candidates, and the next tranche write scope.",
     ]
-    return {
+    payload = {
         "objective": "OPL series document lifecycle governance and software-engineering closeout",
         "repos": paths,
         "scope_policy": {
@@ -316,6 +480,9 @@ def family_plan(repo_paths: dict[str, str] | None = None) -> dict[str, Any]:
             "support repos remain explicit extensions and never become the default Foundry Agent truth set",
         ],
     }
+    if workspace_inventory is not None:
+        payload["live_workspace_inventory"] = workspace_inventory
+    return payload
 
 
 def parse_repo_overrides(

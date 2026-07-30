@@ -71,7 +71,7 @@ python3 scripts/install_local_plugin.py --verify-only
 - “使用 OPL Doc 治理 OPL series 的开发文档生命周期。”
 - “使用 OPL Doc 清理 stale active docs，并把已完成计划折回 history。”
 
-对于 OPL series、多仓清理、长周期自治、或提到 worktree/subagent/吸收回 `main` 的任务，skill 会主动进入或延续 `/goal`。`family-plan` 当前内置的 11 仓/22 个概念主参考只是 workflow baseline，不是 live OPL family inventory；每轮必须从 workspace 与 repo-local owner 重新发现实际存在的自有仓库，用 `--repo` 纳入当前产品或分发仓，已退役或不存在的仓库不形成缺失项。短单仓只读审计先跑 doctor，不强制 goal。
+对于 OPL series、多仓清理、长周期自治、或提到 worktree/subagent/吸收回 `main` 的任务，skill 会主动进入或延续 `/goal`。`family-plan` 当前内置的 11 仓/22 个概念主参考只是 workflow baseline，不是 live OPL family inventory。传入 `--workspace-root` 后，命令会根据真实 Git 根仓、repo-local owner 标识和 canonical GitHub owner 保守发现当前 OPL-owned 仓库，并输出 `live_workspace_inventory`；已退役、不存在、外部或 shell-support 仓库不进入 governed set。非标准布局或新纳入仓库继续使用 `--repo` 显式覆盖。短单仓只读审计先跑 doctor，不强制 goal。
 
 ## 它如何工作
 
@@ -90,7 +90,7 @@ python3 scripts/install_local_plugin.py --verify-only
 
 OPL Doc 是 OPL-native 的治理工具。OpenArc、OpenSpec、Spec Kit、Agent OS 等项目是有用参考，但本仓不会把 OPL 系列项目迁移到外部固定文件布局。
 
-内置 workflow baseline 覆盖 OPL、App、Native Workbench、OPL Flow、OPL Doc、MAS、MAG、RCA、OMA、BookForge 和 MAS Scholar Skills。实际运行还要按当前 workspace 与 repo-local owner 纳入存在且在范围内的 Cloud、Health、Homebrew 等产品或分发仓；`opl-aion-shell` 等 upstream shell repo 仍只是 shell-carrier 任务的 explicit extension，不是默认 Foundry Agent truth owner。
+内置 workflow baseline 覆盖 OPL、App、Native Workbench、OPL Flow、OPL Doc、MAS、MAG、RCA、OMA、BookForge 和 MAS Scholar Skills。使用 `--workspace-root` 时，实际运行会按真实 Git 根仓、repo-local owner 与 canonical remote owner 纳入当前存在的 Cloud、Health、Homebrew、Persona、Relay 等产品或分发仓；`opl-aion-shell` 等 upstream shell repo 只作为只读 support extension 出现在 inventory 中，不进入 governed repo map 或默认 Foundry Agent truth set。
 
 ## CLI
 
@@ -115,6 +115,11 @@ opl-doc-doctor family-plan --format json
 ```bash
 opl-doc-doctor family-plan --workspace-root /path/to/workspace --format json
 ```
+
+JSON 输出使用 `repos` 表示本次 governed repo map，并在
+`live_workspace_inventory` 中记录发现依据、support extensions 和被排除候选数量。
+该结果只证明范围发现，不能替代任何仓库的 contracts、source、runtime readback 或 owner
+authority。
 
 覆盖或新增 repo：
 
