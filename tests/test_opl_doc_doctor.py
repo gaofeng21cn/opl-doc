@@ -137,6 +137,9 @@ def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) ->
         payload["expected_profile"]["managed_by_plugins"]["opl-doc"]["authority_boundary"]["native_profile_role"]
         == "profile_sync_and_drift_check_only"
     )
+    assert payload["expected_profile"]["managed_by_plugins"]["opl-doc"]["managed_surfaces"] == [
+        "contracts/opl-native-profile.json"
+    ]
     assert "repo_truth" in payload["expected_profile"]["managed_by_plugins"]["opl-doc"]["does_not_own"]
     assert payload["support_repo_policy"] == build_support_repo_policy()
     assert payload["support_profile_guard"] == build_support_profile_guard()
@@ -223,6 +226,9 @@ def test_native_sync_apply_writes_profile_and_then_check_passes(tmp_path: Path) 
     assert profile["schema"] == "opl_native_profile.v1"
     assert profile["repo_id"] == "med-autoscience"
     assert profile["plugin_native_status"] == "profile_declared"
+    assert profile["managed_by_plugins"]["opl-doc"]["managed_surfaces"] == [
+        "contracts/opl-native-profile.json"
+    ]
     assert profile["owned_by_repo"] == [
         "contracts/**",
         "src/**",

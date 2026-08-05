@@ -46,6 +46,7 @@ def _owned_by_repo(active_truth_owner: str | None) -> list[str]:
 def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -> dict[str, Any]:
     payload = doctor(root)
     surfaces = payload["repo_native_surfaces"]
+    repo_id = repo_identity(root)
     active_truth_owner = next(iter(payload["active_truth_health"]["owner_docs"]), None)
     canonical_docs = [
         {"path": path, "role": _profile_doc_role(path)}
@@ -57,10 +58,13 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
         if exists
     ]
     repo_profile = payload["repo_profile"]
+    managed_surfaces = [NATIVE_PROFILE_REL_PATH]
+    if repo_id == "opl-doc" and (root / SUPPORT_REPO_POLICY_REL_PATH).is_file():
+        managed_surfaces.append(SUPPORT_REPO_POLICY_REL_PATH)
     managed_by_plugins = dict((current or {}).get("managed_by_plugins") or {})
     managed_by_plugins["opl-doc"] = {
         "management": "profile_check_and_sync",
-        "managed_surfaces": [NATIVE_PROFILE_REL_PATH, SUPPORT_REPO_POLICY_REL_PATH],
+        "managed_surfaces": managed_surfaces,
         "authority_boundary": OPL_DOC_AUTHORITY_BOUNDARY,
         "does_not_own": [
             "repo_truth",
@@ -74,7 +78,7 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
     }
     return {
         "schema": "opl_native_profile.v1",
-        "repo_id": repo_identity(root),
+        "repo_id": repo_id,
         "repo_profile": repo_profile,
         "flow_profile": repo_profile,
         "doc_profile": repo_profile,
