@@ -15,7 +15,7 @@ from .constants import (
 
 def repo_identity(root: Path) -> str:
     package_name = package_json_name(root)
-    if package_name == "opl-framework-shared":
+    if package_name in {"opl-framework", "opl-framework-shared"}:
         return "one-person-lab"
     if package_name == "redcube-ai-mono":
         return "redcube-ai"

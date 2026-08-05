@@ -20,7 +20,7 @@ from scripts.opl_doc_doctor_parts.constants import (
 )
 from scripts.opl_doc_doctor_parts.invariant_checks import doctor
 from scripts.opl_doc_doctor_parts.plugin_sync import native_check, native_sync
-from scripts.opl_doc_doctor_parts.profile_discovery import detect_profile
+from scripts.opl_doc_doctor_parts.profile_discovery import detect_profile, repo_identity
 from scripts.opl_doc_doctor_parts.rendering import print_family_markdown
 
 
@@ -93,6 +93,15 @@ def test_detect_profile_uses_package_identity_inside_worktree_named_differently(
     (root / "package.json").write_text('{"name":"opl-meta-agent"}\n', encoding="utf-8")
 
     assert detect_profile(root) == "opl_meta_agent"
+
+
+def test_current_framework_package_identity_stays_canonical_inside_worktrees(tmp_path: Path) -> None:
+    root = tmp_path / "framework-task-worktree"
+    root.mkdir()
+    (root / "package.json").write_text('{"name":"opl-framework"}\n', encoding="utf-8")
+
+    assert repo_identity(root) == "one-person-lab"
+    assert detect_profile(root) == "opl_framework"
 
 
 def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) -> None:
