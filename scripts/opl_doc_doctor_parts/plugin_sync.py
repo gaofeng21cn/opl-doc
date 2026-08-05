@@ -76,7 +76,7 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
             "production_readiness",
         ],
     }
-    return {
+    generated = {
         "schema": "opl_native_profile.v1",
         "repo_id": repo_id,
         "repo_profile": repo_profile,
@@ -91,6 +91,9 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
         "managed_by_plugins": managed_by_plugins,
         "plugin_native_status": "profile_declared",
     }
+    # Target repos may add owner-defined gates to this profile. Sync only
+    # replaces the fields OPL Doc derives, preserving those repo-owned keys.
+    return {**(current or {}), **generated}
 
 
 def _native_profile_text(payload: dict[str, Any]) -> str:

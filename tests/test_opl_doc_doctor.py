@@ -379,7 +379,7 @@ def test_verify_entrypoint_keeps_python_cache_outside_checkout() -> None:
     assert 'addopts = "-p no:cacheprovider"' in pyproject
 
 
-def test_native_sync_preserves_other_plugin_profile_entries(tmp_path: Path) -> None:
+def test_native_sync_preserves_repo_extensions_and_other_plugin_entries(tmp_path: Path) -> None:
     root = tmp_path / "one-person-lab-app"
     (root / "docs" / "active").mkdir(parents=True)
     (root / "contracts").mkdir()
@@ -397,6 +397,12 @@ def test_native_sync_preserves_other_plugin_profile_entries(tmp_path: Path) -> N
         encoding="utf-8",
     )
     existing = {
+        "flow_closeout_gates": [
+            {
+                "kind": "completion_audit",
+                "path": "contracts/opl-framework/opl-flow-completion-audit-contract.json",
+            }
+        ],
         "managed_by_plugins": {
             "opl-flow": {
                 "version": "0.1.0",
@@ -415,6 +421,7 @@ def test_native_sync_preserves_other_plugin_profile_entries(tmp_path: Path) -> N
     native_sync(root, apply=True)
 
     profile = __import__("json").loads((root / "contracts" / "opl-native-profile.json").read_text(encoding="utf-8"))
+    assert profile["flow_closeout_gates"] == existing["flow_closeout_gates"]
     assert profile["managed_by_plugins"]["opl-flow"] == existing["managed_by_plugins"]["opl-flow"]
     assert profile["managed_by_plugins"]["opl-doc"]["management"] == "profile_check_and_sync"
 
