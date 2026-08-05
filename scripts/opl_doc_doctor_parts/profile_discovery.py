@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -13,13 +14,41 @@ from .constants import (
 )
 
 
+def _git_common_repo_root(root: Path) -> Path | None:
+    result = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--git-common-dir"],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+    if result.returncode != 0:
+        return None
+    common_dir = Path(result.stdout.strip())
+    if not common_dir.is_absolute():
+        common_dir = (root / common_dir).resolve()
+    if common_dir.name != ".git":
+        return None
+    return common_dir.parent
+
+
+def _machine_truth_surface_exists(root: Path, rel_path: str, *, git_repo: bool) -> bool:
+    path = root / rel_path
+    if path.is_file():
+        return True
+    if not path.is_dir() or not git_repo:
+        return path.is_dir()
+    return any(candidate.is_file() or candidate.is_symlink() for candidate in path.rglob("*"))
+
+
 def repo_identity(root: Path) -> str:
     package_name = package_json_name(root)
     if package_name in {"opl-framework", "opl-framework-shared"}:
         return "one-person-lab"
     if package_name == "redcube-ai-mono":
         return "redcube-ai"
-    return package_name or pyproject_name(root) or root.name
+    canonical_root = _git_common_repo_root(root)
+    return package_name or pyproject_name(root) or (canonical_root or root).name
 
 
 def detect_profile(root: Path) -> str:
@@ -41,6 +70,7 @@ def detect_profile(root: Path) -> str:
 
 def inspect_repo_native_surfaces(root: Path, core_status: dict[str, bool]) -> dict[str, Any]:
     package_scripts = package_json_scripts(root)
+    git_repo = _git_common_repo_root(root) is not None
     verification = []
     if rel_exists(root, "scripts/verify.sh"):
         verification.append("scripts/verify.sh")
@@ -59,7 +89,9 @@ def inspect_repo_native_surfaces(root: Path, core_status: dict[str, bool]) -> di
             "missing": [path for path, exists in core_status.items() if not exists],
         },
         "machine_truth": [
-            path for path in MACHINE_TRUTH_SURFACES if rel_exists(root, path)
+            path
+            for path in MACHINE_TRUTH_SURFACES
+            if _machine_truth_surface_exists(root, path, git_repo=git_repo)
         ],
         "verification": verification,
     }

@@ -104,6 +104,58 @@ def test_current_framework_package_identity_stays_canonical_inside_worktrees(tmp
     assert detect_profile(root) == "opl_framework"
 
 
+def test_native_profile_discovery_matches_real_git_linked_worktree(tmp_path: Path) -> None:
+    root = tmp_path / "mas-scholar-skills"
+    worktree = tmp_path / "unrelated-task-lane-name"
+    (root / ".codex-plugin").mkdir(parents=True)
+    (root / "contracts").mkdir()
+    (root / "tests").mkdir()
+    (root / "scripts").mkdir()
+    (root / ".codex-plugin" / "plugin.json").write_text(
+        '{"name":"mas-scholar-skills"}\n', encoding="utf-8"
+    )
+    (root / "contracts" / "package.json").write_text("{}\n", encoding="utf-8")
+    (root / "tests" / "test_placeholder.py").write_text("\n", encoding="utf-8")
+    (root / "scripts" / "verify.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(root),
+            "-c",
+            "user.name=OPL Doc Test",
+            "-c",
+            "user.email=opl-doc@example.invalid",
+            "commit",
+            "-qm",
+            "fixture",
+        ],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "-C", str(root), "worktree", "add", "-qb", "task-lane", str(worktree)],
+        check=True,
+    )
+    (root / "src").mkdir()
+
+    root_profile = native_check(root)["expected_profile"]
+    worktree_profile = native_check(worktree)["expected_profile"]
+
+    for key in (
+        "repo_id",
+        "repo_profile",
+        "machine_truth_surfaces",
+        "verification_commands",
+    ):
+        assert worktree_profile[key] == root_profile[key]
+    assert root_profile["repo_id"] == "mas-scholar-skills"
+    assert root_profile["repo_profile"] == "codex_plugin"
+    assert root_profile["machine_truth_surfaces"] == ["contracts", "tests"]
+    assert root_profile["verification_commands"] == ["scripts/verify.sh"]
+
+
 def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) -> None:
     root = tmp_path / "opl-meta-agent"
     docs = root / "docs" / "active"
