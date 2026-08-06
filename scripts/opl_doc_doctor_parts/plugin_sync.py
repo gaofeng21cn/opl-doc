@@ -57,6 +57,10 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
         for path, exists in payload["canonical_dirs"].items()
         if exists
     ]
+    machine_truth_surfaces = list(surfaces["machine_truth"])
+    native_profile_surface = NATIVE_PROFILE_REL_PATH.split("/", 1)[0]
+    if native_profile_surface not in machine_truth_surfaces:
+        machine_truth_surfaces.insert(0, native_profile_surface)
     repo_profile = payload["repo_profile"]
     managed_surfaces = [NATIVE_PROFILE_REL_PATH]
     if repo_id == "opl-doc" and (root / SUPPORT_REPO_POLICY_REL_PATH).is_file():
@@ -85,7 +89,7 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
         "active_truth_owner": active_truth_owner,
         "canonical_docs": canonical_docs,
         "taxonomy_dirs": taxonomy_dirs,
-        "machine_truth_surfaces": surfaces["machine_truth"],
+        "machine_truth_surfaces": machine_truth_surfaces,
         "verification_commands": surfaces["verification"],
         "owned_by_repo": _owned_by_repo(active_truth_owner),
         "managed_by_plugins": managed_by_plugins,

@@ -299,13 +299,17 @@ def test_native_sync_apply_writes_profile_and_then_check_passes(tmp_path: Path) 
     ]
 
 
-def test_native_sync_apply_recomputes_profile_after_creating_contracts_dir(tmp_path: Path) -> None:
+def test_native_sync_apply_includes_managed_profile_surface_in_git_repo(tmp_path: Path) -> None:
     root = tmp_path / "opl-doc"
     (root / "docs" / "active").mkdir(parents=True)
     (root / "docs").mkdir(exist_ok=True)
     (root / "tests").mkdir()
     (root / ".codex-plugin").mkdir()
     (root / "scripts").mkdir()
+    (root / "tests" / "test_placeholder.py").write_text(
+        "def test_placeholder() -> None:\n    pass\n",
+        encoding="utf-8",
+    )
     (root / ".codex-plugin" / "plugin.json").write_text('{"name":"opl-doc"}\n', encoding="utf-8")
     (root / "README.md").write_text("# OPL Doc\n", encoding="utf-8")
     (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
@@ -329,7 +333,16 @@ def test_native_sync_apply_recomputes_profile_after_creating_contracts_dir(tmp_p
         "Foldback target: docs/status.md\n",
         encoding="utf-8",
     )
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
 
+    dry_run = native_sync(root, apply=False)
+
+    assert dry_run["expected_profile"]["machine_truth_surfaces"] == [
+        "contracts",
+        "tests",
+        "pyproject.toml",
+    ]
+    assert not (root / "contracts" / "opl-native-profile.json").exists()
     sync_payload = native_sync(root, apply=True)
 
     assert sync_payload["applied"] is True
