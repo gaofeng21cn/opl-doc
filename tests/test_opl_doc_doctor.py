@@ -156,6 +156,30 @@ def test_native_profile_discovery_matches_real_git_linked_worktree(tmp_path: Pat
     assert root_profile["verification_commands"] == ["scripts/verify.sh"]
 
 
+def test_native_profile_concrete_doc_owners_include_only_tracked_present_files(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "opl-flow"
+    (root / "contracts").mkdir(parents=True)
+    (root / "tests").mkdir()
+    (root / "docs").mkdir()
+    (root / "README.md").write_text("# OPL Flow\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (root / "contracts" / "workflow-policy.json").write_text("{}\n", encoding="utf-8")
+    (root / "tests" / "test_policy.py").write_text("\n", encoding="utf-8")
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+
+    (root / "src").mkdir()
+    (root / "src" / "untracked.py").write_text("\n", encoding="utf-8")
+    (root / "docs" / "status.md").write_text("# Untracked status\n", encoding="utf-8")
+
+    profile = native_check(root)["expected_profile"]
+
+    assert profile["owned_by_repo"] == ["contracts/**", "src/**", "tests/**"]
+    assert "docs/status.md" not in profile["owned_by_repo"]
+
+
 def test_native_check_reports_missing_profile_without_writing(tmp_path: Path) -> None:
     root = tmp_path / "opl-meta-agent"
     docs = root / "docs" / "active"
@@ -294,7 +318,6 @@ def test_native_sync_apply_writes_profile_and_then_check_passes(tmp_path: Path) 
         "contracts/**",
         "src/**",
         "tests/**",
-        "docs/status.md",
         "docs/active/mas-ideal-state-gap-plan.md",
     ]
 

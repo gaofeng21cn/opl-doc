@@ -16,7 +16,7 @@ from .constants import (
 )
 from .family_plan import build_support_profile_guard_audit, default_series_repos
 from .invariant_checks import doctor
-from .profile_discovery import repo_identity
+from .profile_discovery import repo_identity, repo_surface_exists
 
 OPL_DOC_REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -36,9 +36,11 @@ def _profile_doc_role(path: str) -> str:
     return roles.get(path, "canonical_doc")
 
 
-def _owned_by_repo(active_truth_owner: str | None) -> list[str]:
-    owned = ["contracts/**", "src/**", "tests/**", "docs/status.md"]
-    if active_truth_owner:
+def _owned_by_repo(root: Path, active_truth_owner: str | None) -> list[str]:
+    owned = ["contracts/**", "src/**", "tests/**"]
+    if repo_surface_exists(root, "docs/status.md"):
+        owned.append("docs/status.md")
+    if active_truth_owner and repo_surface_exists(root, active_truth_owner):
         owned.append(active_truth_owner)
     return owned
 
@@ -118,7 +120,7 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
         "verification_commands": _verification_commands(
             surfaces["verification"], current
         ),
-        "owned_by_repo": _owned_by_repo(active_truth_owner),
+        "owned_by_repo": _owned_by_repo(root, active_truth_owner),
         "managed_by_plugins": managed_by_plugins,
         "plugin_native_status": "profile_declared",
     }
