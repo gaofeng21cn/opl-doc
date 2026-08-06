@@ -356,6 +356,55 @@ def test_native_sync_apply_includes_managed_profile_surface_in_git_repo(tmp_path
     assert profile["machine_truth_surfaces"] == ["contracts", "tests", "pyproject.toml"]
 
 
+def test_git_repo_discovery_ignores_untracked_governance_surfaces(tmp_path: Path) -> None:
+    root = tmp_path / "one-person-lab-cloud"
+    (root / "docs" / "delivery").mkdir(parents=True)
+    (root / "README.md").write_text("# Cloud\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# Agents\n", encoding="utf-8")
+    (root / "docs" / "README.md").write_text("# Docs\n", encoding="utf-8")
+    (root / "docs" / "delivery" / "README.md").write_text(
+        "# Delivery\n", encoding="utf-8"
+    )
+    (root / ".gitignore").write_text(
+        "docs/active/\ndocs/public/\ndocs/site/latest/\n"
+        "package.json\nscripts/verify.sh\nsrc/\n",
+        encoding="utf-8",
+    )
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+
+    (root / "docs" / "public").mkdir()
+    (root / "docs" / "public" / ".DS_Store").write_bytes(b"ignored")
+    (root / "docs" / "active").mkdir()
+    (root / "docs" / "active" / "ignored-active-truth-plan.md").write_text(
+        "# Ignored Active Truth\n", encoding="utf-8"
+    )
+    (root / "docs" / "site" / "latest").mkdir(parents=True)
+    (root / "docs" / "site" / "latest" / "generated.md").write_text(
+        "# Generated\n", encoding="utf-8"
+    )
+    (root / "package.json").write_text(
+        '{"name":"ignored-tooling-repo"}\n', encoding="utf-8"
+    )
+    (root / "scripts").mkdir()
+    (root / "scripts" / "verify.sh").write_text("#!/bin/sh\n", encoding="utf-8")
+    (root / "src").mkdir()
+    (root / "src" / "generated.py").write_text("IGNORED = True\n", encoding="utf-8")
+
+    payload = doctor(root)
+    expected = native_check(root)["expected_profile"]
+
+    assert payload["repo_profile"] == "generic_repo"
+    assert payload["markdown_doc_count"] == 2
+    assert payload["canonical_dirs"]["docs/delivery"] is True
+    assert payload["canonical_dirs"]["docs/active"] is False
+    assert payload["canonical_dirs"]["docs/public"] is False
+    assert payload["active_gap_reference_docs"] == []
+    assert payload["repo_native_surfaces"]["verification"] == []
+    assert expected["taxonomy_dirs"] == ["docs/delivery"]
+    assert expected["machine_truth_surfaces"] == ["contracts"]
+
+
 def test_support_repo_profile_contract_is_materialized() -> None:
     root = Path(__file__).resolve().parents[1]
     profile_path = root / "contracts" / "opl-native-profile.json"

@@ -23,6 +23,8 @@ OPL Doc 的 repo-native 能力由外置 skill / CLI 读取目标 repo 自己已�
 
 验证入口分为两类：OPL Doc 从 `scripts/verify.sh`、受支持的 `package.json` scripts 与 pytest 约定重算可发现入口；目标 repo 在同一 `verification_commands` 字段显式声明的其它命令按 repo truth 保留并去重。同步不得解析自由文本 `AGENTS.md` 猜测命令，也不得保留已经失去真实文件或 package script 的可发现入口。
 
+对 Git checkout，repo identity、canonical docs/taxonomy、machine-truth surface、验证入口和 Markdown 扫描只读取当前 index 中实际存在的 tracked path。Ignored/untracked cache、生成站点、临时 `package.json` 或空目录不是 active repo truth；非 Git 输入仍按当前文件系统检查。
+
 该文件不持有 domain truth、runtime truth、artifact authority、quality verdict、owner receipt 或生产 ready 证据；这些仍由目标 repo 的 contracts、source、tests、runtime ledger、owner receipt 和 repo-native verification 持有。
 
 ## Family plan 只生成 workflow，不定义 truth owner 集合

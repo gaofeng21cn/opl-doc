@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .common import Finding, read_text, rel_exists
+from .common import Finding, read_text
 from .constants import (
     ACTIVE_GAP_MARKERS,
     ACTIVE_STATE_SUMMARY_MARKERS,
@@ -26,7 +26,12 @@ from .constants import (
     PROCESS_LOG_HEADING_RE,
     RETIREMENT_NEGATION_MARKERS,
 )
-from .profile_discovery import detect_profile, inspect_repo_native_surfaces
+from .profile_discovery import (
+    detect_profile,
+    inspect_repo_native_surfaces,
+    repo_surface_exists,
+    tracked_markdown_docs,
+)
 
 
 def inspect_header(path: Path) -> dict[str, bool]:
@@ -37,10 +42,7 @@ def inspect_header(path: Path) -> dict[str, bool]:
 
 
 def list_markdown_docs(root: Path) -> list[Path]:
-    docs_root = root / "docs"
-    if not docs_root.exists():
-        return []
-    return sorted(path for path in docs_root.rglob("*.md") if path.is_file())
+    return tracked_markdown_docs(root)
 
 
 def is_history_path(path: Path) -> bool:
@@ -75,24 +77,22 @@ def incremental_list_risk_details(text: str) -> list[str]:
 
 
 def active_truth_reference_docs(root: Path) -> list[str]:
+    markdown_docs = list_markdown_docs(root)
     refs = [
         path
         for path in FAMILY_REFERENCE_DOCS
-        if rel_exists(root, path)
+        if repo_surface_exists(root, path)
     ]
-    for doc in list_markdown_docs(root):
+    for doc in markdown_docs:
         rel = doc.relative_to(root).as_posix()
         if rel in refs or is_history_path(doc):
             continue
         if has_active_truth_owner_purpose(doc):
             refs.append(rel)
 
-    active_root = root / "docs" / "active"
-    if not active_root.exists():
-        return refs
-    for doc in sorted(active_root.glob("*.md")):
+    for doc in markdown_docs:
         rel = doc.relative_to(root).as_posix()
-        if rel in refs:
+        if rel in refs or not is_active_rel_path(rel):
             continue
         if ACTIVE_TRUTH_DOC_NAME_RE.search(doc.name):
             refs.append(rel)
@@ -212,9 +212,11 @@ def doctor(root: Path) -> dict[str, Any]:
     docs = list_markdown_docs(root)
     findings: list[Finding] = []
 
-    core_status = {path: rel_exists(root, path) for path in CORE_DOCS}
+    core_status = {path: repo_surface_exists(root, path) for path in CORE_DOCS}
     repo_native_surfaces = inspect_repo_native_surfaces(root, core_status)
-    dir_status = {path: rel_exists(root, path) for path in CANONICAL_DOC_DIRS}
+    dir_status = {
+        path: repo_surface_exists(root, path) for path in CANONICAL_DOC_DIRS
+    }
 
     for path, exists in core_status.items():
         if not exists and path not in {"TASTE.md", "docs/decisions.md"}:
