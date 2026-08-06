@@ -306,6 +306,9 @@ def test_native_sync_apply_includes_managed_profile_surface_in_git_repo(tmp_path
     (root / "tests").mkdir()
     (root / ".codex-plugin").mkdir()
     (root / "scripts").mkdir()
+    (root / "src").mkdir()
+    (root / ".gitignore").write_text("src/\n", encoding="utf-8")
+    (root / "src" / "generated.py").write_text("IGNORED = True\n", encoding="utf-8")
     (root / "tests" / "test_placeholder.py").write_text(
         "def test_placeholder() -> None:\n    pass\n",
         encoding="utf-8",
@@ -334,6 +337,7 @@ def test_native_sync_apply_includes_managed_profile_surface_in_git_repo(tmp_path
         encoding="utf-8",
     )
     subprocess.run(["git", "init", "-q", str(root)], check=True)
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True)
 
     dry_run = native_sync(root, apply=False)
 

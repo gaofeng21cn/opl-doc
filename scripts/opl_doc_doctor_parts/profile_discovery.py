@@ -33,12 +33,19 @@ def _git_common_repo_root(root: Path) -> Path | None:
 
 
 def _machine_truth_surface_exists(root: Path, rel_path: str, *, git_repo: bool) -> bool:
+    if git_repo:
+        result = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--", rel_path],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        return result.returncode == 0 and bool(result.stdout.strip())
     path = root / rel_path
     if path.is_file():
         return True
-    if not path.is_dir() or not git_repo:
-        return path.is_dir()
-    return any(candidate.is_file() or candidate.is_symlink() for candidate in path.rglob("*"))
+    return path.is_dir()
 
 
 def repo_identity(root: Path) -> str:
