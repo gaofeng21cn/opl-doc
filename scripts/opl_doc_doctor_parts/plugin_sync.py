@@ -43,6 +43,31 @@ def _owned_by_repo(active_truth_owner: str | None) -> list[str]:
     return owned
 
 
+def _is_autodiscovered_verification_command(command: str) -> bool:
+    return (
+        command in {"scripts/verify.sh", "python -m pytest"}
+        or command.startswith("package.json:scripts.")
+    )
+
+
+def _verification_commands(
+    discovered: list[str], current: dict[str, Any] | None
+) -> list[str]:
+    current_commands = (current or {}).get("verification_commands")
+    repo_owned = (
+        [
+            command
+            for command in current_commands
+            if isinstance(command, str)
+            and command
+            and not _is_autodiscovered_verification_command(command)
+        ]
+        if isinstance(current_commands, list)
+        else []
+    )
+    return list(dict.fromkeys([*discovered, *repo_owned]))
+
+
 def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -> dict[str, Any]:
     payload = doctor(root)
     surfaces = payload["repo_native_surfaces"]
@@ -90,7 +115,9 @@ def expected_native_profile(root: Path, current: dict[str, Any] | None = None) -
         "canonical_docs": canonical_docs,
         "taxonomy_dirs": taxonomy_dirs,
         "machine_truth_surfaces": machine_truth_surfaces,
-        "verification_commands": surfaces["verification"],
+        "verification_commands": _verification_commands(
+            surfaces["verification"], current
+        ),
         "owned_by_repo": _owned_by_repo(active_truth_owner),
         "managed_by_plugins": managed_by_plugins,
         "plugin_native_status": "profile_declared",

@@ -495,6 +495,43 @@ def test_native_sync_preserves_repo_extensions_and_other_plugin_entries(tmp_path
     assert profile["managed_by_plugins"]["opl-doc"]["management"] == "profile_check_and_sync"
 
 
+def test_native_sync_preserves_repo_owned_verification_and_refreshes_detected_entries(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "opl-skills"
+    (root / "contracts").mkdir(parents=True)
+    (root / "scripts").mkdir()
+    (root / "package.json").write_text(
+        '{"scripts":{"test":"node --test"}}\n', encoding="utf-8"
+    )
+    (root / "scripts" / "validate_skills.py").write_text("\n", encoding="utf-8")
+    existing = {
+        "verification_commands": [
+            "scripts/verify.sh",
+            "package.json:scripts.build",
+            "python -m pytest",
+            "python scripts/validate_skills.py",
+            "git diff --check",
+            "python scripts/validate_skills.py",
+        ]
+    }
+    (root / "contracts" / "opl-native-profile.json").write_text(
+        __import__("json").dumps(existing, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    native_sync(root, apply=True)
+
+    profile = __import__("json").loads(
+        (root / "contracts" / "opl-native-profile.json").read_text(encoding="utf-8")
+    )
+    assert profile["verification_commands"] == [
+        "package.json:scripts.test",
+        "python scripts/validate_skills.py",
+        "git diff --check",
+    ]
+
+
 def test_doctor_detects_repo_native_verification_without_writing(tmp_path: Path) -> None:
     root = tmp_path / "redcube-ai"
     scripts = root / "scripts"
