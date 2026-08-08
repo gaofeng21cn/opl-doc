@@ -1,2 +1,0 @@
-"""OPL document governance scripts."""
-
